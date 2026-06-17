@@ -19,6 +19,9 @@ export const env = {
   supabaseUrl: () => required("NEXT_PUBLIC_SUPABASE_URL"),
   supabaseAnonKey: () => required("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
   supabaseServiceRoleKey: () => required("SUPABASE_SERVICE_ROLE_KEY"),
+  // True once Supabase keys exist. Lets the public site boot before setup.
+  isSupabaseConfigured: () =>
+    Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
 
   // Twilio
   twilioAccountSid: () => required("TWILIO_ACCOUNT_SID"),

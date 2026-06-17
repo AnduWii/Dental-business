@@ -10,6 +10,16 @@ type CookieToSet = { name: string; value: string; options: CookieOptions };
 const PROTECTED = ["/dashboard", "/conversations", "/settings", "/notifications", "/missed-calls", "/onboarding"];
 
 export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const isProtected = PROTECTED.some((p) => path === p || path.startsWith(p + "/"));
+
+  // Before Supabase is configured, let public pages render and keep the
+  // dashboard behind a redirect to /login (which explains setup is needed).
+  if (!env.isSupabaseConfigured()) {
+    if (isProtected) return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(env.supabaseUrl(), env.supabaseAnonKey(), {
@@ -30,9 +40,6 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const path = request.nextUrl.pathname;
-  const isProtected = PROTECTED.some((p) => path === p || path.startsWith(p + "/"));
 
   if (!user && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url));
