@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>YouTube Shorts Analytics Dashboard</title>
+
+<!--
+================================================================================
+  YOUTUBE SHORTS ANALYTICS DASHBOARD  —  single-file web application
+================================================================================
+
+  WHAT THIS IS
+  ------------
+  A personal, client-side-only dashboard that signs in with your Google
+  account (official OAuth via Google Identity Services) and reads your own
+  YouTube channel data through:
+    • YouTube Data API v3        (channel + video metadata and public stats)
+    • YouTube Analytics API v2   (watch time, retention, daily time-series)
+
+  Everything runs in your browser. There is NO backend. Your access token
+  lives only in this page's memory (never written to disk/localStorage), and
+  no data is ever sent anywhere except directly to Google's APIs.
+
+  --------------------------------------------------------------------------
+  SETUP (one-time, ~10 minutes)  — also shown in the in-app "Setup" tab
+  --------------------------------------------------------------------------
+  1. Go to https://console.cloud.google.com/  and create a new project.
+
+  2. Enable two APIs (APIs & Services > Library):
+       • "YouTube Data API v3"
+       • "YouTube Analytics API"
+
+  3. Configure the OAuth consent screen (APIs & Services > OAuth consent screen):
+       • User type: External (or Internal if you use Google Workspace)
+       • Add your Google account as a "Test user" while the app is in Testing.
+       • Add the scopes (optional at this step; the app requests them anyway):
+           https://www.googleapis.com/auth/youtube.readonly
+           https://www.googleapis.com/auth/yt-analytics.readonly
+
+  4. Create OAuth credentials (APIs & Services > Credentials > Create
+     Credentials > OAuth client ID):
+       • Application type: "Web application"
+       • Authorized JavaScript origins: add the EXACT origin you serve this
+         file from, e.g.
+             http://localhost:8000
+             https://your-username.github.io
+         (No path, no trailing slash. The origin must match exactly.)
+       • Copy the generated "Client ID".
+
+  5. (Optional) Create an API key on the same Credentials page. It is NOT
+     required for this app because all calls are authorized with your OAuth
+     access token, but the field is provided for completeness.
+
+  6. Paste your Client ID into the CONFIG block in the JavaScript below
+     (search for "PASTE_YOUR_CLIENT_ID_HERE").
+
+  7. Serve the file over http/https (Google sign-in does NOT work from
+     file://). Quick options:
+         python3 -m http.server 8000      ->  http://localhost:8000
+         npx serve .
+     Then open the served URL and click "Sign in with Google".
+
+  --------------------------------------------------------------------------
+  SECURITY CONSIDERATIONS
+  --------------------------------------------------------------------------
+  • Read-only scopes only. The app requests youtube.readonly and
+    yt-analytics.readonly. It can never modify, upload, delete, or post.
+  • No monetary scope. yt-analytics-monetary.readonly is deliberately NOT
+    requested. The Revenue tab is purely educational. This app never touches
+    banks, payment processors, or financial accounts.
+  • Token handling. The OAuth access token is kept only in a JavaScript
+    variable in memory. It is not persisted to localStorage, cookies, or any
+    server. Closing the tab discards it. "Sign out" revokes it with Google.
+  • Implicit (token) flow. Because there is no backend, there is no refresh
+    token; tokens expire (~1 hour) and you simply sign in again. A backend
+    using the authorization-code flow would be needed for silent refresh.
+  • Client ID is not a secret. An OAuth *Client ID* for a web app is safe to
+    expose in client code; it is restricted by the Authorized JavaScript
+    origins you configured. Do NOT embed any client *secret* here.
+  • Third-party code. The only external scripts are Google's GSI client and
+    Chart.js (from a CDN). Review/host them yourself if you need to lock down
+    your supply chain (e.g., add Subresource Integrity).
+
+  --------------------------------------------------------------------------
+  API LIMITATIONS (read the "Setup" tab in-app for the full list)
+  --------------------------------------------------------------------------
+  • Quota: Data API default is 10,000 units/day. This app uses very little
+    (a few units per refresh) but heavy use can hit the cap.
+  • Analytics latency: Analytics data is typically delayed 2–3 days and the
+    last 1–2 days are often incomplete.
+  • "Shorts" flag: the API does not expose a reliable is-Short field, so this
+    app classifies a video as a Short by duration (<= 60s by default). This
+    is a heuristic and can misclassify edge cases.
+  • No per-impression / CTR / traffic-source data is requested here (it is
+    available via Analytics with more queries; see "Future upgrades").
+
+  --------------------------------------------------------------------------
+  HONEST LIMITATIONS OF WHAT THE DATA CAN TELL YOU
+  --------------------------------------------------------------------------
+  • "Best time to post" is correlational, not causal. We only know a video's
+    publish time and its accumulated performance — not a controlled test.
+    Small sample sizes make this noisy; treat it as a hint, not a rule.
+  • Forecasts are statistical estimates, not predictions. Virality is driven
+    by recommendation-system behavior we cannot see. Probabilities here are
+    derived from your own history + a simple growth-decay model and can be
+    wrong. They are presented with explicit confidence levels.
+  • "Audience retention" beyond averageViewPercentage/averageViewDuration,
+    audience demographics over short ranges, and real-time data have API
+    restrictions and minimum-threshold privacy rules.
+
+  See the in-app "Setup & Info" tab for: full setup, security, API limits,
+  features that require a backend, and future upgrade recommendations.
+================================================================================
+-->
+
+<!-- External dependencies:
+     - Google Identity Services (OAuth)  -> token-based sign in
+     - Chart.js v4                       -> interactive charts -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+<style>
+/* ============================================================================
+   THEME TOKENS  (dark by default; [data-theme="light"] overrides)
+   ========================================================================== */
+:root{
+  --bg:#0d0f14; --bg-2:#12151c; --card:#161a23; --card-2:#1b2030;
+  --border:#252b3a; --text:#e8ecf4; --muted:#9aa4b8; --muted-2:#6b7488;
+  --accent:#ff3b5c;            /* YouTube-ish red          */
+  --accent-2:#6c8cff;          /* modern indigo            */
+  --good:#34d399; --warn:#fbbf24; --bad:#f87171; --info:#60a5fa;
+  --shadow:0 8px 24px rgba(0,0,0,.35);
+  --radius:14px;
+}
+[data-theme="light"]{
+  --bg:#f4f6fb; --bg-2:#eef1f7; --card:#ffffff; --card-2:#f7f9fd;
+  --border:#e2e7f0; --text:#10131a; --muted:#566076; --muted-2:#8a93a6;
+  --shadow:0 8px 24px rgba(20,30,60,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-2); text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{margin:0 0 .4em; font-weight:700; letter-spacing:-.01em}
+h2{font-size:1.25rem} h3{font-size:1.05rem} h4{font-size:.95rem}
+.muted{color:var(--muted)} .small{font-size:.82rem}
+.mono{font-variant-numeric:tabular-nums}
+
+/* ---- layout ---- */
+.app-header{
+  position:sticky; top:0; z-index:50; background:var(--bg-2);
+  border-bottom:1px solid var(--border); backdrop-filter:blur(8px);
+}
+.header-row{
+  max-width:1280px; margin:0 auto; padding:.7rem 1rem;
+  display:flex; align-items:center; gap:.75rem; flex-wrap:wrap;
+}
+.brand{display:flex; align-items:center; gap:.6rem; font-weight:800; font-size:1.05rem}
+.brand .logo{
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),#ff7a5c); color:#fff; font-size:1.1rem;
+  box-shadow:var(--shadow);
+}
+.spacer{flex:1 1 auto}
+.channel-chip{display:flex; align-items:center; gap:.55rem; padding:.3rem .55rem;
+  background:var(--card); border:1px solid var(--border); border-radius:999px;}
+.channel-chip img{width:30px;height:30px;border-radius:50%;object-fit:cover;background:var(--card-2)}
+.channel-chip .meta{line-height:1.1}
+.channel-chip .meta b{font-size:.85rem} .channel-chip .meta span{font-size:.72rem}
+
+.nav{max-width:1280px; margin:0 auto; padding:0 .6rem; display:flex; gap:.2rem;
+  overflow-x:auto; scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav button{
+  background:none; border:none; color:var(--muted); font:inherit; font-weight:600;
+  padding:.7rem .85rem; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap;
+}
+.nav button:hover{color:var(--text)}
+.nav button.active{color:var(--text); border-bottom-color:var(--accent)}
+
+.container{max-width:1280px; margin:0 auto; padding:1.1rem 1rem 4rem}
+
+/* ---- buttons ---- */
+.btn{
+  display:inline-flex; align-items:center; gap:.5rem; cursor:pointer;
+  background:var(--card); color:var(--text); border:1px solid var(--border);
+  padding:.5rem .8rem; border-radius:10px; font:inherit; font-weight:600;
+  transition:.15s; white-space:nowrap;
+}
+.btn:hover{border-color:var(--accent-2)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#ff6a5c); border:none; color:#fff}
+.btn.primary:hover{filter:brightness(1.05)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:.35rem .6rem; font-size:.82rem}
+.icon-btn{background:var(--card); border:1px solid var(--border); width:38px;height:38px;
+  border-radius:10px; cursor:pointer; color:var(--text); display:grid; place-items:center; font-size:1.05rem}
+.icon-btn:hover{border-color:var(--accent-2)}
+
+/* ---- cards & grids ---- */
+.card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:1rem 1.1rem; box-shadow:var(--shadow)}
+.grid{display:grid; gap:1rem}
+.kpi-grid{grid-template-columns:repeat(auto-fit,minmax(165px,1fr))}
+.cols-2{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.cols-3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.kpi .label{color:var(--muted); font-size:.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.03em}
+.kpi .value{font-size:1.7rem; font-weight:800; margin-top:.25rem}
+.kpi .sub{font-size:.8rem; color:var(--muted); margin-top:.15rem}
+.kpi .value.small{font-size:1.25rem}
+
+.section-title{display:flex; align-items:center; gap:.6rem; margin:1.4rem 0 .7rem}
+.section-title h2{margin:0}
+.badge{display:inline-block; font-size:.72rem; font-weight:700; padding:.18rem .5rem;
+  border-radius:999px; background:var(--card-2); border:1px solid var(--border); color:var(--muted)}
+.badge.good{color:var(--good); border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+.badge.warn{color:var(--warn); border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+.badge.bad{color:var(--bad); border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.badge.info{color:var(--info); border-color:color-mix(in srgb,var(--info) 40%,transparent)}
+
+/* ---- disclaimers / callouts ---- */
+.callout{border:1px solid var(--border); border-left:3px solid var(--accent-2);
+  background:var(--card-2); border-radius:10px; padding:.7rem .9rem; font-size:.86rem; color:var(--muted)}
+.callout.warn{border-left-color:var(--warn)}
+.callout b{color:var(--text)}
+
+/* ---- chart wrappers ---- */
+.chart-box{position:relative; width:100%; height:300px}
+.chart-box.tall{height:340px}
+.chart-box.short{height:230px}
+
+/* ---- tables ---- */
+.table-wrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.88rem}
+th,td{padding:.6rem .6rem; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap}
+th{color:var(--muted); font-size:.76rem; text-transform:uppercase; letter-spacing:.03em; cursor:pointer; user-select:none}
+th:hover{color:var(--text)}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--card-2)}
+.thumb{width:54px;height:54px;border-radius:8px;object-fit:cover;background:var(--card-2); display:block}
+.vid-cell{display:flex; align-items:center; gap:.6rem}
+.vid-cell .t{max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600}
+.rank-pill{font-weight:800; color:var(--muted)}
+
+/* ---- progress / gauges ---- */
+.bar{height:8px; background:var(--card-2); border-radius:999px; overflow:hidden}
+.bar>span{display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+.gauge{--p:0; width:92px;height:92px;border-radius:50%;
+  background:conic-gradient(var(--g,var(--accent)) calc(var(--p)*1%), var(--card-2) 0);
+  display:grid; place-items:center; position:relative}
+.gauge::before{content:""; position:absolute; inset:9px; border-radius:50%; background:var(--card)}
+.gauge .num{position:relative; font-weight:800; font-size:1.3rem}
+
+/* ---- heatmap ---- */
+.heat{display:grid; grid-template-columns:auto repeat(24,1fr); gap:2px; font-size:.62rem; min-width:640px}
+.heat .h-lbl{color:var(--muted); display:grid; place-items:center; padding:2px}
+.heat .cell{aspect-ratio:1/1; border-radius:3px; background:var(--card-2)}
+
+/* ---- detail modal ---- */
+.modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.6); display:none;
+  align-items:flex-start; justify-content:center; z-index:100; padding:2rem 1rem; overflow:auto}
+.modal-bg.open{display:flex}
+.modal{background:var(--card); border:1px solid var(--border); border-radius:16px;
+  width:min(820px,100%); box-shadow:var(--shadow)}
+.modal-head{display:flex; align-items:center; gap:.8rem; padding:1rem 1.1rem; border-bottom:1px solid var(--border)}
+.modal-body{padding:1.1rem}
+
+/* ---- loading overlay ---- */
+.overlay{position:fixed; inset:0; background:color-mix(in srgb,var(--bg) 80%,transparent);
+  display:none; flex-direction:column; align-items:center; justify-content:center; gap:1rem; z-index:200}
+.overlay.open{display:flex}
+.spinner{width:42px;height:42px;border-radius:50%;border:4px solid var(--border);
+  border-top-color:var(--accent); animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---- toast ---- */
+#toasts{position:fixed; right:1rem; bottom:1rem; z-index:300; display:flex; flex-direction:column; gap:.5rem}
+.toast{background:var(--card); border:1px solid var(--border); border-left:3px solid var(--info);
+  padding:.7rem .9rem; border-radius:10px; box-shadow:var(--shadow); max-width:340px; font-size:.86rem}
+.toast.bad{border-left-color:var(--bad)} .toast.good{border-left-color:var(--good)}
+
+/* ---- welcome / gate ---- */
+.gate{max-width:760px; margin:3rem auto; text-align:center}
+.gate .hero{font-size:2rem; font-weight:800; letter-spacing:-.02em; margin-bottom:.4rem}
+.gate .lead{color:var(--muted); font-size:1.05rem; margin-bottom:1.4rem}
+.steps{text-align:left; counter-reset:s}
+.steps li{margin:.5rem 0}
+.hidden{display:none !important}
+
+/* link list for revenue */
+.link-card{display:flex; flex-direction:column; gap:.4rem}
+.link-card .icon{font-size:1.5rem}
+details{border:1px solid var(--border); border-radius:10px; padding:.2rem .9rem; margin:.6rem 0; background:var(--card-2)}
+details summary{cursor:pointer; font-weight:700; padding:.6rem 0}
+details[open] summary{border-bottom:1px solid var(--border); margin-bottom:.6rem}
+code{background:var(--card-2); border:1px solid var(--border); padding:.05rem .35rem; border-radius:5px; font-size:.85em}
+.kvs{display:grid; grid-template-columns:auto 1fr; gap:.3rem .9rem; font-size:.88rem}
+.kvs .k{color:var(--muted)}
+.factor{display:flex; align-items:center; gap:.5rem; padding:.4rem 0; border-bottom:1px solid var(--border)}
+.dot{width:9px;height:9px;border-radius:50%}
+@media (max-width:560px){
+  .kpi .value{font-size:1.4rem}
+  .header-row{padding:.6rem .7rem}
+  .vid-cell .t{max-width:150px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== HEADER ===================== -->
+<header class="app-header">
+  <div class="header-row">
+    <div class="brand"><span class="logo">▶</span> Shorts Analytics</div>
+    <div class="spacer"></div>
+
+    <!-- channel chip (shown when signed in / demo) -->
+    <div id="channelChip" class="channel-chip hidden">
+      <img id="chAvatar" alt="" />
+      <div class="meta">
+        <b id="chName">Channel</b><br/>
+        <span class="muted" id="chSubs">— subscribers</span>
+      </div>
+    </div>
+
+    <button id="refreshBtn" class="icon-btn hidden" title="Refresh data">⟳</button>
+    <button id="themeBtn" class="icon-btn" title="Toggle dark / light">🌙</button>
+    <button id="signinBtn" class="btn primary">Sign in with Google</button>
+    <button id="signoutBtn" class="btn ghost hidden">Sign out</button>
+  </div>
+
+  <!-- tab navigation (hidden until data is available) -->
+  <nav class="nav hidden" id="nav">
+    <button data-view="overview" class="active">Overview</button>
+    <button data-view="shorts">Shorts</button>
+    <button data-view="besttime">Best Time</button>
+    <button data-view="forecast">Forecasting</button>
+    <button data-view="health">Health Score</button>
+    <button data-view="revenue">Revenue</button>
+    <button data-view="setup">Setup &amp; Info</button>
+  </nav>
+</header>
+
+<div class="container">
+
+  <!-- ===================== WELCOME / GATE ===================== -->
+  <section id="view-gate">
+    <div class="gate">
+      <div class="hero">Your personal YouTube Shorts analytics dashboard</div>
+      <div class="lead">
+        Sign in with Google to read your own channel &amp; Shorts performance, find
+        your best posting windows, score video health, and view statistical growth
+        forecasts. Runs entirely in your browser — no backend, read-only access.
+      </div>
+
+      <div id="notConfigured" class="callout warn hidden" style="margin-bottom:1rem">
+        ⚠️ <b>Not configured yet.</b> Add your Google OAuth <b>Client ID</b> in the
+        <code>CONFIG</code> block of this file (see the in-file comment, step 6) and
+        serve it from an authorized origin. You can still explore the UI with sample data.
+      </div>
+
+      <div style="display:flex; gap:.7rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.6rem">
+        <button id="gateSignin" class="btn primary">🔐 Sign in with Google</button>
+        <button id="gateDemo" class="btn">✨ Explore with sample data</button>
+        <button id="gateSetup" class="btn ghost">📖 Setup instructions</button>
+      </div>
+
+      <div class="card" style="text-align:left">
+        <h3>What permissions are requested?</h3>
+        <p class="muted small" style="margin:.3rem 0 .6rem">
+          Only the minimum, <b>read-only</b> scopes needed for analytics:
+        </p>
+        <div class="kvs small">
+          <span class="k mono">youtube.readonly</span>
+          <span>Read your channel info and video metadata / public statistics.</span>
+          <span class="k mono">yt-analytics.readonly</span>
+          <span>Read your analytics: watch time, retention, daily time-series.</span>
+        </div>
+        <p class="muted small" style="margin-top:.7rem">
+          No write/upload access. No monetary or financial scopes. Token stays in
+          memory only. See the <b>Setup &amp; Info</b> tab for full security notes.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <section id="view-overview" class="hidden">
+    <div id="demoBanner" class="callout warn hidden" style="margin-bottom:1rem">
+      ✨ <b>Sample data mode.</b> These numbers are randomly generated for demonstration.
+      Sign in with Google to load your real channel.
+    </div>
+
+    <div class="section-title"><h2>Channel overview</h2><span id="ovUpdated" class="badge"></span></div>
+    <div class="grid kpi-grid" id="kpiGrid"></div>
+
+    <div class="grid cols-2" style="margin-top:1rem">
+      <div class="card">
+        <h3>Growth trends</h3>
+        <p class="muted small">Daily views and net subscriber change (YouTube Analytics).</p>
+        <div class="chart-box"><canvas id="chartGrowth"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Watch time &amp; cumulative views</h3>
+        <p class="muted small">Estimated minutes watched per day and cumulative views.</p>
+        <div class="chart-box"><canvas id="chartWatch"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid cols-2" style="margin-top:1rem">
+      <div class="card">
+        <h3>Top-performing Shorts</h3>
+        <div id="topShorts" class="grid" style="gap:.6rem; margin-top:.5rem"></div>
+      </div>
+      <div class="card">
+        <h3>Recent Shorts</h3>
+        <div id="recentShorts" class="grid" style="gap:.6rem; margin-top:.5rem"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SHORTS TABLE ===================== -->
+  <section id="view-shorts" class="hidden">
+    <div class="section-title"><h2>All Shorts</h2><span id="shortsCount" class="badge"></span></div>
+    <p class="muted small">Click any row for the growth curve, retention, relative performance and forecast. Click column headers to sort.</p>
+    <div class="card">
+      <div class="table-wrap">
+        <table id="shortsTable">
+          <thead>
+            <tr>
+              <th data-sort="rank">#</th>
+              <th data-sort="title">Short</th>
+              <th data-sort="publishedAt">Uploaded</th>
+              <th data-sort="views">Views</th>
+              <th data-sort="likes">Likes</th>
+              <th data-sort="comments">Comments</th>
+              <th data-sort="engRate">Engagement</th>
+              <th data-sort="viewsPerDay">Views/day</th>
+              <th data-sort="vsMedian">vs median</th>
+              <th data-sort="health">Health</th>
+            </tr>
+          </thead>
+          <tbody id="shortsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BEST TIME ===================== -->
+  <section id="view-besttime" class="hidden">
+    <div class="section-title"><h2>Best time to post</h2></div>
+    <div class="callout warn" style="margin-bottom:1rem">
+      📌 <b>These are estimates, not guarantees.</b> They are based on the publish time and
+      accumulated performance of your past Shorts (correlational, not a controlled test).
+      Times use <b>your browser's local timezone</b>. Small samples are noisy — see the
+      confidence and sample size on each recommendation.
+    </div>
+
+    <div class="grid cols-3" id="bestRecs"></div>
+
+    <div class="grid cols-2" style="margin-top:1rem">
+      <div class="card">
+        <h3>By day of week</h3>
+        <p class="muted small">Average views/day of Shorts published on each weekday.</p>
+        <div class="chart-box short"><canvas id="chartDOW"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>By hour of day</h3>
+        <p class="muted small">Average views/day of Shorts published in each hour.</p>
+        <div class="chart-box short"><canvas id="chartHOD"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <h3>Day × hour heatmap</h3>
+      <p class="muted small">Brighter = higher average views/day for Shorts posted in that slot. Hover a cell for details. Empty cells = no data.</p>
+      <div class="table-wrap"><div class="heat" id="heatmap"></div></div>
+    </div>
+  </section>
+
+  <!-- ===================== FORECASTING ===================== -->
+  <section id="view-forecast" class="hidden">
+    <div class="section-title"><h2>Growth forecasting</h2></div>
+    <div class="callout warn" style="margin-bottom:1rem">
+      📌 <b>Statistical estimates, not predictions.</b> Probabilities come from your channel's
+      own history plus a simple growth-decay model. They cannot account for the recommendation
+      system going viral (or not). Confidence reflects the video's age and your sample size.
+    </div>
+
+    <div class="card" style="margin-bottom:1rem; display:flex; align-items:center; gap:.8rem; flex-wrap:wrap">
+      <label class="muted small" for="forecastSelect">Forecast a Short:</label>
+      <select id="forecastSelect" class="btn" style="max-width:380px"></select>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>Probability of reaching milestones</h3>
+        <p class="muted small" id="forecastMeta"></p>
+        <div class="grid cols-2" id="milestoneGrid" style="margin-top:.5rem"></div>
+      </div>
+      <div class="card">
+        <h3>Estimated trajectory</h3>
+        <p class="muted small">Actual cumulative views (solid) vs modeled saturating curve (dashed).</p>
+        <div class="chart-box short"><canvas id="chartTrajectory"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid cols-2" style="margin-top:1rem">
+      <div class="card">
+        <h3>Channel base rates</h3>
+        <p class="muted small">Share of your mature Shorts (≥14 days old) that reached each milestone.</p>
+        <div id="baseRates" class="grid" style="gap:.5rem; margin-top:.4rem"></div>
+      </div>
+      <div class="card">
+        <h3>Factors helping / hurting</h3>
+        <div id="factors" style="margin-top:.4rem"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HEALTH ===================== -->
+  <section id="view-health" class="hidden">
+    <div class="section-title"><h2>Video health scores</h2></div>
+    <div class="callout" style="margin-bottom:1rem">
+      A 0–100 score blending early engagement, like-to-view ratio, comment activity, growth
+      speed, and (when available) audience retention — each measured <b>relative to your own
+      channel's median</b>. Hover/expand a card for the breakdown. This is a relative health
+      signal, not an absolute quality verdict.
+    </div>
+    <div class="grid cols-3" id="healthGrid"></div>
+  </section>
+
+  <!-- ===================== REVENUE (EDUCATIONAL) ===================== -->
+  <section id="view-revenue" class="hidden">
+    <div class="section-title"><h2>Monetization &amp; revenue (educational)</h2></div>
+    <div class="callout warn" style="margin-bottom:1rem">
+      🔒 This section is <b>informational only</b>. This app never connects to banks, payment
+      processors, or financial accounts, and does not request monetary data scopes. It links
+      to official resources so you can set things up yourself in YouTube Studio / Google AdSense.
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card link-card">
+        <div class="icon">🎯</div>
+        <h3>YouTube Partner Program (YPP)</h3>
+        <p class="muted small">To earn ad revenue you must be accepted into YPP. Typical eligibility (verify current thresholds — they change and vary by country):</p>
+        <ul class="small muted" style="margin:.2rem 0 .4rem 1rem">
+          <li>1,000 subscribers, <b>and</b></li>
+          <li>4,000 valid public watch hours in 12 months, <b>or</b> 10M valid public Shorts views in 90 days</li>
+          <li>Follow monetization policies; have AdSense linked; 2-step verification on</li>
+        </ul>
+        <a href="https://support.google.com/youtube/answer/72857" target="_blank" rel="noopener">Official YPP requirements →</a>
+      </div>
+
+      <div class="card link-card">
+        <div class="icon">📺</div>
+        <h3>Ad revenue basics</h3>
+        <p class="muted small">Once in YPP, ads run on long-form videos and Shorts. Shorts ad revenue comes from the <b>Shorts ad pool</b>, shared based on your share of views, then split with you. Earnings depend on views, viewer geography, niche (CPM/RPM), and seasonality.</p>
+        <a href="https://support.google.com/youtube/answer/12504220" target="_blank" rel="noopener">How Shorts monetization works →</a>
+      </div>
+
+      <div class="card link-card">
+        <div class="icon">🤝</div>
+        <h3>Brand sponsorships</h3>
+        <p class="muted small">Brands pay you directly to feature products. Disclose paid promotions (YouTube's paid-promotion toggle + local laws e.g. FTC). Marketplaces and your media kit (use the metrics in this dashboard!) help you pitch.</p>
+        <a href="https://support.google.com/youtube/answer/154235" target="_blank" rel="noopener">Paid product placements &amp; disclosure →</a>
+      </div>
+
+      <div class="card link-card">
+        <div class="icon">🔗</div>
+        <h3>Affiliate marketing</h3>
+        <p class="muted small">Earn commissions by linking products (Amazon Associates, brand programs). Put trackable links in descriptions/pinned comments and disclose affiliate relationships.</p>
+        <a href="https://support.google.com/youtube/answer/154235" target="_blank" rel="noopener">Disclosure guidance →</a>
+      </div>
+
+      <div class="card link-card">
+        <div class="icon">👕</div>
+        <h3>Merchandise</h3>
+        <p class="muted small">Sell products via the YouTube Shopping integration or external print-on-demand stores. Eligibility and connected-store requirements apply.</p>
+        <a href="https://support.google.com/youtube/answer/9454088" target="_blank" rel="noopener">YouTube Shopping / merch →</a>
+      </div>
+
+      <div class="card link-card">
+        <div class="icon">💖</div>
+        <h3>Memberships &amp; fan funding</h3>
+        <p class="muted small">Channel Memberships, Super Thanks, Super Chat &amp; Super Stickers let fans support you directly. Most require YPP and minimum subscribers.</p>
+        <a href="https://support.google.com/youtube/answer/7124236" target="_blank" rel="noopener">Fan funding features →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SETUP & INFO ===================== -->
+  <section id="view-setup" class="hidden">
+    <div class="section-title"><h2>Setup &amp; information</h2></div>
+
+    <details open>
+      <summary>1 · Setup instructions (Google Cloud, OAuth, APIs, keys)</summary>
+      <ol class="steps small">
+        <li>Create a project at <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">console.cloud.google.com</a>.</li>
+        <li>In <b>APIs &amp; Services → Library</b>, enable <b>YouTube Data API v3</b> and <b>YouTube Analytics API</b>.</li>
+        <li>In <b>OAuth consent screen</b>: choose <i>External</i>, fill basics, and add your Google account under <b>Test users</b> (while in Testing mode). Add scopes <code>youtube.readonly</code> and <code>yt-analytics.readonly</code>.</li>
+        <li>In <b>Credentials → Create credentials → OAuth client ID</b>: type <b>Web application</b>. Under <b>Authorized JavaScript origins</b>, add the exact origin you serve this file from (e.g. <code>http://localhost:8000</code>) — no path, no trailing slash. Copy the <b>Client ID</b>.</li>
+        <li>(Optional) Create an <b>API key</b> — not required here because requests use your OAuth token.</li>
+        <li>Open this HTML file, find <code>PASTE_YOUR_CLIENT_ID_HERE</code> in the <code>CONFIG</code> block, and paste your Client ID.</li>
+        <li>Serve over http/https (not <code>file://</code>): <code>python3 -m http.server 8000</code> then open <code>http://localhost:8000/youtube-shorts-dashboard.html</code>.</li>
+        <li>Click <b>Sign in with Google</b>, grant read-only access, and your data loads.</li>
+      </ol>
+      <div id="originHint" class="callout small"></div>
+    </details>
+
+    <details>
+      <summary>2 · Security considerations</summary>
+      <ul class="small muted" style="margin:.2rem 0 .2rem 1rem">
+        <li><b>Read-only scopes only</b> — cannot modify, upload, delete, or post.</li>
+        <li><b>No financial scope</b> — <code>yt-analytics-monetary.readonly</code> is intentionally not requested; revenue tab is educational. App never touches banks/payment processors.</li>
+        <li><b>Token in memory only</b> — never written to localStorage/cookies/servers. Closing the tab discards it; <b>Sign out</b> revokes it with Google.</li>
+        <li><b>Implicit flow</b> — no refresh token client-side, tokens expire (~1h), then re-auth. Authorization-code flow needs a backend.</li>
+        <li><b>Client ID is public-safe</b> — restricted by your Authorized JavaScript origins. Never put a client <i>secret</i> in client code.</li>
+        <li><b>Third-party CDNs</b> — Google GSI + Chart.js. Self-host + add Subresource Integrity for a stricter supply chain.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>3 · API limitations</summary>
+      <ul class="small muted" style="margin:.2rem 0 .2rem 1rem">
+        <li><b>Quota</b>: Data API default 10,000 units/day. This app uses only a few units/refresh, but be mindful.</li>
+        <li><b>Analytics latency</b>: data is delayed ~2–3 days; the most recent 1–2 days are often incomplete.</li>
+        <li><b>Shorts detection</b>: no reliable is-Short API field, so classification is by duration (≤60s by default — editable in CONFIG). Edge cases may be misclassified.</li>
+        <li><b>Privacy thresholds</b>: some Analytics dimensions (e.g. demographics) are withheld below minimum view thresholds.</li>
+        <li><b>Pagination</b>: this demo loads up to a capped number of recent uploads (CONFIG.MAX_VIDEOS) to stay fast and within quota.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>4 · Honest limitations — what the data can &amp; cannot tell you</summary>
+      <ul class="small muted" style="margin:.2rem 0 .2rem 1rem">
+        <li><b>Best time to post is correlational.</b> We see publish time + accumulated views, not a randomized experiment. It's a hint, not causation.</li>
+        <li><b>Forecasts are estimates.</b> Virality depends on recommendation-system behavior that isn't exposed by any API. Treat probabilities as rough, confidence-tagged guesses from your own history.</li>
+        <li><b>"Audience activity patterns"</b> here are inferred from your publish/performance history, not real-time viewer presence (which the public API doesn't provide).</li>
+        <li><b>Retention</b> is limited to averageViewPercentage / averageViewDuration via the API; frame-by-frame retention graphs live in Studio, not the public API.</li>
+        <li><b>Health score is relative</b> to your own channel medians — not an absolute quality measure or a Studio metric.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>5 · Features that would require a backend server</summary>
+      <ul class="small muted" style="margin:.2rem 0 .2rem 1rem">
+        <li><b>Silent token refresh</b> via OAuth authorization-code flow (store refresh token server-side).</li>
+        <li><b>Scheduled snapshots / historical tracking</b> (cron jobs storing daily metrics to build true longitudinal datasets and detect anomalies).</li>
+        <li><b>True ML forecasting</b> trained across many videos/channels, served from an API.</li>
+        <li><b>Quota pooling &amp; caching</b> for multiple users; hiding API keys; rate-limit protection.</li>
+        <li><b>Email/push alerts</b> ("a Short is overperforming"), exports, and multi-channel comparison.</li>
+        <li><b>Webhooks / PubSubHubbub</b> for near-real-time new-upload notifications.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>6 · Future upgrade recommendations</summary>
+      <ul class="small muted" style="margin:.2rem 0 .2rem 1rem">
+        <li>Pull <b>traffic sources</b>, <b>impressions &amp; CTR</b> (where available), and <b>audience geography</b> from Analytics for deeper "best time" + targeting insight.</li>
+        <li>Replace the heuristic Shorts filter with a confirmed list (e.g., cross-check via your own labeling).</li>
+        <li>Store time-series locally (IndexedDB) to build real per-video growth history across sessions.</li>
+        <li>Add <b>A/B-style</b> comparisons of titles/thumbnails over time, and tag experiments.</li>
+        <li>Backend ML model (e.g., survival / hazard models) for milestone probabilities; calibrate against outcomes.</li>
+        <li>Add CSV/PDF export and a shareable read-only "media kit" view for sponsorships.</li>
+        <li>Subresource Integrity + self-hosted libraries; optional PKCE auth-code flow with a tiny serverless function.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>7 · Methodology (how each estimate is computed)</summary>
+      <div class="small muted">
+        <p><b>View velocity</b> = lifetime views ÷ age in days (and ÷24 for per-hour).</p>
+        <p><b>Best time</b>: each Short's views/day is bucketed by local publish weekday &amp; hour; we average per bucket and rank. Confidence scales with the number of Shorts in a bucket.</p>
+        <p><b>Forecast</b>: we model cumulative views as <code>V∞·(1 − e^(−t/τ))</code> with τ≈<span id="tauNote"></span> days. From a Short's current views at age <i>t</i> we estimate its lifetime total <code>V∞</code>, then model the final outcome as log-normal (σ from your channel's view spread, widened for very young videos) to get P(final ≥ milestone). Already-reached milestones are 100%.</p>
+        <p><b>Health score</b>: weighted blend of engagement rate, like/view, comment/view, views/day, and retention — each scored by a logistic of its log-ratio to your channel median (median ⇒ 50).</p>
+        <p><b>Base rates</b>: fraction of your Shorts older than 14 days that crossed each milestone.</p>
+      </div>
+    </details>
+  </section>
+
+</div><!-- /container -->
+
+<!-- ===================== DETAIL MODAL ===================== -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <img id="mThumb" class="thumb" alt="" />
+      <div style="flex:1; min-width:0">
+        <h3 id="mTitle" style="margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis"></h3>
+        <div class="muted small" id="mMeta"></div>
+      </div>
+      <button class="icon-btn" id="mClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="grid kpi-grid" id="mKpis"></div>
+      <div class="card" style="margin-top:1rem; background:var(--card-2)">
+        <h4>Daily view growth curve</h4>
+        <p class="muted small">Per-day views since upload (YouTube Analytics).</p>
+        <div class="chart-box short"><canvas id="mChart"></canvas></div>
+      </div>
+      <div class="grid cols-2" style="margin-top:1rem">
+        <div class="card" style="background:var(--card-2)">
+          <h4>Relative performance</h4>
+          <div id="mRelative" class="small"></div>
+        </div>
+        <div class="card" style="background:var(--card-2)">
+          <h4>Health breakdown</h4>
+          <div id="mHealth" class="small"></div>
+        </div>
+      </div>
+      <a id="mOpenYt" class="btn sm" target="_blank" rel="noopener" style="margin-top:1rem">Open on YouTube ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- loading + toasts -->
+<div class="overlay" id="overlay">
+  <div class="spinner"></div>
+  <div id="overlayMsg" class="muted">Loading…</div>
+</div>
+<div id="toasts"></div>
+
+<script>
+"use strict";
+/* ============================================================================
+   SECTION 0 · CONFIGURATION
+   --------------------------------------------------------------------------
+   Paste your OAuth Client ID below. The API key is optional (OAuth token
+   authorizes all calls here). Adjust SHORTS_MAX_SECONDS / MAX_VIDEOS as needed.
+   ========================================================================== */
+const CONFIG = {
+  // >>> PASTE_YOUR_CLIENT_ID_HERE <<<  (looks like 12345-abcde.apps.googleusercontent.com)
+  CLIENT_ID: "PASTE_YOUR_CLIENT_ID_HERE.apps.googleusercontent.com",
+
+  API_KEY: "", // optional, not required for OAuth-authorized requests
+
+  // Minimal read-only scopes (no write, no monetary).
+  SCOPES: [
+    "https://www.googleapis.com/auth/youtube.readonly",
+    "https://www.googleapis.com/auth/yt-analytics.readonly"
+  ],
+
+  SHORTS_MAX_SECONDS: 60,   // classify video as a Short if duration <= this
+  MAX_VIDEOS: 200,          // cap of recent uploads to fetch (quota friendly)
+  GROWTH_TAU_DAYS: 7,       // time-constant for the saturating growth model
+  BASE_RATE_MIN_AGE: 14,    // a Short must be this old to count in base rates
+  MILESTONES: [1000, 10000, 100000, 1000000],
+
+  DATA_API: "https://www.googleapis.com/youtube/v3",
+  ANALYTICS_API: "https://youtubeanalytics.googleapis.com/v2/reports",
+};
+
+/* ============================================================================
+   SECTION 1 · APP STATE
+   ========================================================================== */
+const state = {
+  token: null,          // OAuth access token (in memory only)
+  tokenExpiry: 0,
+  tokenClient: null,
+  demo: false,
+  channel: null,        // { title, avatar, subs, views, videoCount, publishedAt, hiddenSubs }
+  watchMinutes: null,   // lifetime estimated minutes watched (analytics)
+  shorts: [],           // processed Short objects
+  dailySeries: [],      // channel daily analytics [{day, views, minutes, subsGained, subsLost}]
+  medians: {},          // channel medians for relative metrics
+  curveCache: {},       // videoId -> [{day, views}]
+  retentionCache: {},   // videoId -> {avgViewPct, avgViewDur}
+  charts: {},           // Chart.js instances by key
+  sort: { key: "views", dir: -1 },
+  currentView: "gate",
+};
+
+/* ============================================================================
+   SECTION 2 · SMALL UTILITIES
+   ========================================================================== */
+const $  = (sel, el=document) => el.querySelector(sel);
+const $$ = (sel, el=document) => [...el.querySelectorAll(sel)];
+
+function fmt(n){ // 1234567 -> 1.2M
+  if (n === null || n === undefined || isNaN(n)) return "—";
+  const a = Math.abs(n);
+  if (a >= 1e9) return (n/1e9).toFixed(a>=1e10?0:1)+"B";
+  if (a >= 1e6) return (n/1e6).toFixed(a>=1e7?0:1)+"M";
+  if (a >= 1e3) return (n/1e3).toFixed(a>=1e4?0:1)+"K";
+  return Math.round(n).toLocaleString();
+}
+function pct(x, digits=1){ return (x*100).toFixed(digits)+"%"; }
+function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+function median(arr){
+  if(!arr.length) return 0;
+  const s=[...arr].sort((a,b)=>a-b), m=Math.floor(s.length/2);
+  return s.length%2 ? s[m] : (s[m-1]+s[m])/2;
+}
+function mean(arr){ return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
+function daysBetween(a,b){ return (b-a)/86400000; }
+function ymd(d){ return d.toISOString().slice(0,10); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>(
+  {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+// ISO-8601 duration ("PT1M5S") -> seconds
+function parseDuration(iso){
+  const m = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(iso || "");
+  if(!m) return 0;
+  return (+(m[1]||0))*3600 + (+(m[2]||0))*60 + (+(m[3]||0));
+}
+
+// Normal CDF via Abramowitz–Stegun erf approximation (for the forecast model)
+function erf(x){
+  const t = 1/(1+0.3275911*Math.abs(x));
+  const y = 1 - (((((1.061405429*t - 1.453152027)*t) + 1.421413741)*t - 0.284496736)*t + 0.254829592)*t*Math.exp(-x*x);
+  return x>=0 ? y : -y;
+}
+function normalCdf(z){ return 0.5*(1+erf(z/Math.SQRT2)); }
+
+function toast(msg, kind="info", ms=4200){
+  const t = document.createElement("div");
+  t.className = "toast "+(kind==="bad"?"bad":kind==="good"?"good":"");
+  t.textContent = msg;
+  $("#toasts").appendChild(t);
+  setTimeout(()=>{ t.style.opacity="0"; t.style.transition="opacity .4s"; setTimeout(()=>t.remove(),400); }, ms);
+}
+function showOverlay(msg){ $("#overlayMsg").textContent = msg||"Loading…"; $("#overlay").classList.add("open"); }
+function hideOverlay(){ $("#overlay").classList.remove("open"); }
+const DOW = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const DOW_SHORT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+function hourLabel(h){ const ap=h<12?"AM":"PM"; const hh=h%12===0?12:h%12; return hh+" "+ap; }
+
+/* ============================================================================
+   SECTION 3 · AUTH (Google Identity Services — OAuth token model)
+   ========================================================================== */
+function isConfigured(){ return CONFIG.CLIENT_ID && !CONFIG.CLIENT_ID.startsWith("PASTE_YOUR_CLIENT_ID_HERE"); }
+
+function initAuth(){
+  // Surface origin so the user can add it to Authorized JavaScript origins.
+  $("#originHint").innerHTML = "Your current origin is <code>"+escapeHtml(location.origin)+"</code>"
+    + (location.protocol==="file:" ? " — ⚠️ Google sign-in will NOT work from file://. Serve over http/https." : "")
+    + ". Add it to the OAuth client's Authorized JavaScript origins.";
+
+  if(!isConfigured()){ $("#notConfigured").classList.remove("hidden"); }
+
+  if(typeof google === "undefined" || !google.accounts){
+    // GSI script may still be loading; retry shortly.
+    return setTimeout(initAuth, 300);
+  }
+  if(!isConfigured()) return; // can't init a token client without a client id
+
+  try{
+    state.tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CONFIG.CLIENT_ID,
+      scope: CONFIG.SCOPES.join(" "),
+      callback: onTokenResponse,
+      error_callback: (err)=>{ hideOverlay(); toast("Sign-in was cancelled or failed: "+(err && err.type||""), "bad"); },
+    });
+  }catch(e){ console.error(e); toast("Failed to initialise Google sign-in. Check your Client ID.", "bad"); }
+}
+
+function signIn(){
+  if(!isConfigured()){
+    toast("Add your OAuth Client ID first (see Setup tab).", "bad");
+    showView("setup");
+    return;
+  }
+  if(location.protocol==="file:"){
+    toast("Google sign-in needs http/https. Serve the file (e.g. python3 -m http.server).", "bad", 7000);
+    return;
+  }
+  if(!state.tokenClient){ initAuth(); toast("Initialising sign-in… click again in a moment."); return; }
+  // prompt 'consent' first time so scopes are granted; '' for re-auth.
+  state.tokenClient.requestAccessToken({ prompt: state.token ? "" : "consent" });
+}
+
+function onTokenResponse(resp){
+  if(resp.error){ hideOverlay(); toast("Authorization error: "+resp.error, "bad"); return; }
+  state.token = resp.access_token;
+  state.tokenExpiry = Date.now() + (resp.expires_in ? resp.expires_in*1000 : 3600000);
+  state.demo = false;
+  loadEverything().catch(err=>{
+    console.error(err); hideOverlay();
+    toast("Failed to load data: "+err.message, "bad", 7000);
+  });
+}
+
+function signOut(){
+  if(state.token && google && google.accounts){
+    google.accounts.oauth2.revoke(state.token, ()=>{});
+  }
+  state.token = null; state.tokenExpiry = 0; state.demo = false;
+  state.channel = null; state.shorts = []; state.dailySeries = [];
+  state.curveCache = {}; state.retentionCache = {};
+  destroyCharts();
+  $("#channelChip").classList.add("hidden");
+  $("#nav").classList.add("hidden");
+  $("#refreshBtn").classList.add("hidden");
+  $("#signinBtn").classList.remove("hidden");
+  $("#signoutBtn").classList.add("hidden");
+  showView("gate");
+  toast("Signed out. Token revoked.", "good");
+}
+
+/* ============================================================================
+   SECTION 4 · API LAYER (fetch with Bearer token)
+   ========================================================================== */
+async function apiGet(url){
+  if(state.tokenExpiry && Date.now() > state.tokenExpiry - 10000){
+    throw new Error("Your session expired. Please sign in again.");
+  }
+  const res = await fetch(url, { headers: { Authorization: "Bearer "+state.token } });
+  if(res.status === 401){
+    state.token = null;
+    throw new Error("Session expired or unauthorized — please sign in again.");
+  }
+  if(res.status === 403){
+    const body = await res.json().catch(()=>({}));
+    const reason = body?.error?.errors?.[0]?.reason || body?.error?.message || "forbidden";
+    throw new Error("API access denied ("+reason+"). Check that both APIs are enabled and scopes granted.");
+  }
+  if(!res.ok){
+    const body = await res.json().catch(()=>({}));
+    throw new Error("API error "+res.status+": "+(body?.error?.message||res.statusText));
+  }
+  return res.json();
+}
+
+function dataUrl(path, params){
+  const u = new URL(CONFIG.DATA_API + path);
+  Object.entries(params).forEach(([k,v])=> u.searchParams.set(k, v));
+  if(CONFIG.API_KEY) u.searchParams.set("key", CONFIG.API_KEY);
+  return u.toString();
+}
+function analyticsUrl(params){
+  const u = new URL(CONFIG.ANALYTICS_API);
+  Object.entries(params).forEach(([k,v])=> u.searchParams.set(k, v));
+  return u.toString();
+}
+
+// --- Channel ------------------------------------------------------------------
+async function fetchChannel(){
+  const j = await apiGet(dataUrl("/channels", {
+    part: "snippet,statistics,contentDetails", mine: "true"
+  }));
+  const c = j.items && j.items[0];
+  if(!c) throw new Error("No channel found for this account.");
+  return {
+    id: c.id,
+    title: c.snippet.title,
+    avatar: c.snippet.thumbnails?.default?.url || "",
+    subs: c.statistics.hiddenSubscriberCount ? null : +c.statistics.subscriberCount,
+    hiddenSubs: !!c.statistics.hiddenSubscriberCount,
+    views: +c.statistics.viewCount,
+    videoCount: +c.statistics.videoCount,
+    publishedAt: c.snippet.publishedAt,
+    uploads: c.contentDetails.relatedPlaylists.uploads,
+  };
+}
+
+// --- Uploads (video ids + publishedAt), paginated ----------------------------
+async function fetchUploadIds(uploadsPlaylist){
+  let ids = [], pageToken = "";
+  while(ids.length < CONFIG.MAX_VIDEOS){
+    const j = await apiGet(dataUrl("/playlistItems", {
+      part: "contentDetails", playlistId: uploadsPlaylist,
+      maxResults: 50, pageToken
+    }));
+    (j.items||[]).forEach(it => ids.push(it.contentDetails.videoId));
+    if(!j.nextPageToken) break;
+    pageToken = j.nextPageToken;
+  }
+  return ids.slice(0, CONFIG.MAX_VIDEOS);
+}
+
+// --- Video details in batches of 50 ------------------------------------------
+async function fetchVideoDetails(ids){
+  const out = [];
+  for(let i=0;i<ids.length;i+=50){
+    const batch = ids.slice(i,i+50);
+    const j = await apiGet(dataUrl("/videos", {
+      part: "snippet,statistics,contentDetails", id: batch.join(",")
+    }));
+    (j.items||[]).forEach(v=>{
+      out.push({
+        id: v.id,
+        title: v.snippet.title,
+        publishedAt: new Date(v.snippet.publishedAt),
+        durationSec: parseDuration(v.contentDetails.duration),
+        thumb: v.snippet.thumbnails?.medium?.url || v.snippet.thumbnails?.default?.url || "",
+        views: +(v.statistics.viewCount||0),
+        likes: +(v.statistics.likeCount||0),
+        comments: +(v.statistics.commentCount||0),
+      });
+    });
+  }
+  return out;
+}
+
+// --- Channel daily analytics (growth trends + watch time) --------------------
+async function fetchChannelDaily(startDate){
+  try{
+    const j = await apiGet(analyticsUrl({
+      ids: "channel==MINE",
+      startDate, endDate: ymd(new Date()),
+      metrics: "views,estimatedMinutesWatched,subscribersGained,subscribersLost",
+      dimensions: "day", sort: "day", maxResults: 100000
+    }));
+    return (j.rows||[]).map(r=>({
+      day: r[0], views: r[1], minutes: r[2], subsGained: r[3], subsLost: r[4]
+    }));
+  }catch(e){ console.warn("Channel daily analytics unavailable:", e.message); return []; }
+}
+
+// --- Lifetime watch minutes ---------------------------------------------------
+async function fetchLifetimeWatch(startDate){
+  try{
+    const j = await apiGet(analyticsUrl({
+      ids: "channel==MINE", startDate, endDate: ymd(new Date()),
+      metrics: "estimatedMinutesWatched"
+    }));
+    return j.rows && j.rows[0] ? j.rows[0][0] : null;
+  }catch(e){ return null; }
+}
+
+// --- Per-video daily curve (lazy, cached) ------------------------------------
+async function fetchVideoCurve(video){
+  if(state.curveCache[video.id]) return state.curveCache[video.id];
+  if(state.demo){ const c = demoCurve(video); state.curveCache[video.id]=c; return c; }
+  try{
+    const j = await apiGet(analyticsUrl({
+      ids: "channel==MINE",
+      startDate: ymd(video.publishedAt), endDate: ymd(new Date()),
+      metrics: "views", dimensions: "day", sort: "day",
+      filters: "video=="+video.id, maxResults: 100000
+    }));
+    const curve = (j.rows||[]).map(r=>({ day: r[0], views: r[1] }));
+    state.curveCache[video.id] = curve;
+    return curve;
+  }catch(e){ console.warn("curve error", e.message); return []; }
+}
+
+// --- Per-video retention (lazy, cached) --------------------------------------
+async function fetchVideoRetention(video){
+  if(state.retentionCache[video.id]) return state.retentionCache[video.id];
+  if(state.demo){ const r=demoRetention(video); state.retentionCache[video.id]=r; return r; }
+  try{
+    const j = await apiGet(analyticsUrl({
+      ids: "channel==MINE",
+      startDate: ymd(video.publishedAt), endDate: ymd(new Date()),
+      metrics: "averageViewPercentage,averageViewDuration",
+      filters: "video=="+video.id
+    }));
+    const row = j.rows && j.rows[0];
+    const r = row ? { avgViewPct: row[0], avgViewDur: row[1] } : null;
+    state.retentionCache[video.id] = r;
+    return r;
+  }catch(e){ return null; }
+}
+
+/* ============================================================================
+   SECTION 5 · ORCHESTRATION — load + process everything
+   ========================================================================== */
+async function loadEverything(){
+  showOverlay("Reading your channel…");
+  state.channel = await fetchChannel();
+
+  showOverlay("Listing your uploads…");
+  const ids = await fetchUploadIds(state.channel.uploads);
+
+  showOverlay("Fetching video details…");
+  const videos = await fetchVideoDetails(ids);
+
+  // classify Shorts by duration heuristic
+  state.shorts = videos.filter(v => v.durationSec > 0 && v.durationSec <= CONFIG.SHORTS_MAX_SECONDS);
+  if(state.shorts.length === 0){
+    // fall back to all videos if no shorts detected, but warn
+    toast("No Shorts (<= "+CONFIG.SHORTS_MAX_SECONDS+"s) detected; showing all recent videos.", "info", 6000);
+    state.shorts = videos;
+  }
+
+  showOverlay("Loading analytics (watch time, trends)…");
+  const startDate = ymd(new Date(state.channel.publishedAt));
+  const recentStart = ymd(new Date(Date.now() - 365*86400000)); // last year for daily chart
+  [state.dailySeries, state.watchMinutes] = await Promise.all([
+    fetchChannelDaily(recentStart),
+    fetchLifetimeWatch(startDate)
+  ]);
+
+  processData();
+  buildUIAfterLoad();
+  hideOverlay();
+  toast("Loaded "+state.shorts.length+" Shorts.", "good");
+}
+
+// compute derived per-Short metrics, medians, ranks, health
+function processData(){
+  const now = Date.now();
+  state.shorts.forEach(s=>{
+    s.ageDays = Math.max(0.04, daysBetween(s.publishedAt.getTime(), now)); // >= ~1h
+    s.viewsPerDay = s.views / s.ageDays;
+    s.viewsPerHour = s.viewsPerDay / 24;
+    s.engRate = s.views ? (s.likes + s.comments) / s.views : 0;
+    s.lvr = s.views ? s.likes / s.views : 0;       // like-to-view
+    s.cr  = s.views ? s.comments / s.views : 0;     // comment rate
+  });
+
+  const views = state.shorts.map(s=>s.views).filter(v=>v>0);
+  state.medians = {
+    views: median(state.shorts.map(s=>s.views)),
+    viewsPerDay: median(state.shorts.map(s=>s.viewsPerDay)),
+    engRate: median(state.shorts.map(s=>s.engRate)),
+    lvr: median(state.shorts.map(s=>s.lvr)),
+    cr: median(state.shorts.map(s=>s.cr)),
+    logViewsStd: stdOfLog(views),
+  };
+
+  // rank by views + relative-to-median + health
+  const ranked = [...state.shorts].sort((a,b)=>b.views-a.views);
+  ranked.forEach((s,i)=> s.rank = i+1);
+  state.shorts.forEach(s=>{
+    s.vsMedian = state.medians.views ? s.views/state.medians.views : 0;
+    s.health = healthScore(s).score;
+  });
+}
+
+function stdOfLog(views){
+  if(views.length < 2) return 0.8; // sensible default spread
+  const logs = views.map(v=>Math.log(v+1));
+  const m = mean(logs);
+  const v = mean(logs.map(x=>(x-m)*(x-m)));
+  return clamp(Math.sqrt(v), 0.4, 1.4);
+}
+
+/* ============================================================================
+   SECTION 6 · ANALYTICS MODELS
+   ========================================================================== */
+
+// ---- Health score ------------------------------------------------------------
+function logisticRatio(value, med, k=1.2){
+  // median -> 50; above median -> >50; below -> <50 (0..100)
+  const lr = Math.log((value+1e-9)/(med+1e-9));
+  return 100/(1+Math.exp(-lr*k));
+}
+function healthScore(s){
+  const m = state.medians;
+  const comps = [];
+  comps.push({ key:"Engagement rate", w:.25, val:s.engRate, med:m.engRate,
+    score:logisticRatio(s.engRate, m.engRate),
+    display: pct(s.engRate,1), medDisplay: pct(m.engRate,1) });
+  comps.push({ key:"Like-to-view", w:.15, val:s.lvr, med:m.lvr,
+    score:logisticRatio(s.lvr, m.lvr),
+    display: pct(s.lvr,1), medDisplay: pct(m.lvr,1) });
+  comps.push({ key:"Comment rate", w:.15, val:s.cr, med:m.cr,
+    score:logisticRatio(s.cr, m.cr),
+    display: pct(s.cr,2), medDisplay: pct(m.cr,2) });
+  comps.push({ key:"Growth speed", w:.30, val:s.viewsPerDay, med:m.viewsPerDay,
+    score:logisticRatio(s.viewsPerDay, m.viewsPerDay),
+    display: fmt(s.viewsPerDay)+"/day", medDisplay: fmt(m.viewsPerDay)+"/day" });
+
+  // retention if cached
+  const ret = state.retentionCache[s.id];
+  if(ret && ret.avgViewPct != null){
+    const medRet = 70; // typical Shorts avg view % reference if channel median unknown
+    comps.push({ key:"Retention", w:.15, val:ret.avgViewPct, med:medRet,
+      score:clamp(ret.avgViewPct,0,100),
+      display: ret.avgViewPct.toFixed(0)+"%", medDisplay:"—" });
+  }
+
+  const wsum = comps.reduce((a,c)=>a+c.w,0);
+  const score = comps.reduce((a,c)=>a+c.w*c.score,0)/wsum;
+  return { score: Math.round(score), comps };
+}
+function healthColor(v){ return v>=66?"var(--good)":v>=40?"var(--warn)":"var(--bad)"; }
+
+// ---- Best time to post -------------------------------------------------------
+function bestTimeAnalysis(){
+  const byDow = Array.from({length:7},()=>({sum:0,n:0}));
+  const byHour = Array.from({length:24},()=>({sum:0,n:0}));
+  const heat = Array.from({length:7},()=>Array.from({length:24},()=>({sum:0,n:0})));
+
+  state.shorts.forEach(s=>{
+    const d = s.publishedAt.getDay();   // local weekday
+    const h = s.publishedAt.getHours(); // local hour
+    const metric = s.viewsPerDay;       // age-normalized performance
+    byDow[d].sum += metric; byDow[d].n++;
+    byHour[h].sum += metric; byHour[h].n++;
+    heat[d][h].sum += metric; heat[d][h].n++;
+  });
+
+  const dowAvg = byDow.map(b=> b.n? b.sum/b.n : 0);
+  const hourAvg = byHour.map(b=> b.n? b.sum/b.n : 0);
+
+  const bestDow = bestBucket(byDow);
+  const bestHour = bestBucket(byHour);
+
+  // best combined day×hour slot: prefer slots with >=2 samples, then highest avg
+  const slots = [];
+  for(let d=0; d<7; d++) for(let h=0; h<24; h++){
+    const cc = heat[d][h];
+    if(cc.n>0) slots.push({ d, h, avg: cc.sum/cc.n, n: cc.n });
+  }
+  let bestSlot = null;
+  if(slots.length){
+    const multi = slots.filter(x=>x.n>=2);
+    const pool = multi.length ? multi : slots;
+    bestSlot = pool.reduce((a,b)=> b.avg>a.avg ? b : a);
+  }
+  return { byDow, byHour, dowAvg, hourAvg, heat, bestDow, bestHour, bestSlot };
+}
+function bestBucket(buckets){
+  let best=null;
+  buckets.forEach((b,i)=>{
+    if(b.n>0){ const avg=b.sum/b.n; if(!best||avg>best.avg) best={i,avg,n:b.n}; }
+  });
+  return best;
+}
+function confidenceFromN(n){
+  if(n>=6) return {label:"High", cls:"good"};
+  if(n>=3) return {label:"Medium", cls:"warn"};
+  return {label:"Low", cls:"bad"};
+}
+
+// ---- Forecast ----------------------------------------------------------------
+function forecast(s){
+  const tau = CONFIG.GROWTH_TAU_DAYS;
+  const t = s.ageDays;
+  const sat = 1 - Math.exp(-t/tau);            // fraction of lifetime views realized (model)
+  const vInf = sat > 0.02 ? s.views / sat : s.views * 20; // projected lifetime total
+  // uncertainty: channel log-spread, widened for very young videos
+  const widen = 1 + Math.max(0, (3 - t)) * 0.3;
+  const sigma = clamp(state.medians.logViewsStd * widen, 0.4, 1.8);
+
+  const probs = CONFIG.MILESTONES.map(M=>{
+    if(s.views >= M) return { M, p: 1 };
+    const z = (Math.log(M) - Math.log(vInf+1)) / sigma;
+    return { M, p: clamp(1 - normalCdf(z), 0.001, 0.999) };
+  });
+
+  // confidence in the forecast itself (age + sample size)
+  const matureCount = state.shorts.filter(x=>x.ageDays>=CONFIG.BASE_RATE_MIN_AGE).length;
+  const conf = clamp(0.6*clamp(t/14,0,1) + 0.4*clamp(matureCount/15,0,1), 0, 1);
+
+  return { vInf, sigma, sat, tau, probs, conf };
+}
+function baseRates(){
+  const mature = state.shorts.filter(s=>s.ageDays >= CONFIG.BASE_RATE_MIN_AGE);
+  return CONFIG.MILESTONES.map(M=>{
+    const hit = mature.filter(s=>s.views>=M).length;
+    return { M, hit, total: mature.length, rate: mature.length? hit/mature.length : 0 };
+  });
+}
+function factorsFor(s){
+  const m = state.medians;
+  const f = [];
+  const add = (name, ratio, unit)=> f.push({
+    name, ratio, good: ratio>=1,
+    text: (ratio>=1? "above":"below")+" channel median ("+ (ratio>=1?"+":"") + Math.round((ratio-1)*100) +"%)"
+  });
+  add("Engagement rate", m.engRate? s.engRate/m.engRate : 1);
+  add("View velocity", m.viewsPerDay? s.viewsPerDay/m.viewsPerDay : 1);
+  add("Like-to-view ratio", m.lvr? s.lvr/m.lvr : 1);
+  add("Comment activity", m.cr? s.cr/m.cr : 1);
+  const ret = state.retentionCache[s.id];
+  if(ret && ret.avgViewPct!=null){
+    f.push({ name:"Audience retention", ratio: ret.avgViewPct/70, good: ret.avgViewPct>=70,
+      text: ret.avgViewPct.toFixed(0)+"% average view" });
+  }
+  return f.sort((a,b)=>b.ratio-a.ratio);
+}
+
+/* ============================================================================
+   SECTION 7 · DEMO DATA (clearly-labelled synthetic data, no API needed)
+   ========================================================================== */
+function seededRand(seed){ let x=seed; return ()=>{ x=(x*1103515245+12345)&0x7fffffff; return x/0x7fffffff; }; }
+
+function loadDemo(){
+  state.demo = true; state.token = null;
+  const rnd = seededRand(20260617);
+  const N = 42;
+  const now = Date.now();
+  const shorts = [];
+  for(let i=0;i<N;i++){
+    const ageDays = 1 + Math.floor(rnd()*220);
+    const publishedAt = new Date(now - ageDays*86400000 - Math.floor(rnd()*86400000));
+    // log-normal-ish views, a couple of "viral" outliers
+    let base = Math.exp(7 + rnd()*2.4);            // ~1k..50k
+    if(rnd()>0.9) base *= 8 + rnd()*20;            // viral
+    const maturity = 1 - Math.exp(-ageDays/7);
+    const views = Math.round(base * maturity * (0.7+rnd()*0.6));
+    const lvr = 0.03 + rnd()*0.05;
+    const cr = 0.002 + rnd()*0.006;
+    shorts.push({
+      id: "demo"+i,
+      title: DEMO_TITLES[i % DEMO_TITLES.length] + (i>=DEMO_TITLES.length? " #"+(i+1):""),
+      publishedAt,
+      durationSec: 15 + Math.floor(rnd()*45),
+      thumb: "",
+      views,
+      likes: Math.round(views*lvr),
+      comments: Math.round(views*cr),
+    });
+  }
+  state.shorts = shorts;
+
+  // synthetic channel + daily series
+  const totalViews = shorts.reduce((a,s)=>a+s.views,0) + 480000;
+  state.channel = {
+    id:"demo", title:"Demo Creator (sample data)", avatar:"",
+    subs: 18450, hiddenSubs:false, views: totalViews, videoCount: 120,
+    publishedAt: new Date(now-400*86400000).toISOString(), uploads:"demo"
+  };
+  state.watchMinutes = Math.round(totalViews*0.45);
+  const series=[]; let cumSubs=0;
+  for(let d=365; d>=0; d--){
+    const day = ymd(new Date(now - d*86400000));
+    const base = 1800 + Math.sin(d/6)*600 + rnd()*900;
+    const views = Math.round(base*(1+ (d<30?0.4:0)));
+    const sg = Math.round(20+rnd()*60), sl=Math.round(rnd()*18);
+    series.push({day, views, minutes: Math.round(views*0.45), subsGained:sg, subsLost:sl});
+  }
+  state.dailySeries = series;
+
+  processData();
+  buildUIAfterLoad();
+  toast("Loaded sample data. Sign in for your real channel.", "info", 5000);
+}
+const DEMO_TITLES = [
+  "POV: you finally tried this","3 things nobody tells you","Wait for it…","This changed everything",
+  "Don't make this mistake","The fastest way to…","I tested it so you don't have to","Watch till the end",
+  "You're doing it wrong","Underrated tip","Day in the life","Reacting to your comments",
+  "Before vs after","Quick tutorial","Rating your ideas"
+];
+function demoCurve(video){
+  const rnd = seededRand(parseInt(video.id.replace("demo",""))*7+3);
+  const days = Math.min(60, Math.ceil(video.ageDays));
+  const out=[]; const tau=7;
+  let prevCum=0;
+  for(let d=1; d<=days; d++){
+    const cum = video.views * (1-Math.exp(-d/tau));
+    let day = Math.max(0, Math.round((cum-prevCum)*(0.7+rnd()*0.6)));
+    prevCum=cum;
+    out.push({ day: ymd(new Date(video.publishedAt.getTime()+d*86400000)), views: day });
+  }
+  return out;
+}
+function demoRetention(video){
+  const rnd = seededRand(parseInt(video.id.replace("demo",""))*11+5);
+  return { avgViewPct: Math.round(55+rnd()*35), avgViewDur: Math.round(video.durationSec*(0.5+rnd()*0.4)) };
+}
+
+/* ============================================================================
+   SECTION 8 · UI RENDERING
+   ========================================================================== */
+function buildUIAfterLoad(){
+  // header chip
+  const c = state.channel;
+  $("#chName").textContent = c.title;
+  $("#chSubs").textContent = (c.hiddenSubs? "Subs hidden" : fmt(c.subs)+" subscribers");
+  if(c.avatar){ $("#chAvatar").src = c.avatar; } else { $("#chAvatar").src = placeholderAvatar(c.title); }
+  $("#channelChip").classList.remove("hidden");
+  $("#nav").classList.remove("hidden");
+  if(!state.demo){ $("#refreshBtn").classList.remove("hidden"); $("#signoutBtn").classList.remove("hidden"); $("#signinBtn").classList.add("hidden"); }
+  else { $("#signoutBtn").classList.remove("hidden"); }
+
+  $("#demoBanner").classList.toggle("hidden", !state.demo);
+
+  renderOverview();
+  renderShorts();
+  renderBestTime();
+  setupForecastSelect();
+  renderHealth();
+  showView("overview");
+}
+
+function placeholderAvatar(name){
+  const ch = (name||"C").trim()[0].toUpperCase();
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><rect width='60' height='60' rx='30' fill='%23ff3b5c'/><text x='50%' y='54%' font-size='28' fill='white' text-anchor='middle' font-family='Arial' dominant-baseline='middle'>${ch}</text></svg>`;
+  return "data:image/svg+xml;utf8,"+svg.replace(/#/g,"%23");
+}
+function placeholderThumb(seed){
+  const hues=[["#ff3b5c","#ff7a5c"],["#6c8cff","#34d399"],["#fbbf24","#ff3b5c"],["#60a5fa","#6c8cff"]];
+  const h = hues[Math.abs(hashStr(seed))%hues.length];
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='${h[0]}'/><stop offset='1' stop-color='${h[1]}'/></linearGradient></defs><rect width='90' height='90' rx='10' fill='url(%23g)'/><text x='50%' y='56%' font-size='30' text-anchor='middle' fill='white' opacity='.8' font-family='Arial'>▶</text></svg>`;
+  return "data:image/svg+xml;utf8,"+svg.replace(/#/g,"%23");
+}
+function hashStr(s){ let h=0; for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return h; }
+function thumbOf(s){ return s.thumb || placeholderThumb(s.id); }
+
+// ---- Overview ----------------------------------------------------------------
+function renderOverview(){
+  const c = state.channel;
+  const totalShortViews = state.shorts.reduce((a,s)=>a+s.views,0);
+  const avgViews = state.shorts.length ? totalShortViews/state.shorts.length : 0;
+  const avgEng = mean(state.shorts.map(s=>s.engRate));
+  const recentVelocity = mean(state.shorts.filter(s=>s.ageDays<=14).map(s=>s.viewsPerHour));
+
+  const kpis = [
+    { label:"Subscribers", value: c.hiddenSubs? "Hidden" : fmt(c.subs), sub:"channel total" },
+    { label:"Total channel views", value: fmt(c.views), sub:"all videos" },
+    { label:"Watch time", value: state.watchMinutes!=null? fmt(Math.round(state.watchMinutes/60))+" hrs" : "—", sub: state.watchMinutes!=null?"estimated, all time":"not available" },
+    { label:"Shorts analysed", value: fmt(state.shorts.length), sub:"recent uploads ≤ "+CONFIG.SHORTS_MAX_SECONDS+"s" },
+    { label:"Avg views / Short", value: fmt(avgViews), sub:"mean of analysed" },
+    { label:"Avg engagement", value: pct(avgEng,1), sub:"(likes+comments)/views" },
+    { label:"View velocity", value: fmt(recentVelocity)+"/hr", sub:"recent Shorts (≤14d)" },
+    { label:"Total Shorts views", value: fmt(totalShortViews), sub:"sum of analysed" },
+  ];
+  $("#kpiGrid").innerHTML = kpis.map(k=>`
+    <div class="card kpi">
+      <div class="label">${k.label}</div>
+      <div class="value ${String(k.value).length>8?'small':''}">${k.value}</div>
+      <div class="sub">${k.sub}</div>
+    </div>`).join("");
+
+  $("#ovUpdated").textContent = state.demo? "sample data" : "updated "+new Date().toLocaleString();
+
+  // top + recent shorts
+  const top = [...state.shorts].sort((a,b)=>b.views-a.views).slice(0,5);
+  const recent = [...state.shorts].sort((a,b)=>b.publishedAt-a.publishedAt).slice(0,5);
+  $("#topShorts").innerHTML = top.map(miniRow).join("") || emptyMsg();
+  $("#recentShorts").innerHTML = recent.map(miniRow).join("") || emptyMsg();
+  $$("#topShorts [data-vid], #recentShorts [data-vid]").forEach(el=>{
+    el.onclick = ()=> openDetail(el.dataset.vid);
+  });
+
+  renderGrowthChart();
+  renderWatchChart();
+}
+function emptyMsg(){ return `<div class="muted small">No Shorts found.</div>`; }
+function miniRow(s){
+  return `<div data-vid="${s.id}" style="display:flex; align-items:center; gap:.6rem; cursor:pointer; padding:.35rem; border-radius:8px">
+    <img class="thumb" src="${thumbOf(s)}" alt="" />
+    <div style="min-width:0; flex:1">
+      <div style="font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${escapeHtml(s.title)}</div>
+      <div class="muted small">${fmt(s.views)} views · ${pct(s.engRate,1)} eng · ${s.publishedAt.toLocaleDateString()}</div>
+    </div>
+    <div class="badge">#${s.rank}</div>
+  </div>`;
+}
+
+// ---- Shorts table ------------------------------------------------------------
+function renderShorts(){
+  $("#shortsCount").textContent = state.shorts.length+" Shorts";
+  sortShorts();
+  const rows = state.shorts.map(s=>`
+    <tr data-vid="${s.id}">
+      <td><span class="rank-pill">#${s.rank}</span></td>
+      <td><div class="vid-cell"><img class="thumb" src="${thumbOf(s)}" alt=""/><span class="t">${escapeHtml(s.title)}</span></div></td>
+      <td class="muted">${s.publishedAt.toLocaleDateString()}</td>
+      <td class="mono">${fmt(s.views)}</td>
+      <td class="mono">${fmt(s.likes)}</td>
+      <td class="mono">${fmt(s.comments)}</td>
+      <td class="mono">${pct(s.engRate,1)}</td>
+      <td class="mono">${fmt(s.viewsPerDay)}</td>
+      <td class="mono">${s.vsMedian.toFixed(2)}×</td>
+      <td><span class="badge" style="color:${healthColor(s.health)}">${s.health}</span></td>
+    </tr>`).join("");
+  $("#shortsBody").innerHTML = rows || `<tr><td colspan="10" class="muted">No Shorts found.</td></tr>`;
+  $$("#shortsBody tr[data-vid]").forEach(tr=> tr.onclick = ()=> openDetail(tr.dataset.vid));
+}
+function sortShorts(){
+  const {key,dir} = state.sort;
+  state.shorts.sort((a,b)=>{
+    let av=a[key], bv=b[key];
+    if(key==="title"){ return dir*String(av).localeCompare(String(bv)); }
+    if(key==="publishedAt"){ av=a.publishedAt.getTime(); bv=b.publishedAt.getTime(); }
+    if(key==="rank"){ av=a.rank; bv=b.rank; }
+    return dir*((av||0)-(bv||0));
+  });
+}
+
+// ---- Best time ---------------------------------------------------------------
+function renderBestTime(){
+  const a = bestTimeAnalysis();
+
+  const recs = [];
+  if(a.bestDow){
+    const cf = confidenceFromN(a.bestDow.n);
+    recs.push(recCard("Best day", DOW[a.bestDow.i], fmt(a.bestDow.avg)+" avg views/day", cf, a.bestDow.n));
+  }
+  if(a.bestHour){
+    const cf = confidenceFromN(a.bestHour.n);
+    recs.push(recCard("Best hour", hourLabel(a.bestHour.i), fmt(a.bestHour.avg)+" avg views/day", cf, a.bestHour.n));
+  }
+  if(a.bestSlot){
+    const cf = confidenceFromN(a.bestSlot.n);
+    recs.push(recCard("Best slot", DOW_SHORT[a.bestSlot.d]+" "+hourLabel(a.bestSlot.h), fmt(a.bestSlot.avg)+" avg views/day", cf, a.bestSlot.n));
+  }
+  $("#bestRecs").innerHTML = recs.join("") || `<div class="card muted">Not enough data yet.</div>`;
+
+  renderBarChart("chartDOW", DOW_SHORT, a.dowAvg, "Avg views/day");
+  renderBarChart("chartHOD", Array.from({length:24},(_,h)=>hourLabel(h)), a.hourAvg, "Avg views/day");
+  renderHeatmap(a.heat);
+}
+function recCard(label, value, sub, cf, n){
+  return `<div class="card">
+    <div class="kpi"><div class="label">${label}</div>
+      <div class="value">${value}</div>
+      <div class="sub">${sub}</div></div>
+    <div style="margin-top:.6rem; display:flex; gap:.4rem; align-items:center">
+      <span class="badge ${cf.cls}">${cf.label} confidence</span>
+      <span class="muted small">${n} Short${n!==1?"s":""}</span>
+    </div>
+  </div>`;
+}
+function renderHeatmap(heat){
+  let html = `<div class="h-lbl"></div>`;
+  for(let h=0;h<24;h++) html += `<div class="h-lbl">${h}</div>`;
+  // find max for color scale
+  let max=0; heat.forEach(row=>row.forEach(c=>{ if(c.n){ max=Math.max(max,c.sum/c.n); }}));
+  for(let d=0; d<7; d++){
+    html += `<div class="h-lbl">${DOW_SHORT[d]}</div>`;
+    for(let h=0; h<24; h++){
+      const c = heat[d][h];
+      if(c.n){
+        const avg=c.sum/c.n; const t = max? avg/max : 0;
+        const col = `color-mix(in srgb, var(--accent) ${Math.round(t*100)}%, var(--card-2))`;
+        html += `<div class="cell" style="background:${col}" title="${DOW[d]} ${hourLabel(h)} — ${fmt(avg)} avg views/day (${c.n} Short${c.n!==1?'s':''})"></div>`;
+      } else {
+        html += `<div class="cell" title="${DOW[d]} ${hourLabel(h)} — no data"></div>`;
+      }
+    }
+  }
+  $("#heatmap").innerHTML = html;
+}
+
+// ---- Forecast ----------------------------------------------------------------
+function setupForecastSelect(){
+  const sel = $("#forecastSelect");
+  const ordered = [...state.shorts].sort((a,b)=>b.publishedAt-a.publishedAt);
+  sel.innerHTML = ordered.map(s=>`<option value="${s.id}">${escapeHtml(s.title)} — ${fmt(s.views)} views (${Math.round(s.ageDays)}d)</option>`).join("");
+  sel.onchange = ()=> renderForecast(sel.value);
+  if(ordered[0]) renderForecast(ordered[0].id);
+  renderBaseRates();
+}
+function renderForecast(vid){
+  const s = state.shorts.find(x=>x.id===vid);
+  if(!s) return;
+  const f = forecast(s);
+  const conf = f.conf>=0.66? {label:"High",cls:"good"} : f.conf>=0.4? {label:"Medium",cls:"warn"} : {label:"Low",cls:"bad"};
+
+  $("#forecastMeta").innerHTML =
+    `Current: <b>${fmt(s.views)}</b> views at <b>${Math.round(s.ageDays)}d</b> · `+
+    `estimated lifetime ≈ <b>${fmt(Math.round(f.vInf))}</b> · `+
+    `<span class="badge ${conf.cls}">${conf.label} confidence</span>`;
+
+  $("#milestoneGrid").innerHTML = f.probs.map(p=>{
+    const reached = s.views>=p.M;
+    const col = p.p>=0.66?"var(--good)":p.p>=0.33?"var(--warn)":"var(--bad)";
+    return `<div class="card" style="background:var(--card-2)">
+      <div class="label muted small">${fmt(p.M)} views</div>
+      <div style="display:flex; align-items:center; gap:.7rem; margin-top:.4rem">
+        <div class="gauge" style="--p:${Math.round(p.p*100)}; --g:${col}; width:64px;height:64px">
+          <span class="num" style="font-size:.95rem">${reached?"✓":Math.round(p.p*100)+"%"}</span>
+        </div>
+        <div class="small muted">${reached? "Already reached" : "Estimated probability"}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  renderTrajectory(s, f);
+  renderFactors(s);
+}
+function renderBaseRates(){
+  const br = baseRates();
+  $("#baseRates").innerHTML = br.map(r=>`
+    <div>
+      <div style="display:flex; justify-content:space-between" class="small">
+        <span>${fmt(r.M)} views</span>
+        <span class="muted">${r.hit}/${r.total} · ${pct(r.rate,0)}</span>
+      </div>
+      <div class="bar"><span style="width:${Math.round(r.rate*100)}%"></span></div>
+    </div>`).join("") || `<div class="muted small">No mature Shorts yet.</div>`;
+}
+function renderFactors(s){
+  const f = factorsFor(s);
+  $("#factors").innerHTML = f.map(x=>`
+    <div class="factor">
+      <span class="dot" style="background:${x.good?'var(--good)':'var(--bad)'}"></span>
+      <b>${x.name}</b>
+      <span class="muted small" style="margin-left:auto">${x.good?'▲':'▼'} ${x.text}</span>
+    </div>`).join("");
+}
+
+// ---- Health ------------------------------------------------------------------
+function renderHealth(){
+  const ordered = [...state.shorts].sort((a,b)=>b.health-a.health);
+  $("#healthGrid").innerHTML = ordered.map(s=>{
+    const hs = healthScore(s);
+    const comps = hs.comps.map(c=>`
+      <div style="margin:.35rem 0">
+        <div style="display:flex; justify-content:space-between" class="small">
+          <span>${c.key}</span><span class="muted">${c.display}${c.medDisplay!=="—"?" · med "+c.medDisplay:""}</span>
+        </div>
+        <div class="bar"><span style="width:${Math.round(c.score)}%; background:${healthColor(c.score)}"></span></div>
+      </div>`).join("");
+    return `<div class="card">
+      <div style="display:flex; gap:.8rem; align-items:center">
+        <div class="gauge" style="--p:${s.health}; --g:${healthColor(s.health)}"><span class="num">${s.health}</span></div>
+        <div style="min-width:0">
+          <div style="font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${escapeHtml(s.title)}</div>
+          <div class="muted small">${fmt(s.views)} views · #${s.rank} · ${s.publishedAt.toLocaleDateString()}</div>
+        </div>
+      </div>
+      <details style="margin-top:.6rem; background:var(--card-2)">
+        <summary class="small">Score breakdown &amp; explanation</summary>
+        ${comps}
+        <p class="muted small" style="margin-top:.5rem">${healthExplain(s, hs)}</p>
+      </details>
+    </div>`;
+  }).join("") || `<div class="card muted">No Shorts found.</div>`;
+}
+function healthExplain(s, hs){
+  const strong = hs.comps.filter(c=>c.score>=60).map(c=>c.key.toLowerCase());
+  const weak = hs.comps.filter(c=>c.score<40).map(c=>c.key.toLowerCase());
+  let txt = `Overall ${s.health}/100. `;
+  txt += strong.length? `Strengths: ${strong.join(", ")}. ` : "";
+  txt += weak.length? `Below median: ${weak.join(", ")}. ` : (strong.length? "":"Roughly average across metrics. ");
+  txt += "Scores are relative to your channel's own medians.";
+  return txt;
+}
+
+/* ============================================================================
+   SECTION 9 · CHARTS (Chart.js)
+   ========================================================================== */
+function chartColors(){
+  const css = getComputedStyle(document.documentElement);
+  return {
+    text: css.getPropertyValue("--muted").trim(),
+    grid: css.getPropertyValue("--border").trim(),
+    accent: css.getPropertyValue("--accent").trim(),
+    accent2: css.getPropertyValue("--accent-2").trim(),
+    good: css.getPropertyValue("--good").trim(),
+    info: css.getPropertyValue("--info").trim(),
+  };
+}
+// Canvas fillStyle does NOT understand CSS color-mix(); convert hex -> rgba instead.
+function hexToRgba(hex, a){
+  hex = (hex||"#888888").replace("#","").trim();
+  if(hex.length===3) hex = hex.split("").map(x=>x+x).join("");
+  const n = parseInt(hex,16);
+  if(isNaN(n)) return `rgba(136,136,136,${a})`;
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+}
+function baseOpts(){
+  const c = chartColors();
+  return {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{ mode:"index", intersect:false },
+    plugins:{ legend:{ labels:{ color:c.text, boxWidth:12 } }, tooltip:{} },
+    scales:{
+      x:{ ticks:{ color:c.text, maxRotation:0, autoSkip:true, maxTicksLimit:8 }, grid:{ color:c.grid } },
+      y:{ ticks:{ color:c.text, callback:v=>fmt(v) }, grid:{ color:c.grid } },
+    }
+  };
+}
+function makeChart(key, canvasId, cfg){
+  if(state.charts[key]){ state.charts[key].destroy(); }
+  const el = document.getElementById(canvasId);
+  if(!el) return;
+  state.charts[key] = new Chart(el.getContext("2d"), cfg);
+}
+function destroyCharts(){ Object.values(state.charts).forEach(c=>{ try{c.destroy();}catch(e){} }); state.charts={}; }
+
+function renderGrowthChart(){
+  const c = chartColors();
+  const s = state.dailySeries;
+  const labels = s.map(d=>d.day);
+  makeChart("growth","chartGrowth",{
+    data:{ labels, datasets:[
+      { type:"line", label:"Daily views", data:s.map(d=>d.views), borderColor:c.accent, backgroundColor:"transparent", tension:.3, pointRadius:0, yAxisID:"y" },
+      { type:"bar", label:"Net subs", data:s.map(d=>d.subsGained-d.subsLost), backgroundColor:c.accent2, yAxisID:"y1" },
+    ]},
+    options:{ ...baseOpts(), scales:{ ...baseOpts().scales,
+      y1:{ position:"right", ticks:{ color:c.text, callback:v=>fmt(v) }, grid:{ drawOnChartArea:false } } } }
+  });
+}
+function renderWatchChart(){
+  const c = chartColors();
+  const s = state.dailySeries;
+  let cum=0; const cumViews = s.map(d=> cum+=d.views);
+  makeChart("watch","chartWatch",{
+    data:{ labels:s.map(d=>d.day), datasets:[
+      { type:"line", label:"Cumulative views", data:cumViews, borderColor:c.accent2, backgroundColor:"transparent", tension:.3, pointRadius:0, yAxisID:"y" },
+      { type:"bar", label:"Minutes watched", data:s.map(d=>d.minutes), backgroundColor:hexToRgba(c.good,0.5), yAxisID:"y1" },
+    ]},
+    options:{ ...baseOpts(), scales:{ ...baseOpts().scales,
+      y1:{ position:"right", ticks:{ color:c.text, callback:v=>fmt(v) }, grid:{ drawOnChartArea:false } } } }
+  });
+}
+function renderBarChart(canvasId, labels, data, label){
+  const c = chartColors();
+  const key = canvasId;
+  // color bars by value intensity (alpha ramp; canvas can't use CSS color-mix)
+  const max = Math.max(1, ...data);
+  const bg = data.map(v=> hexToRgba(c.accent, 0.3 + 0.7*(v/max)) );
+  makeChart(key, canvasId, {
+    type:"bar",
+    data:{ labels, datasets:[{ label, data, backgroundColor:bg, borderRadius:5 }] },
+    options:{ ...baseOpts(), plugins:{ legend:{ display:false } } }
+  });
+}
+function renderTrajectory(s, f){
+  const c = chartColors();
+  fetchVideoCurve(s).then(curve=>{
+    // build a continuous daily label axis from publish to a horizon past today
+    const horizon = Math.max(30, Math.ceil(s.ageDays)+10);
+    const startMs = s.publishedAt.getTime();
+    const today = ymd(new Date());
+    const labels=[], model=[];
+    for(let d=1; d<=horizon; d++){
+      labels.push(ymd(new Date(startMs + d*86400000)));
+      model.push(Math.round(f.vInf*(1-Math.exp(-d/f.tau))));   // saturating model curve
+    }
+    // actual cumulative, aligned onto the same label axis (null in the future)
+    let cum=0; const cumByDay={};
+    curve.forEach(p=>{ cum+=p.views; cumByDay[p.day]=cum; });
+    let last=null;
+    const actual = labels.map(day=>{
+      if(cumByDay[day]!=null){ last=cumByDay[day]; return last; }
+      return (day<=today && last!=null) ? last : null; // carry forward to today only
+    });
+    makeChart("traj","chartTrajectory",{
+      type:"line",
+      data:{ labels, datasets:[
+        { label:"Actual cumulative", data:actual, borderColor:c.accent, backgroundColor:"transparent", tension:.25, pointRadius:0, spanGaps:true },
+        { label:"Modeled curve", data:model, borderColor:c.accent2, borderDash:[6,4], backgroundColor:"transparent", tension:.25, pointRadius:0 },
+      ]},
+      options: baseOpts()
+    });
+  });
+}
+
+/* ============================================================================
+   SECTION 10 · DETAIL MODAL
+   ========================================================================== */
+async function openDetail(vid){
+  const s = state.shorts.find(x=>x.id===vid);
+  if(!s) return;
+  $("#mThumb").src = thumbOf(s);
+  $("#mTitle").textContent = s.title;
+  $("#mMeta").textContent = `Uploaded ${s.publishedAt.toLocaleString()} · ${s.durationSec}s · rank #${s.rank}`;
+  $("#mOpenYt").href = state.demo? "#" : "https://www.youtube.com/shorts/"+s.id;
+  $("#mOpenYt").style.display = state.demo? "none":"";
+
+  $("#mKpis").innerHTML = [
+    ["Views", fmt(s.views)], ["Likes", fmt(s.likes)], ["Comments", fmt(s.comments)],
+    ["Engagement", pct(s.engRate,1)], ["Views/day", fmt(s.viewsPerDay)], ["vs median", s.vsMedian.toFixed(2)+"×"],
+  ].map(([l,v])=>`<div class="card kpi" style="background:var(--card-2)"><div class="label">${l}</div><div class="value small">${v}</div></div>`).join("");
+
+  // relative performance
+  const m = state.medians;
+  $("#mRelative").innerHTML = `
+    <div class="kvs">
+      <span class="k">Views</span><span>${fmt(s.views)} (${s.vsMedian.toFixed(2)}× channel median ${fmt(m.views)})</span>
+      <span class="k">Rank</span><span>#${s.rank} of ${state.shorts.length} Shorts</span>
+      <span class="k">View velocity</span><span>${fmt(s.viewsPerDay)}/day · ${fmt(s.viewsPerHour)}/hr</span>
+      <span class="k">Engagement</span><span>${pct(s.engRate,1)} (median ${pct(m.engRate,1)})</span>
+    </div>`;
+
+  $("#modal").classList.add("open");
+
+  // retention -> recompute health with retention; then breakdown
+  const ret = await fetchVideoRetention(s);
+  const hs = healthScore(s); // now includes retention if cached
+  s.health = hs.score;
+  $("#mHealth").innerHTML = `
+    <div style="display:flex; gap:.7rem; align-items:center; margin-bottom:.5rem">
+      <div class="gauge" style="--p:${s.health}; --g:${healthColor(s.health)}; width:64px;height:64px"><span class="num" style="font-size:1rem">${s.health}</span></div>
+      <div class="muted small">${ret? "Avg view "+ret.avgViewPct.toFixed(0)+"% · "+ret.avgViewDur+"s":"Retention not available"}</div>
+    </div>` +
+    hs.comps.map(c=>`<div style="margin:.3rem 0">
+      <div style="display:flex; justify-content:space-between" class="small"><span>${c.key}</span><span class="muted">${c.display}</span></div>
+      <div class="bar"><span style="width:${Math.round(c.score)}%; background:${healthColor(c.score)}"></span></div>
+    </div>`).join("");
+
+  // growth curve chart
+  const curve = await fetchVideoCurve(s);
+  const c = chartColors();
+  let cum=0;
+  makeChart("detail","mChart",{
+    data:{ labels:curve.map(p=>p.day), datasets:[
+      { type:"bar", label:"Daily views", data:curve.map(p=>p.views), backgroundColor:c.accent2 },
+      { type:"line", label:"Cumulative", data:curve.map(p=> cum+=p.views), borderColor:c.accent, pointRadius:0, tension:.3, yAxisID:"y1" },
+    ]},
+    options:{ ...baseOpts(), scales:{ ...baseOpts().scales,
+      y1:{ position:"right", ticks:{ color:c.text, callback:v=>fmt(v) }, grid:{ drawOnChartArea:false } } } }
+  });
+}
+function closeDetail(){ $("#modal").classList.remove("open"); if(state.charts.detail){ state.charts.detail.destroy(); delete state.charts.detail; } }
+
+/* ============================================================================
+   SECTION 11 · VIEW ROUTER + EVENT WIRING
+   ========================================================================== */
+function showView(name){
+  state.currentView = name;
+  const views = ["gate","overview","shorts","besttime","forecast","health","revenue","setup"];
+  views.forEach(v=> $("#view-"+v).classList.toggle("hidden", v!==name));
+  $$("#nav button").forEach(b=> b.classList.toggle("active", b.dataset.view===name));
+  // (re)draw charts that need a visible canvas
+  if(name==="overview"){ renderGrowthChart(); renderWatchChart(); }
+  if(name==="besttime"){ renderBestTime(); }
+  if(name==="forecast"){ const v=$("#forecastSelect").value; if(v) renderForecast(v); }
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function applyTheme(theme){
+  document.documentElement.setAttribute("data-theme", theme);
+  $("#themeBtn").textContent = theme==="dark" ? "🌙" : "☀️";
+  try{ localStorage.setItem("yt_theme", theme); }catch(e){}
+  // re-render charts to pick up new colors
+  if(state.channel){
+    if(state.currentView==="overview"){ renderGrowthChart(); renderWatchChart(); }
+    if(state.currentView==="besttime"){ renderBestTime(); }
+    if(state.currentView==="forecast"){ const v=$("#forecastSelect").value; if(v) renderForecast(v); }
+  }
+}
+
+function wireEvents(){
+  $("#signinBtn").onclick = signIn;
+  $("#gateSignin").onclick = signIn;
+  $("#signoutBtn").onclick = signOut;
+  $("#gateDemo").onclick = loadDemo;
+  $("#gateSetup").onclick = ()=> showView("setup"); // setup view is safe to show pre-login
+  $(".brand").style.cursor = "pointer";
+  $(".brand").onclick = ()=> showView(state.channel ? "overview" : "gate"); // logo = home
+  $("#refreshBtn").onclick = ()=>{ if(state.demo) loadDemo(); else loadEverything().catch(e=>{hideOverlay(); toast(e.message,"bad");}); };
+  $("#themeBtn").onclick = ()=> applyTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");
+
+  $$("#nav button").forEach(b=> b.onclick = ()=> showView(b.dataset.view));
+
+  // sorting
+  $$("#shortsTable th[data-sort]").forEach(th=> th.onclick = ()=>{
+    const key = th.dataset.sort;
+    if(state.sort.key===key) state.sort.dir*=-1;
+    else state.sort = { key, dir: (key==="title"?1:-1) };
+    renderShorts();
+  });
+
+  // modal
+  $("#mClose").onclick = closeDetail;
+  $("#modal").onclick = e=>{ if(e.target.id==="modal") closeDetail(); };
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeDetail(); });
+
+  $("#tauNote").textContent = CONFIG.GROWTH_TAU_DAYS;
+}
+
+/* ============================================================================
+   SECTION 12 · INIT
+   ========================================================================== */
+(function init(){
+  // restore theme
+  let theme="dark"; try{ theme = localStorage.getItem("yt_theme")||"dark"; }catch(e){}
+  applyTheme(theme);
+  wireEvents();
+  initAuth();
+  showView("gate");
+})();
+</script>
+</body>
+</html>
