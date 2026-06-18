@@ -11,8 +11,9 @@ const NAV = [
   { href: "/settings", label: "Settings" },
 ];
 
-export function Sidebar({ clinicName }: { clinicName: string }) {
+export function Sidebar({ clinicName, isAdmin = false }: { clinicName: string; isAdmin?: boolean }) {
   const pathname = usePathname();
+  const nav = isAdmin ? [...NAV, { href: "/admin", label: "Admin" }] : NAV;
 
   return (
     <aside className="flex w-60 shrink-0 flex-col border-r border-slate-200 bg-white">
@@ -22,7 +23,7 @@ export function Sidebar({ clinicName }: { clinicName: string }) {
       </div>
 
       <nav className="flex-1 space-y-1 px-3">
-        {NAV.map((item) => {
+        {nav.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link

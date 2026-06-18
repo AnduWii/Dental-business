@@ -7,7 +7,15 @@ import { env } from "@/lib/env";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
-const PROTECTED = ["/dashboard", "/conversations", "/settings", "/notifications", "/missed-calls", "/onboarding"];
+const PROTECTED = [
+  "/dashboard",
+  "/conversations",
+  "/settings",
+  "/notifications",
+  "/missed-calls",
+  "/onboarding",
+  "/admin",
+];
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
@@ -44,7 +52,7 @@ export async function middleware(request: NextRequest) {
   if (!user && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-  if (user && path === "/login") {
+  if (user && (path === "/login" || path === "/signup")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

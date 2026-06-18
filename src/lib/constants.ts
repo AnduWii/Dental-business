@@ -12,3 +12,8 @@ export const DEFAULT_TEXTBACK =
 
 // Max length we allow a single outbound SMS segment-friendly reply to be.
 export const MAX_SMS_LENGTH = 480;
+
+// Platform admins (founder accounts). When one of these emails signs in it
+// gets access to the cross-clinic /admin overview. Extendable via the
+// ADMIN_EMAILS env var (comma-separated).
+export const DEFAULT_ADMIN_EMAILS = ["andrewbirdie777@gmail.com"];

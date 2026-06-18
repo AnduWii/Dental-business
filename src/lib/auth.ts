@@ -1,13 +1,27 @@
 // Auth + tenancy helpers shared by Server Components and Route Handlers.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { DEFAULT_ADMIN_EMAILS } from "@/lib/constants";
+import { env } from "@/lib/env";
 import type { Clinic, Conversation, Profile } from "@/lib/types";
+
+// Is this email a platform admin (founder)? Defaults + ADMIN_EMAILS env.
+export function isAdminEmail(email?: string | null): boolean {
+  if (!email) return false;
+  const allow = new Set([
+    ...DEFAULT_ADMIN_EMAILS.map((e) => e.toLowerCase()),
+    ...env.adminEmails(),
+  ]);
+  return allow.has(email.toLowerCase());
+}
 
 // For Server Components: who is logged in, their profile, and their clinic.
 // Reads run as the user through RLS, so this only ever returns the caller's
 // own clinic. `clinic` is null until onboarding is complete.
 export async function getDashboardContext(): Promise<{
   userId: string | null;
+  email: string | null;
+  isAdmin: boolean;
   profile: Profile | null;
   clinic: Clinic | null;
 }> {
@@ -15,7 +29,7 @@ export async function getDashboardContext(): Promise<{
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { userId: null, profile: null, clinic: null };
+  if (!user) return { userId: null, email: null, isAdmin: false, profile: null, clinic: null };
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -33,7 +47,13 @@ export async function getDashboardContext(): Promise<{
     clinic = data;
   }
 
-  return { userId: user.id, profile: profile ?? null, clinic };
+  return {
+    userId: user.id,
+    email: user.email ?? null,
+    isAdmin: isAdminEmail(user.email),
+    profile: profile ?? null,
+    clinic,
+  };
 }
 
 // For Route Handlers: confirm `userId` belongs to the clinic that owns

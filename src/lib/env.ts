@@ -37,4 +37,11 @@ export const env = {
   // Email (optional)
   resendKey: () => optional("RESEND_API_KEY"),
   notifyFromEmail: () => process.env.NOTIFY_FROM_EMAIL || "alerts@tryrecall.com",
+
+  // Extra platform-admin emails (comma-separated), merged with the defaults.
+  adminEmails: () =>
+    (process.env.ADMIN_EMAILS || "")
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean),
 };
