@@ -12,13 +12,23 @@ function optional(name: string): string | undefined {
   return process.env[name] || undefined;
 }
 
+// For NEXT_PUBLIC_* values used in the browser: Next.js only inlines a
+// *literal* `process.env.NEXT_PUBLIC_FOO` reference into the client bundle,
+// never a dynamic `process.env[name]` lookup. So these getters must pass the
+// already-resolved literal value, not a variable name.
+function need(value: string | undefined, name: string): string {
+  if (!value) throw new Error(`Missing required environment variable: ${name}`);
+  return value;
+}
+
 export const env = {
   appUrl: () => process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
 
-  // Supabase
-  supabaseUrl: () => required("NEXT_PUBLIC_SUPABASE_URL"),
-  supabaseAnonKey: () => required("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-  supabaseServiceRoleKey: () => required("SUPABASE_SERVICE_ROLE_KEY"),
+  // Supabase (anon URL/key are public and used in the browser → static refs).
+  supabaseUrl: () => need(process.env.NEXT_PUBLIC_SUPABASE_URL, "NEXT_PUBLIC_SUPABASE_URL"),
+  supabaseAnonKey: () =>
+    need(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, "NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+  supabaseServiceRoleKey: () => required("SUPABASE_SERVICE_ROLE_KEY"), // server-only
   // True once Supabase keys exist. Lets the public site boot before setup.
   isSupabaseConfigured: () =>
     Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
