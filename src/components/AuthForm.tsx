@@ -4,8 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { env } from "@/lib/env";
 
 type Mode = "signin" | "signup";
+
+const NOT_CONFIGURED =
+  "Sign-in isn't connected yet. Add your Supabase keys in Vercel (Settings → Environment Variables) and redeploy.";
 
 export function AuthForm({ initialMode = "signin" }: { initialMode?: Mode }) {
   const router = useRouter();
@@ -22,33 +26,43 @@ export function AuthForm({ initialMode = "signin" }: { initialMode?: Mode }) {
 
   async function handlePassword(e: React.FormEvent) {
     e.preventDefault();
+    if (!env.isSupabaseConfigured()) {
+      setError(NOT_CONFIGURED);
+      return;
+    }
     setBusy(true);
     setError("");
     setNotice("");
-    const supabase = createClient();
-
-    if (mode === "signup") {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: redirectTo, data: { full_name: fullName } },
-      });
-      if (error) setError(error.message);
-      else if (data.session) {
-        router.push("/dashboard");
-        router.refresh();
+    try {
+      const supabase = createClient();
+      if (mode === "signup") {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: redirectTo, data: { full_name: fullName } },
+        });
+        if (error) setError(error.message);
+        else if (data.session) {
+          router.push("/dashboard");
+          router.refresh();
+          return;
+        } else {
+          setNotice(`We sent a confirmation link to ${email}. Click it to finish creating your account.`);
+        }
       } else {
-        setNotice(`We sent a confirmation link to ${email}. Click it to finish creating your account.`);
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) setError(error.message);
+        else {
+          router.push("/dashboard");
+          router.refresh();
+          return;
+        }
       }
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message);
-      else {
-        router.push("/dashboard");
-        router.refresh();
-      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   }
 
   async function handleMagicLink() {
@@ -56,17 +70,26 @@ export function AuthForm({ initialMode = "signin" }: { initialMode?: Mode }) {
       setError("Enter your email first, then tap the magic-link button.");
       return;
     }
+    if (!env.isSupabaseConfigured()) {
+      setError(NOT_CONFIGURED);
+      return;
+    }
     setBusy(true);
     setError("");
     setNotice("");
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: redirectTo, shouldCreateUser: true },
-    });
-    if (error) setError(error.message);
-    else setNotice(`Check ${email} for a one-time sign-in link.`);
-    setBusy(false);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: redirectTo, shouldCreateUser: true },
+      });
+      if (error) setError(error.message);
+      else setNotice(`Check ${email} for a one-time sign-in link.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
