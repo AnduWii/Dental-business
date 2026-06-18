@@ -37,6 +37,11 @@ Full reasoning, costs and trade-offs: [`docs/03-tech-stack.md`](docs/03-tech-sta
 | [`docs/06-wireframes.md`](docs/06-wireframes.md) | Wireframes for every page |
 | [`docs/07-roadmap.md`](docs/07-roadmap.md) | Week-by-week build plan |
 | [`docs/08-twilio-setup.md`](docs/08-twilio-setup.md) | Call forwarding, 10DLC & CASL compliance |
+| [`docs/10-production-readiness.md`](docs/10-production-readiness.md) | Hardening checklist: security, tests, compliance, DR — done / partial / deferred |
+| [`docs/11-security.md`](docs/11-security.md) | Threat model + controls |
+| [`docs/12-compliance-privacy.md`](docs/12-compliance-privacy.md) | PIPEDA/PHIPA/CASL, PII inventory, retention & erasure |
+| [`docs/13-disaster-recovery.md`](docs/13-disaster-recovery.md) | RTO/RPO + restore runbook |
+| [`docs/adr/`](docs/adr/README.md) | Architecture Decision Records |
 
 ---
 

@@ -2,6 +2,7 @@
 // Server only.
 import twilio from "twilio";
 import { env } from "@/lib/env";
+import { withRetry } from "@/lib/retry";
 
 export function getTwilioClient() {
   return twilio(env.twilioAccountSid(), env.twilioAuthToken());
@@ -26,7 +27,8 @@ export async function sendSms({ to, from, body, messagingServiceSid }: SendSmsAr
   else if (from) payload.from = from;
   else throw new Error("sendSms requires either a `from` number or a Messaging Service SID");
 
-  return client.messages.create(payload);
+  // Retry transient Twilio/network blips with backoff.
+  return withRetry(() => client.messages.create(payload), { retries: 2, baseMs: 300 });
 }
 
 // Validate that an incoming webhook genuinely came from Twilio.

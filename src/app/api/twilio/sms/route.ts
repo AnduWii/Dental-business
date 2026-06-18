@@ -10,6 +10,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendSms, validateTwilioSignature, EMPTY_TWIML } from "@/lib/twilio";
 import { runIntake, type IntakeTurn } from "@/lib/ai/intake";
 import { notifyClinic } from "@/lib/notify";
+import { autoReplyLimitReached } from "@/lib/ratelimit";
+import { sanitizeText, LIMITS } from "@/lib/validation";
 import { env } from "@/lib/env";
 import type { Clinic, Conversation, Message } from "@/lib/types";
 
@@ -34,7 +36,7 @@ export async function POST(req: NextRequest) {
 
   const from = params.From; // patient
   const to = params.To; // clinic Recall number
-  const body = (params.Body || "").trim();
+  const body = sanitizeText(params.Body, LIMITS.smsBody);
   const messageSid = params.MessageSid || params.SmsSid || null;
 
   const admin = createAdminClient();
@@ -118,6 +120,23 @@ export async function POST(req: NextRequest) {
       type: "new_message",
       title: "New patient reply",
       body: `${conversation.caller_name || patient!.name || from}: ${body.slice(0, 140)}`,
+    });
+    return xml(EMPTY_TWIML);
+  }
+
+  // --- abuse / cost guard: if this thread has burned through the auto-reply
+  //     budget, stop the AI and hand it to a human ---
+  if (await autoReplyLimitReached(admin, conversation.id)) {
+    await admin
+      .from("conversations")
+      .update({ status: "needs_attention", mode: "human" })
+      .eq("id", conversation.id);
+    await notifyClinic({
+      clinic,
+      conversationId: conversation.id,
+      type: "new_message",
+      title: "Conversation needs a human",
+      body: `Auto-reply limit reached for ${conversation.caller_name || from}. Please take over.`,
     });
     return xml(EMPTY_TWIML);
   }

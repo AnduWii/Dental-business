@@ -104,6 +104,7 @@ export function AuthForm({ initialMode = "signin" }: { initialMode?: Mode }) {
           <button
             key={m}
             type="button"
+            aria-pressed={mode === m}
             onClick={() => {
               setMode(m);
               setError("");
@@ -119,37 +120,64 @@ export function AuthForm({ initialMode = "signin" }: { initialMode?: Mode }) {
       </div>
 
       {notice ? (
-        <div className="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+        <div
+          role="status"
+          className="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"
+        >
           {notice}
         </div>
       ) : (
         <form onSubmit={handlePassword} className="mt-6 space-y-3">
           {mode === "signup" && (
+            <div>
+              <label htmlFor="fullName" className="sr-only">
+                Your name
+              </label>
+              <input
+                id="fullName"
+                name="fullName"
+                type="text"
+                autoComplete="name"
+                placeholder="Your name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+              />
+            </div>
+          )}
+          <div>
+            <label htmlFor="email" className="sr-only">
+              Email address
+            </label>
             <input
-              type="text"
-              placeholder="Your name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              id="email"
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              placeholder="you@clinic.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
             />
-          )}
-          <input
-            type="email"
-            required
-            placeholder="you@clinic.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
-          />
-          <input
-            type="password"
-            required
-            minLength={6}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
-          />
+          </div>
+          <div>
+            <label htmlFor="password" className="sr-only">
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              minLength={6}
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+            />
+          </div>
 
           <button
             type="submit"
@@ -159,7 +187,11 @@ export function AuthForm({ initialMode = "signin" }: { initialMode?: Mode }) {
             {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
           </button>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && (
+            <p role="alert" className="text-sm text-red-600">
+              {error}
+            </p>
+          )}
 
           <div className="flex items-center gap-3 py-1 text-xs text-slate-400">
             <span className="h-px flex-1 bg-slate-200" />

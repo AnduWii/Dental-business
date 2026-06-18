@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendSms } from "@/lib/twilio";
 import { requireClinicMember } from "@/lib/auth";
+import { sanitizeText, LIMITS } from "@/lib/validation";
+import { logAudit } from "@/lib/audit";
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const supabase = createClient();
@@ -13,8 +15,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { body } = (await req.json()) as { body?: string };
-  const text = (body || "").trim();
+  const { body } = (await req.json().catch(() => ({}))) as { body?: string };
+  const text = sanitizeText(body, LIMITS.reply);
   if (!text) return NextResponse.json({ error: "Message body required" }, { status: 400 });
 
   const admin = createAdminClient();
@@ -58,6 +60,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       .from("conversations")
       .update({ mode: "human", status: "handled" })
       .eq("id", conversation.id);
+
+    await logAudit({
+      clinicId: clinic.id,
+      actorEmail: user.email,
+      action: "staff.reply",
+      target: conversation.id,
+    });
 
     return NextResponse.json({ message: stored });
   } catch (err) {

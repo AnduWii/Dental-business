@@ -14,6 +14,7 @@
 // or the LLM call fails — so the product keeps working no matter what.
 // =====================================================================
 import { env } from "@/lib/env";
+import { fetchWithTimeout, withRetry } from "@/lib/retry";
 import type { BookingIntent, UrgencyLevel } from "@/lib/types";
 
 export interface IntakeTurn {
@@ -139,7 +140,7 @@ async function runOpenAI(ctx: IntakeContext, key: string): Promise<IntakeResult>
     })),
   ];
 
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+  const res = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
     body: JSON.stringify({
@@ -185,7 +186,7 @@ async function runOpenAI(ctx: IntakeContext, key: string): Promise<IntakeResult>
 // Anthropic (optional) — tool use forces a structured result.
 // ---------------------------------------------------------------------
 async function runAnthropic(ctx: IntakeContext, key: string): Promise<IntakeResult> {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
+  const res = await fetchWithTimeout("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -294,10 +295,10 @@ export async function runIntake(ctx: IntakeContext): Promise<IntakeResult> {
   try {
     if (provider === "openai") {
       const key = env.openaiKey();
-      if (key) return await runOpenAI(ctx, key);
+      if (key) return await withRetry(() => runOpenAI(ctx, key), { retries: 1 });
     } else if (provider === "anthropic") {
       const key = env.anthropicKey();
-      if (key) return await runAnthropic(ctx, key);
+      if (key) return await withRetry(() => runAnthropic(ctx, key), { retries: 1 });
     }
   } catch (err) {
     console.error("[intake] LLM call failed, using fallback:", err);

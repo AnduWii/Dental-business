@@ -1,19 +1,11 @@
 // Auth + tenancy helpers shared by Server Components and Route Handlers.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-import { DEFAULT_ADMIN_EMAILS } from "@/lib/constants";
-import { env } from "@/lib/env";
+import { isAdminEmail } from "@/lib/admin";
 import type { Clinic, Conversation, Profile } from "@/lib/types";
 
-// Is this email a platform admin (founder)? Defaults + ADMIN_EMAILS env.
-export function isAdminEmail(email?: string | null): boolean {
-  if (!email) return false;
-  const allow = new Set([
-    ...DEFAULT_ADMIN_EMAILS.map((e) => e.toLowerCase()),
-    ...env.adminEmails(),
-  ]);
-  return allow.has(email.toLowerCase());
-}
+// Re-exported so existing imports from "@/lib/auth" keep working.
+export { isAdminEmail };
 
 // For Server Components: who is logged in, their profile, and their clinic.
 // Reads run as the user through RLS, so this only ever returns the caller's

@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sanitizeText, normalizePhone, isValidEmail, LIMITS } from "@/lib/validation";
+import { logAudit } from "@/lib/audit";
 
 // Create the clinic + owner profile during onboarding.
 export async function createClinic(formData: FormData) {
@@ -13,17 +15,19 @@ export async function createClinic(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const name = String(formData.get("name") || "").trim();
+  const name = sanitizeText(formData.get("name"), LIMITS.clinicName);
   if (!name) return;
+
+  const notifyEmailRaw = String(formData.get("notify_email") || user.email || "");
 
   const admin = createAdminClient();
   const { data: clinic, error } = await admin
     .from("clinics")
     .insert({
       name,
-      timezone: String(formData.get("timezone") || "America/Toronto"),
-      notify_phone: String(formData.get("notify_phone") || "") || null,
-      notify_email: String(formData.get("notify_email") || user.email || "") || null,
+      timezone: sanitizeText(formData.get("timezone"), 64) || "America/Toronto",
+      notify_phone: normalizePhone(formData.get("notify_phone")),
+      notify_email: isValidEmail(notifyEmailRaw) ? notifyEmailRaw : null,
     })
     .select("id")
     .single();
@@ -32,8 +36,15 @@ export async function createClinic(formData: FormData) {
   await admin.from("profiles").upsert({
     user_id: user.id,
     clinic_id: clinic.id,
-    full_name: String(formData.get("full_name") || "") || null,
+    full_name: sanitizeText(formData.get("full_name"), LIMITS.name) || null,
     role: "owner",
+  });
+
+  await logAudit({
+    clinicId: clinic.id,
+    actorEmail: user.email,
+    action: "clinic.create",
+    target: clinic.id,
   });
 
   redirect("/dashboard");
@@ -55,19 +66,28 @@ export async function updateSettings(formData: FormData) {
     .maybeSingle();
   if (!profile?.clinic_id) redirect("/onboarding");
 
+  const notifyEmailRaw = String(formData.get("notify_email") || "");
+
   await admin
     .from("clinics")
     .update({
-      name: String(formData.get("name") || "").trim(),
-      twilio_number: String(formData.get("twilio_number") || "") || null,
-      twilio_messaging_service_sid: String(formData.get("twilio_messaging_service_sid") || "") || null,
-      notify_phone: String(formData.get("notify_phone") || "") || null,
-      notify_email: String(formData.get("notify_email") || "") || null,
-      textback_message: String(formData.get("textback_message") || "").trim(),
+      name: sanitizeText(formData.get("name"), LIMITS.clinicName),
+      twilio_number: normalizePhone(formData.get("twilio_number")),
+      twilio_messaging_service_sid: sanitizeText(formData.get("twilio_messaging_service_sid"), 64) || null,
+      notify_phone: normalizePhone(formData.get("notify_phone")),
+      notify_email: isValidEmail(notifyEmailRaw) ? notifyEmailRaw : null,
+      textback_message: sanitizeText(formData.get("textback_message"), 600),
       ai_enabled: formData.get("ai_enabled") === "on",
-      timezone: String(formData.get("timezone") || "America/Toronto"),
+      timezone: sanitizeText(formData.get("timezone"), 64) || "America/Toronto",
     })
     .eq("id", profile.clinic_id);
+
+  await logAudit({
+    clinicId: profile.clinic_id,
+    actorEmail: user.email,
+    action: "clinic.settings_update",
+    target: profile.clinic_id,
+  });
 
   revalidatePath("/settings");
   revalidatePath("/dashboard");
