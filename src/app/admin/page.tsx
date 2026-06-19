@@ -116,8 +116,12 @@ export default async function AdminPage() {
                 </tr>
               ) : (
                 rows.map((r) => (
-                  <tr key={r.clinic.id}>
-                    <td className="px-4 py-3 font-medium text-slate-900">{r.clinic.name}</td>
+                  <tr key={r.clinic.id} className="hover:bg-slate-50">
+                    <td className="px-4 py-3 font-medium">
+                      <Link href={`/admin/clinics/${r.clinic.id}`} className="text-brand-700 hover:underline">
+                        {r.clinic.name}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3 capitalize text-slate-600">
                       {r.clinic.subscription_status}
                     </td>

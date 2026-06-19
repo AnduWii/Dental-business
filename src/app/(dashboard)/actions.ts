@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAdminEmail } from "@/lib/admin";
 import { sanitizeText, normalizePhone, isValidEmail, LIMITS } from "@/lib/validation";
 import { logAudit } from "@/lib/audit";
 
@@ -91,4 +92,43 @@ export async function updateSettings(formData: FormData) {
 
   revalidatePath("/settings");
   revalidatePath("/dashboard");
+}
+
+// Admin edits ANY clinic's settings (hybrid model: you do "free setup" for a
+// clinic that owns its own dashboard). Gated to platform admins.
+export async function updateClinicAsAdmin(formData: FormData) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || !isAdminEmail(user.email)) redirect("/login");
+
+  const clinicId = String(formData.get("clinic_id") || "");
+  if (!clinicId) return;
+
+  const admin = createAdminClient();
+  const notifyEmailRaw = String(formData.get("notify_email") || "");
+
+  await admin
+    .from("clinics")
+    .update({
+      name: sanitizeText(formData.get("name"), LIMITS.clinicName),
+      twilio_number: normalizePhone(formData.get("twilio_number")),
+      twilio_messaging_service_sid: sanitizeText(formData.get("twilio_messaging_service_sid"), 64) || null,
+      notify_phone: normalizePhone(formData.get("notify_phone")),
+      notify_email: isValidEmail(notifyEmailRaw) ? notifyEmailRaw : null,
+      textback_message: sanitizeText(formData.get("textback_message"), 600),
+      ai_enabled: formData.get("ai_enabled") === "on",
+      timezone: sanitizeText(formData.get("timezone"), 64) || "America/Toronto",
+    })
+    .eq("id", clinicId);
+
+  await logAudit({
+    clinicId,
+    actorEmail: user.email,
+    action: "admin.clinic_settings_update",
+    target: clinicId,
+  });
+
+  revalidatePath(`/admin/clinics/${clinicId}`);
 }
