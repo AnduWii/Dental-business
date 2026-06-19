@@ -11,14 +11,20 @@ type Mode = "signin" | "signup";
 const NOT_CONFIGURED =
   "Sign-in isn't connected yet. Add your Supabase keys in Vercel (Settings → Environment Variables) and redeploy.";
 
-export function AuthForm({ initialMode = "signin" }: { initialMode?: Mode }) {
+export function AuthForm({
+  initialMode = "signin",
+  initialError = "",
+}: {
+  initialMode?: Mode;
+  initialError?: string;
+}) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>(initialMode);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(initialError);
   const [notice, setNotice] = useState("");
 
   const redirectTo =
