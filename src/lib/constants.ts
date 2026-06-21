@@ -3,6 +3,9 @@ export const BRAND = {
   name: "Catchline",
   tagline: "Every missed call, recovered.",
   supportEmail: "founders@trycatchline.com",
+  // Legal operating entity (used in the clinic DPA signature block). Sole
+  // proprietor for now; update if/when the business incorporates.
+  legalEntity: "Andrew Li (operating as Catchline)",
 } as const;
 
 // Default copy used when a clinic hasn't customised its own.

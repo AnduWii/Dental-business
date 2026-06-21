@@ -191,7 +191,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Questions about this policy or your information? We are happy to help.",
+        text: "Catchline is operated by Andrew Li. Questions about this policy or your information? We are happy to help.",
       },
       { type: "contact", email: BRAND.supportEmail },
     ],

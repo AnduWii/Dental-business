@@ -213,7 +213,7 @@ const sections: LegalSection[] = [
       },
       {
         type: "p",
-        text: "Catchline: [Catchline legal entity] — Signed by [name], [title] — Date [ ].",
+        text: `Catchline: ${BRAND.legalEntity} — Signed by Andrew Li, Owner — Date [ ].`,
       },
       { type: "contact", email: BRAND.supportEmail },
     ],
