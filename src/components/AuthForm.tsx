@@ -218,10 +218,14 @@ export function AuthForm({
 
       <p className="mt-5 text-center text-xs leading-relaxed text-slate-400">
         {mode === "signup" ? "By creating an account you agree to our " : "See our "}
+        <Link href="/terms" className="font-medium text-slate-500 underline hover:text-slate-700">
+          Terms
+        </Link>
+        {", "}
         <Link href="/privacy" className="font-medium text-slate-500 underline hover:text-slate-700">
           Privacy Policy
         </Link>
-        {" and "}
+        {", and "}
         <Link href="/dpa" className="font-medium text-slate-500 underline hover:text-slate-700">
           Data Processing Agreement
         </Link>

@@ -26,8 +26,10 @@ new session: read this, then `README.md` and `docs/`.
   `npm audit` is **0 vulnerabilities** (was 21). Vitest is now v4; postcss pinned via `overrides`.
   ⚠️ The `main` **branch ruleset is currently DISABLED** (it blocked the deploy automation) —
   re-enable it with the deploy app on the bypass list once you add a collaborator.
-- **Legal pages live:** public **Privacy Policy** (`/privacy`) + clinic **DPA** (`/dpa`), linked from
-  the footer + sign-up form (counsel review + DPA bracketed fields still pending — see checklist 8).
+- **Legal pages live:** public **Privacy Policy** (`/privacy`), **Terms of Service** (`/terms`), and
+  clinic **DPA** (`/dpa`), linked from the footer + sign-up form. Lawyer-ready copies in
+  `docs/legal/`. Legal entity: **Catchline Services Inc.** (not yet registered — register before
+  signing a clinic). Counsel review of all three still pending.
 - **NOT yet live for real calls** — Twilio isn't connected (see below).
 
 ---

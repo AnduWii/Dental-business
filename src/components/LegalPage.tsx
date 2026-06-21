@@ -138,6 +138,9 @@ export function LegalPage({
             © {new Date().getFullYear()} {BRAND.name}
           </span>
           <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
+          <Link href="/terms" className="hover:text-slate-600">
+            Terms
+          </Link>
           <Link href="/privacy" className="hover:text-slate-600">
             Privacy
           </Link>
