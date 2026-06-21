@@ -9,16 +9,21 @@ new session: read this, then `README.md` and `docs/`.
 
 ---
 
-## ✅ Current status (updated 2026-06-19)
+## ✅ Current status (updated 2026-06-21)
 - **V1 built and deployed** on Vercel (`main` auto-deploys; project "dental-business",
   URL `dental-business-dusky.vercel.app`).
+- **Design:** Public Sans typeface; landing has a two-column hero with a live "phone" SMS recovery
+  card (cracked-molar emergency → booked → lead captured). Muted steel-blue brand palette.
 - **Auth works:** sign up / sign in (password + magic link) + platform-admin allow-list
   (`andrewbirdie777@gmail.com` → `/admin`). Configured via `src/lib/constants.ts` / `ADMIN_EMAILS`.
 - **Hybrid onboarding:** clinics self-sign-up and own their dashboard; the admin can configure any
   clinic at `/admin/clinics/[id]` (the "free setup").
+- **Data residency:** moved to Supabase **`ca-central-1` (Montreal)** for Canadian/PHIPA comfort.
+  (Old `us-east-1` project to be deleted once the Canadian one is fully verified.)
 - **Hardening done (Steps 3 & 4):** input validation, security headers, append-only audit log,
-  abuse/cost cap, RLS multi-tenancy, 27 unit tests + GitHub CI + Dependabot + secret scanning,
-  branch ruleset on `main` (admin bypass).
+  abuse/cost cap, RLS multi-tenancy, 27 unit tests + GitHub CI + Dependabot + secret scanning.
+  ⚠️ The `main` **branch ruleset is currently DISABLED** (it blocked the deploy automation) —
+  re-enable it with the deploy app on the bypass list once you add a collaborator.
 - **NOT yet live for real calls** — Twilio isn't connected (see below).
 
 ---
@@ -40,15 +45,16 @@ run the launch checklist"*).
    `noreply@yourdomain`. (Built-in Supabase email works until then.)
 5. **Supabase Pro (hardening Step 5):** upgrade for daily backups; add **PITR** once you run 2–3
    clinics.
-6. **Data residency (Step 6):** project is in `us-east-1`. If a clinic requires Canadian residency
-   (PHIPA comfort), recreate the project in `ca-central-1` and migrate. Decide before onboarding.
+6. **Data residency (Step 6): ✅ DONE** — moved to `ca-central-1` (Montreal). Just delete the old
+   `us-east-1` Supabase project once the Canadian one is fully verified end-to-end.
 7. **Retention (Step 7):** enable `pg_cron` and schedule `select purge_old_conversations(365);`
    monthly.
 8. **Privacy policy + clinic DPA (Step 8):** one-pager basis in `docs/12-compliance-privacy.md`.
 
 ## 🔧 Deferred / optional (not blocking launch)
 - MFA + session inactivity timeouts (Supabase Auth).
-- Full branch protection: drop the admin bypass once you add a collaborator.
+- **Re-enable the `main` branch ruleset** (currently disabled) once you add a collaborator — and
+  add the deploy app to its bypass list so automated deploys aren't blocked.
 - Integration/e2e tests (Playwright), strict Content-Security-Policy, load/chaos testing — rationale
   in `docs/10-production-readiness.md`.
 

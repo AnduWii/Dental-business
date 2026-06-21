@@ -1,20 +1,33 @@
 import Link from "next/link";
 import { BRAND } from "@/lib/constants";
 
+function LogoMark({ size = "h-7 w-7 text-[15px]" }: { size?: string }) {
+  return (
+    <span
+      className={`flex items-center justify-center rounded-lg bg-brand-600 font-bold text-white ${size}`}
+    >
+      R
+    </span>
+  );
+}
+
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-white">
-      {/* Nav */}
-      <header className="border-b border-slate-100">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <span className="text-lg font-semibold text-brand-700">{BRAND.name}</span>
+      {/* Sticky header */}
+      <header className="sticky top-0 z-20 border-b border-slate-100 bg-white/85 backdrop-blur">
+        <div className="mx-auto flex max-w-[1080px] items-center justify-between px-8 py-4">
+          <div className="flex items-center gap-2.5">
+            <LogoMark />
+            <span className="text-lg font-bold tracking-tight text-brand-900">{BRAND.name}</span>
+          </div>
           <nav className="flex items-center gap-5 text-sm">
-            <Link href="/login" className="text-slate-600 hover:text-slate-900">
+            <Link href="/login" className="font-medium text-slate-600 hover:text-slate-900">
               Sign in
             </Link>
             <Link
               href="/signup"
-              className="rounded-md bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700"
+              className="rounded-lg bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700"
             >
               Start a pilot
             </Link>
@@ -22,172 +35,155 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="mx-auto max-w-3xl px-6 py-24 text-center">
-        <p className="mb-4 text-xs font-medium uppercase tracking-widest text-slate-400">
-          Missed-call recovery for dental clinics
-        </p>
-        <h1 className="text-4xl font-semibold leading-tight tracking-tight text-slate-900">
-          Stop losing patients you&apos;ve already paid to reach.
-        </h1>
-        <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
-          When a call to your clinic goes unanswered, {BRAND.name} texts the caller back, finds out
-          what they need, and notifies your front desk — so they book with you instead of the
-          dentist down the road.
-        </p>
-        <div className="mt-9 flex justify-center gap-3">
-          <Link
-            href="/signup"
-            className="rounded-md bg-brand-600 px-6 py-3 font-medium text-white hover:bg-brand-700"
-          >
-            Start your 14-day pilot
-          </Link>
-          <a
-            href="#how"
-            className="rounded-md border border-slate-300 px-6 py-3 font-medium text-slate-700 hover:bg-slate-50"
-          >
-            How it works
-          </a>
+      {/* Hero — two columns: copy + live recovery card */}
+      <section className="mx-auto grid max-w-[1080px] items-center gap-14 px-8 pb-16 pt-20 md:grid-cols-[1.05fr_0.95fr]">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-600">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+            Missed-call recovery for dental clinics
+          </div>
+          <h1 className="mt-5 text-[44px] font-bold leading-[1.05] tracking-tight text-brand-900 sm:text-[46px]">
+            Stop losing patients you&apos;ve already paid to reach.
+          </h1>
+          <p className="mt-5 max-w-[30em] text-lg leading-relaxed text-slate-600">
+            When a call to your clinic goes unanswered, {BRAND.name} texts the caller back, learns
+            what they need, and pages your front desk — so they book with you instead of the dentist
+            down the road.
+          </p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link
+              href="/signup"
+              className="rounded-[9px] bg-brand-600 px-[22px] py-[13px] font-semibold text-white hover:bg-brand-700"
+            >
+              Start your 14-day pilot
+            </Link>
+            <a
+              href="#how"
+              className="rounded-[9px] border border-slate-300 bg-white px-[22px] py-[13px] font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              How it works
+            </a>
+          </div>
+          <div className="mt-[18px] flex items-center gap-3.5 text-[13px] text-slate-400">
+            <span>Free setup</span>
+            <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
+            <span>No contract</span>
+            <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
+            <span>Cancel anytime</span>
+          </div>
         </div>
-        <p className="mt-4 text-sm text-slate-400">Free setup · No contract · Cancel anytime</p>
+
+        {/* Live recovery card */}
+        <div className="relative">
+          <div className="absolute inset-0 translate-x-4 translate-y-[18px] rounded-[18px] bg-brand-50" />
+          <div className="relative overflow-hidden rounded-[18px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(31,45,61,0.12)]">
+            {/* card header */}
+            <div className="flex items-center gap-2.5 border-b border-slate-100 bg-slate-50 px-4 py-3">
+              <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-800">
+                MA
+              </span>
+              <div className="leading-tight">
+                <div className="text-sm font-semibold text-brand-900">Maria Alvarez</div>
+                <div className="text-[11px] text-slate-400">(617) 555-0142</div>
+              </div>
+              <span className="ml-auto inline-flex items-center rounded-full bg-red-100 px-2.5 py-1 text-[11px] font-semibold text-red-800">
+                Emergency
+              </span>
+            </div>
+            {/* conversation */}
+            <div className="flex flex-col gap-2.5 bg-[#fbfcfe] p-4">
+              <div className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900 shadow-sm">
+                Hi, I cracked a molar at lunch and it really hurts. Can I be seen today?
+              </div>
+              <div className="max-w-[78%] self-end rounded-[14px_14px_4px_14px] bg-brand-600 px-3 py-2 text-[13px] text-white">
+                So sorry, Maria! Dr. Okafor has a 2:30 emergency slot. Want me to hold it?
+                <div className="mt-1 text-[10px] text-white/70">Autopilot · just now</div>
+              </div>
+              <div className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900 shadow-sm">
+                Yes please!
+              </div>
+            </div>
+            {/* lead captured */}
+            <div className="flex items-center gap-2.5 border-t border-slate-100 bg-white px-4 py-3">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-[13px] text-emerald-800">
+                ✓
+              </span>
+              <div className="text-xs text-slate-600">
+                <strong className="text-brand-900">Lead captured</strong> — emergency · ready to
+                book · front desk paged
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* How it works */}
-      <section id="how" className="border-t border-slate-100 bg-slate-50 py-20">
-        <div className="mx-auto max-w-5xl px-6">
-          <h2 className="text-center text-2xl font-semibold text-slate-900">
+      <section id="how" className="border-t border-slate-100 bg-slate-50 py-[72px]">
+        <div className="mx-auto max-w-[1080px] px-8">
+          <p className="text-center text-[13px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+            How it works
+          </p>
+          <h2 className="mt-2.5 text-center text-3xl font-bold tracking-tight text-brand-900">
             Every missed call, recovered
           </h2>
-          <div className="mt-12 grid gap-6 sm:grid-cols-3">
+          <div className="mt-11 grid gap-5 sm:grid-cols-3">
             {[
               {
-                step: "1",
+                n: "1",
                 title: "Call goes unanswered",
                 body: "Your line forwards missed and after-hours calls to your Recall number. Nothing changes for your staff.",
               },
               {
-                step: "2",
+                n: "2",
                 title: "The patient gets a text",
-                body: "Within seconds the caller receives a message from your clinic, and the conversation continues over SMS.",
+                body: "Within seconds the caller hears from your clinic, and the conversation continues over SMS.",
               },
               {
-                step: "3",
+                n: "3",
                 title: "You get the lead",
-                body: "Recall captures their name, reason, urgency and booking intent, then notifies your front desk to close.",
+                body: "Recall captures their name, reason, urgency and booking intent, then pages your front desk to close.",
               },
-            ].map((c) => (
-              <div key={c.step} className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700">
-                  {c.step}
+            ].map((s) => (
+              <div
+                key={s.n}
+                className="rounded-[14px] border border-slate-200 bg-white p-[26px] shadow-card"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-[11px] bg-brand-50 text-base font-bold text-brand-600">
+                  {s.n}
                 </div>
-                <h3 className="mt-4 font-semibold text-slate-900">{c.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{c.body}</p>
+                <h3 className="mt-[18px] text-[17px] font-semibold text-brand-900">{s.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-500">{s.body}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* See it work — sample recovered conversation */}
-      <section className="border-t border-slate-100 py-20">
-        <div className="mx-auto max-w-5xl px-6">
-          <h2 className="text-center text-2xl font-semibold text-slate-900">See it work</h2>
-          <p className="mx-auto mt-3 max-w-xl text-center leading-relaxed text-slate-600">
-            A real missed call, recovered in seconds — texted back, triaged, and handed to your
-            front desk with the details already captured.
-          </p>
-
-          <div className="mx-auto mt-10 max-w-sm rounded-3xl border border-slate-200 bg-white p-4 shadow-card">
-            <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-3">
-              <span className="text-sm font-semibold text-slate-900">Bright Smile Dental</span>
-              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">
-                Recall
-              </span>
-            </div>
-            <div className="space-y-2.5">
-              <Bubble side="out">
-                Hi, this is Bright Smile Dental — sorry we missed your call! Reply here and we&apos;ll
-                get you sorted. How can we help?
-              </Bubble>
-              <Bubble side="in">
-                Hi! Saw you missed my call. My wisdom tooth area is really swollen since last night.
-              </Bubble>
-              <Bubble side="out">
-                That can be a sign of infection and shouldn&apos;t wait. Any trouble breathing or
-                swallowing? Either way I&apos;ll get you the first available visit.
-              </Bubble>
-              <Bubble side="in">No trouble breathing, just really sore.</Bubble>
-              <Bubble side="out">
-                Thanks — flagging this as urgent. Our front desk will text you a same-day time
-                shortly. Can I get your name?
-              </Bubble>
-              <Bubble side="in">James Carter</Bubble>
-            </div>
-          </div>
-
-          <div className="mx-auto mt-6 flex max-w-sm flex-wrap justify-center gap-2 text-xs">
-            <Chip>James Carter</Chip>
-            <Chip tone="red">Urgency: High</Chip>
-            <Chip tone="teal">New patient</Chip>
-            <Chip tone="green">Front desk paged</Chip>
-          </div>
-        </div>
-      </section>
-
       {/* Offer */}
-      <section className="py-20">
-        <div className="mx-auto max-w-2xl px-6 text-center">
-          <h2 className="text-2xl font-semibold text-slate-900">See it on your own line first</h2>
-          <p className="mt-4 leading-relaxed text-slate-600">
-            We start with a 14-day pilot on your real phone number. If it recovers patients, you
-            continue at <span className="font-semibold text-slate-900">$299/month</span>. If it
-            doesn&apos;t, we remove it and you owe nothing.
-          </p>
-          <Link
-            href="/signup"
-            className="mt-8 inline-block rounded-md bg-brand-600 px-6 py-3 font-medium text-white hover:bg-brand-700"
-          >
-            Start a pilot
-          </Link>
+      <section className="py-[72px]">
+        <div className="mx-auto max-w-[680px] px-8">
+          <div className="rounded-[18px] border border-slate-200 bg-white p-10 text-center shadow-card">
+            <h2 className="text-[26px] font-bold tracking-tight text-brand-900">
+              See it on your own line first
+            </h2>
+            <p className="mx-auto mt-3.5 max-w-[34em] text-base leading-relaxed text-slate-600">
+              We start with a 14-day pilot on your real phone number. If it recovers patients, you
+              continue at <span className="font-bold text-brand-900">$299/month</span>. If it
+              doesn&apos;t, we remove it and you owe nothing.
+            </p>
+            <Link
+              href="/signup"
+              className="mt-[26px] inline-block rounded-[9px] bg-brand-600 px-[26px] py-[13px] font-semibold text-white hover:bg-brand-700"
+            >
+              Start a pilot
+            </Link>
+          </div>
         </div>
       </section>
 
-      <footer className="border-t border-slate-100 py-8 text-center text-sm text-slate-400">
-        © {new Date().getFullYear()} {BRAND.name}. {BRAND.tagline}
+      <footer className="border-t border-slate-100 py-7 text-center text-[13px] text-slate-400">
+        © {new Date().getFullYear()} {BRAND.name} · {BRAND.tagline}
       </footer>
     </main>
   );
-}
-
-function Bubble({ side, children }: { side: "in" | "out"; children: React.ReactNode }) {
-  const inbound = side === "in";
-  return (
-    <div className={`flex ${inbound ? "justify-start" : "justify-end"}`}>
-      <div
-        className={`max-w-[82%] rounded-2xl px-3.5 py-2 text-sm leading-snug ${
-          inbound
-            ? "rounded-bl-sm bg-slate-100 text-slate-800"
-            : "rounded-br-sm bg-brand-600 text-white"
-        }`}
-      >
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function Chip({
-  children,
-  tone = "slate",
-}: {
-  children: React.ReactNode;
-  tone?: "slate" | "red" | "teal" | "green";
-}) {
-  const map = {
-    slate: "bg-slate-100 text-slate-700",
-    red: "bg-red-100 text-red-800",
-    teal: "bg-teal-100 text-teal-800",
-    green: "bg-emerald-100 text-emerald-800",
-  } as const;
-  return <span className={`rounded-full px-2.5 py-1 font-medium ${map[tone]}`}>{children}</span>;
 }
