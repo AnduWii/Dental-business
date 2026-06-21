@@ -20,7 +20,7 @@ When a call to your clinic goes unanswered, Catchline texts the caller back from
 - Tell us promptly if you suspect unauthorised access.
 
 ## 4. Pilots, fees, and cancellation
-We typically begin with a 14-day pilot on your real phone number. If you continue after the pilot, the service is $299 per month unless we agree otherwise in writing. Fees are exclusive of applicable taxes. Billing is handled by invoice. You can cancel at any time; on cancellation we stop the service and handle your data as described in the Data Processing Agreement. Fees already paid are non-refundable except where required by law.
+We typically begin with a 14-day pilot on your real phone number. If you continue after the pilot, the service is $150 per month (CAD) unless we agree otherwise in writing. Fees are exclusive of applicable taxes. Billing is handled by invoice. You can cancel at any time; on cancellation we stop the service and handle your data as described in the Data Processing Agreement. Fees already paid are non-refundable except where required by law.
 
 ## 5. Acceptable use
 You agree not to use Catchline to:

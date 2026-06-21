@@ -30,6 +30,7 @@ new session: read this, then `README.md` and `docs/`.
   clinic **DPA** (`/dpa`), linked from the footer + sign-up form. Lawyer-ready copies in
   `docs/legal/`. Legal entity: **Catchline Services Inc.** (not yet registered — register before
   signing a clinic). Counsel review of all three still pending.
+- **Pricing:** introductory **$150 CAD/month** per clinic (after a 14-day pilot); revisit later.
 - **NOT yet live for real calls** — Twilio isn't connected (see below).
 
 ---
@@ -53,12 +54,14 @@ run the launch checklist"*).
    clinics.
 6. **Data residency (Step 6): ✅ DONE** — moved to `ca-central-1` (Montreal). Just delete the old
    `us-east-1` Supabase project once the Canadian one is fully verified end-to-end.
-7. **Retention (Step 7):** enable `pg_cron` and schedule `select purge_old_conversations(365);`
-   monthly.
+7. **Retention (Step 7): ✅ DONE** — `pg_cron` job `purge-old-conversations` scheduled (monthly
+   `select purge_old_conversations(365);`). Verify any time with `select * from cron.job;`.
 8. **Privacy policy + clinic DPA (Step 8): ✅ DONE** — published in-app at `/privacy` and `/dpa`
    (linked from the site footer + sign-up form). Source: `src/app/{privacy,dpa}/page.tsx`. ⚠️ Before
    signing a clinic, have counsel review the wording and fill the DPA's bracketed fields (legal
    entity name, signatures).
+9. **Terms of Service: ✅ DONE** — published at `/terms`. Lawyer-ready copies of the Privacy
+   Policy, DPA, and Terms are in `docs/legal/` (counsel review still pending).
 
 ## 🔧 Deferred / optional (not blocking launch)
 - MFA + session inactivity timeouts (Supabase Auth).

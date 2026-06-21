@@ -73,4 +73,4 @@ To send application-to-person SMS to US numbers you must register a Brand + Camp
 - Number: ~$1.15/mo
 - Voice (short forwarded leg): ~$0.0085/min
 - SMS: ~$0.0079 per segment each way
-- A busy pilot clinic is still only a few dollars a month — comfortably inside the $299 price.
+- A busy pilot clinic is still only a few dollars a month — comfortably inside the $150 price.

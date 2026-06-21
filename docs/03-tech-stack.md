@@ -16,7 +16,7 @@ product: **why**, **monthly cost**, **scalability**, **implementation difficulty
 | Email alerts (optional) | Resend | $0 (3k/mo) | Plenty | Low |
 | **Total to run a pilot** | | **≈ $5–25 / clinic / month** | | |
 
-At $299/clinic/month, gross margin is ~90%+. The economics work from clinic #1.
+At $150/clinic/month, gross margin is ~90%+. The economics work from clinic #1.
 
 ---
 

@@ -165,7 +165,7 @@ export default function LandingPage() {
             </h2>
             <p className="mx-auto mt-3.5 max-w-[34em] text-base leading-relaxed text-slate-600">
               We start with a 14-day pilot on your real phone number. If it recovers patients, you
-              continue at <span className="font-bold text-brand-900">$299/month</span>. If it
+              continue at <span className="font-bold text-brand-900">$150 CAD/month</span>. If it
               doesn&apos;t, we remove it and you owe nothing.
             </p>
             <Link

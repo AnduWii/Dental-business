@@ -9,7 +9,7 @@ building forever.
 
 ## ✅ Version 1 — build now (the sellable core)
 
-These are the only things required to put it on a clinic's real number and charge $299/mo.
+These are the only things required to put it on a clinic's real number and charge $150/mo.
 
 1. **Missed-call detection** — clinic forwards unanswered/after-hours calls to a Twilio number; the
    voice webhook records the missed call.

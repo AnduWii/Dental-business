@@ -39,7 +39,7 @@ configuring forwarding; caller-ID nuances vary by carrier (documented in `docs/0
 ## ADR-0005 — Manual billing & hand-onboarding for founding clinics
 **Context:** Need revenue fast without building billing.
 **Decision:** No Stripe in V1. First clinics are hand-onboarded and invoiced manually after the
-14-day pilot converts at $299/mo.
+14-day pilot converts at $150/mo.
 **Consequences:** Zero billing code to maintain now; founder does manual invoicing (fine at <10
 clinics). Stripe + self-serve is a clear V2 item.
 

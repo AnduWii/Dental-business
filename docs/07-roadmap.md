@@ -59,7 +59,7 @@ how to verify/extend it) in four weeks.
 - [ ] Error logging (Vercel logs + Sentry free tier optional); basic uptime check.
 - [ ] Onboard founding clinic #1: forwarding configured, text-back copy set, front-desk number set.
 - [ ] Run the **lunch-hour call test** on prospects to generate proof; book pilot meetings.
-- [ ] Pilot terms: 14 days, free setup, no contract → continue at **$299/mo** if it recovers
+- [ ] Pilot terms: 14 days, free setup, no contract → continue at **$150/mo** if it recovers
       patients.
 
 > Milestone: a clinic's real missed calls are being recovered, and you've got the pilot→paid
