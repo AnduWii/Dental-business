@@ -181,8 +181,19 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-slate-100 py-7 text-center text-[13px] text-slate-400">
-        © {new Date().getFullYear()} {BRAND.name} · {BRAND.tagline}
+      <footer className="border-t border-slate-100 py-7">
+        <div className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-center gap-x-4 gap-y-2 px-8 text-[13px] text-slate-400">
+          <span>
+            © {new Date().getFullYear()} {BRAND.name} · {BRAND.tagline}
+          </span>
+          <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
+          <Link href="/privacy" className="hover:text-slate-600">
+            Privacy
+          </Link>
+          <Link href="/dpa" className="hover:text-slate-600">
+            Data Processing Agreement
+          </Link>
+        </div>
       </footer>
     </main>
   );

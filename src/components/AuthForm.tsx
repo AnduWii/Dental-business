@@ -218,8 +218,16 @@ export function AuthForm({
         )}
       </div>
 
-      <p className="mt-5 text-center text-xs text-slate-400">
-        Catchline is for dental clinics recovering missed-call patients.
+      <p className="mt-5 text-center text-xs leading-relaxed text-slate-400">
+        {mode === "signup" ? "By creating an account you agree to our " : "See our "}
+        <Link href="/privacy" className="font-medium text-slate-500 underline hover:text-slate-700">
+          Privacy Policy
+        </Link>
+        {" and "}
+        <Link href="/dpa" className="font-medium text-slate-500 underline hover:text-slate-700">
+          Data Processing Agreement
+        </Link>
+        .
       </p>
     </div>
   );

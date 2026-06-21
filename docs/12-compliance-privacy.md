@@ -50,8 +50,11 @@ We do **not** store clinical records, treatment history, insurance, or payment d
   text), optionally Resend (email). List these in your clinic DPA.
 
 ## Recommended before first paying clinic
-1. A one-page **privacy policy** + **clinic data-processing agreement** (what you collect, why,
-   retention, sub-processors, erasure).
-2. Decide **data residency** (Canadian Supabase region if required).
+1. ✅ **Privacy policy** + **clinic data-processing agreement** — published in-app at
+   [`/privacy`](../src/app/privacy/page.tsx) and [`/dpa`](../src/app/dpa/page.tsx) (linked from the
+   site footer and the sign-up form). They cover what we collect, why, retention, sub-processors,
+   residency, breach notice, and erasure. **Have counsel review the wording and complete the
+   bracketed fields in the DPA (legal entity, signatures) before signing with a clinic.**
+2. Decide **data residency** (Canadian Supabase region if required). ✅ Done — `ca-central-1`.
 3. Confirm the **AI provider's data-use terms** (ensure inputs aren't used for training; both
    OpenAI API and Anthropic API default to no-training for API data, but confirm and document).

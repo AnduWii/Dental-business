@@ -24,6 +24,8 @@ new session: read this, then `README.md` and `docs/`.
   abuse/cost cap, RLS multi-tenancy, 27 unit tests + GitHub CI + Dependabot + secret scanning.
   ⚠️ The `main` **branch ruleset is currently DISABLED** (it blocked the deploy automation) —
   re-enable it with the deploy app on the bypass list once you add a collaborator.
+- **Legal pages live:** public **Privacy Policy** (`/privacy`) + clinic **DPA** (`/dpa`), linked from
+  the footer + sign-up form (counsel review + DPA bracketed fields still pending — see checklist 8).
 - **NOT yet live for real calls** — Twilio isn't connected (see below).
 
 ---
@@ -49,7 +51,10 @@ run the launch checklist"*).
    `us-east-1` Supabase project once the Canadian one is fully verified end-to-end.
 7. **Retention (Step 7):** enable `pg_cron` and schedule `select purge_old_conversations(365);`
    monthly.
-8. **Privacy policy + clinic DPA (Step 8):** one-pager basis in `docs/12-compliance-privacy.md`.
+8. **Privacy policy + clinic DPA (Step 8): ✅ DONE** — published in-app at `/privacy` and `/dpa`
+   (linked from the site footer + sign-up form). Source: `src/app/{privacy,dpa}/page.tsx`. ⚠️ Before
+   signing a clinic, have counsel review the wording and fill the DPA's bracketed fields (legal
+   entity name, signatures).
 
 ## 🔧 Deferred / optional (not blocking launch)
 - MFA + session inactivity timeouts (Supabase Auth).
