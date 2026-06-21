@@ -31,8 +31,7 @@ export default async function MissedCallsPage() {
       <header className="border-b border-slate-200 bg-white px-8 py-5">
         <h1 className="text-xl font-semibold">Missed calls</h1>
         <p className="mt-2 text-sm text-slate-600">
-          <strong>{today}</strong> today · <strong>{list.length}</strong> recorded. This is the
-          proof: every call that rang out and got a text-back.
+          <strong>{today}</strong> today · <strong>{list.length}</strong> recorded.
         </p>
       </header>
 
