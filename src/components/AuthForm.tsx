@@ -96,11 +96,9 @@ export function AuthForm({
   return (
     <div className="w-full max-w-[400px]">
       <div className="flex flex-col items-center gap-3">
-        <Link
-          href="/"
-          className="flex h-[46px] w-[46px] items-center justify-center rounded-[13px] bg-brand-600 text-[22px] font-bold text-white"
-        >
-          C
+        <Link href="/" aria-label="Catchline home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Catchline" className="h-16 w-auto" />
         </Link>
         <p className="text-sm text-slate-500">
           {mode === "signin" ? "Sign in to your clinic dashboard" : "Create your clinic account"}

@@ -19,9 +19,8 @@ export type LegalSection = { heading: string; blocks: LegalBlock[] };
 
 function LogoMark() {
   return (
-    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-600 text-[15px] font-bold text-white">
-      C
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/icon.png" alt="" className="h-8 w-auto" />
   );
 }
 

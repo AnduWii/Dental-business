@@ -1,13 +1,10 @@
 import Link from "next/link";
 import { BRAND } from "@/lib/constants";
 
-function LogoMark({ size = "h-7 w-7 text-[15px]" }: { size?: string }) {
+function LogoMark({ className = "h-8 w-auto" }: { className?: string }) {
   return (
-    <span
-      className={`flex items-center justify-center rounded-lg bg-brand-600 font-bold text-white ${size}`}
-    >
-      C
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/icon.png" alt="" className={className} />
   );
 }
 
