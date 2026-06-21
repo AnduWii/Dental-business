@@ -11,7 +11,7 @@
 //
 // It is provider-agnostic (OpenAI by default, Anthropic optional) and
 // degrades to a deterministic scripted flow when no API key is configured
-// or the LLM call fails — so the product keeps working no matter what.
+// or the LLM call fails, so the product keeps working no matter what.
 // =====================================================================
 import { env } from "@/lib/env";
 import { fetchWithTimeout, withRetry } from "@/lib/retry";
@@ -85,20 +85,21 @@ function systemPrompt(clinicName: string): string {
     `  tell them to call 911 or go to the nearest emergency room now, and say you're alerting`,
     `  the clinic immediately. Set urgency_level to "emergency".`,
     `- Once you have name + reason + urgency + booking intent, set intake_complete to true and`,
-    `  send a brief closing message ("Thanks {name} — someone from our team will text or call`,
+    `  send a brief closing message ("Thanks {name}, someone from our team will text or call`,
     `  you back shortly to get you booked in.").`,
+    `- Write plainly. Do not use em dashes; use commas, periods, or parentheses instead.`,
     `- Don't repeat questions you already have answers to.`,
   ].join("\n");
 }
 
 // JSON shape both providers must return.
 const SCHEMA_FIELDS = {
-  reply: "string — the text message to send back to the patient",
-  caller_name: "string or null — the patient's name once known",
-  reason: "string or null — short summary of why they're calling",
+  reply: "string, the text message to send back to the patient",
+  caller_name: "string or null, the patient's name once known",
+  reason: "string or null, short summary of why they're calling",
   urgency_level: `one of ${URGENCY_VALUES.join(", ")}`,
   booking_intent: `one of ${INTENT_VALUES.join(", ")}`,
-  intake_complete: "boolean — true once name, reason, urgency and booking intent are known",
+  intake_complete: "boolean, true once name, reason, urgency and booking intent are known",
 };
 
 function coerce(raw: any, ctx: IntakeContext): IntakeResult {
@@ -116,7 +117,7 @@ function coerce(raw: any, ctx: IntakeContext): IntakeResult {
 
   return {
     reply: String(raw?.reply || "").trim() ||
-      "Thanks for your message — someone from our team will get back to you shortly.",
+      "Thanks for your message, someone from our team will get back to you shortly.",
     fields: {
       caller_name: raw?.caller_name ?? ctx.current.caller_name,
       reason: raw?.reason ?? ctx.current.reason,
@@ -129,7 +130,7 @@ function coerce(raw: any, ctx: IntakeContext): IntakeResult {
 }
 
 // ---------------------------------------------------------------------
-// OpenAI (default) — chat completions with strict structured output.
+// OpenAI (default), chat completions with strict structured output.
 // ---------------------------------------------------------------------
 async function runOpenAI(ctx: IntakeContext, key: string): Promise<IntakeResult> {
   const messages = [
@@ -183,7 +184,7 @@ async function runOpenAI(ctx: IntakeContext, key: string): Promise<IntakeResult>
 }
 
 // ---------------------------------------------------------------------
-// Anthropic (optional) — tool use forces a structured result.
+// Anthropic (optional), tool use forces a structured result.
 // ---------------------------------------------------------------------
 async function runAnthropic(ctx: IntakeContext, key: string): Promise<IntakeResult> {
   const res = await fetchWithTimeout("https://api.anthropic.com/v1/messages", {
@@ -230,7 +231,7 @@ async function runAnthropic(ctx: IntakeContext, key: string): Promise<IntakeResu
 }
 
 // ---------------------------------------------------------------------
-// Deterministic fallback — no LLM. Asks for the next missing field.
+// Deterministic fallback, no LLM. Asks for the next missing field.
 // Guarantees the product works even with zero AI configured / API down.
 // ---------------------------------------------------------------------
 function runFallback(ctx: IntakeContext): IntakeResult {
@@ -276,7 +277,7 @@ function runFallback(ctx: IntakeContext): IntakeResult {
       fields.booking_intent = "new_patient";
     else if (/\b(no|not|just|question)\b/i.test(lastText)) fields.booking_intent = "question";
   } else {
-    reply = `Perfect — thanks, ${caller_name}. Someone from our team will text or call you back shortly to help.`;
+    reply = `Perfect, thanks, ${caller_name}. Someone from our team will text or call you back shortly to help.`;
     intake_complete = true;
   }
 

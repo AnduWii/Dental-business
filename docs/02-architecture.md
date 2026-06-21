@@ -71,7 +71,7 @@ for telephony, an **LLM** for intake. No separate backend service, no queue, no 
 ## Design decisions (and why)
 
 - **No separate backend.** Next.js API routes are the Node backend. One repo, one deploy, one
-  mental model — ideal for a solo student builder.
+  mental model, ideal for a solo student builder.
 - **Writes go through the server, reads go through RLS.** Clients never hold the service key;
   webhooks and server actions do, and always check clinic membership. This keeps client RLS to
   simple SELECT policies and removes a whole class of bugs.
@@ -79,6 +79,6 @@ for telephony, an **LLM** for intake. No separate backend service, no queue, no 
   providers with an env var; if the key is missing or the call fails, a deterministic scripted flow
   takes over so the product never goes dark.
 - **Realtime-by-refresh.** New rows trigger `router.refresh()` rather than hand-managed client
-  state — fewer sync bugs, which matters more than elegance here.
+  state, fewer sync bugs, which matters more than elegance here.
 - **Idempotency everywhere telephony touches us.** Twilio retries webhooks; unique constraints on
   `CallSid` and `MessageSid` make retries harmless.

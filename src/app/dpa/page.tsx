@@ -3,7 +3,7 @@ import { BRAND } from "@/lib/constants";
 import { LegalPage, type LegalSection } from "@/components/LegalPage";
 
 export const metadata: Metadata = {
-  title: `Data Processing Agreement — ${BRAND.name}`,
+  title: `Data Processing Agreement · ${BRAND.name}`,
   description:
     "The data-processing terms between Catchline and the dental clinics it serves, covering roles, security, sub-processors, residency, breach notice, and deletion.",
 };
@@ -16,7 +16,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "note",
-        text: "Template — complete the bracketed fields and have it reviewed by counsel before signing. This Data Processing Agreement (DPA) forms part of the service agreement between the clinic (the customer) and Catchline.",
+        text: "Template: complete the bracketed fields and have it reviewed by counsel before signing. This Data Processing Agreement (DPA) forms part of the service agreement between the clinic (the customer) and Catchline.",
       },
       {
         type: "p",
@@ -31,7 +31,7 @@ const sections: LegalSection[] = [
         type: "ul",
         items: [
           "Applicable Privacy Laws: Canada's PIPEDA, Ontario's PHIPA, and CASL, plus any other privacy or anti-spam laws that apply to the Clinic.",
-          "Personal Information / Personal Health Information: information about an identifiable individual (including health information) that Catchline processes for the Clinic under the Service.",
+          "Personal Information and Personal Health Information: information about an identifiable individual (including health information) that Catchline processes for the Clinic under the Service.",
           "Processing: any operation performed on the information, such as collecting, storing, using, transmitting, or deleting it.",
           "Sub-processor: a third party Catchline engages to help provide the Service that may process the information.",
         ],
@@ -47,7 +47,11 @@ const sections: LegalSection[] = [
       },
       {
         type: "p",
-        text: "Catchline will not use the information for its own purposes, will not sell it, and will not use the content of patient messages to train AI models.",
+        text: "Catchline will not use the information for its own purposes, will not sell it, and will not use the content of patient messages to train AI models. Catchline uses AI only for administrative intake and communication; it does not use AI to give medical or dental advice, to diagnose, to recommend or decide on treatment, or to make clinical judgments.",
+      },
+      {
+        type: "p",
+        text: "The Clinic is responsible for having the legal right, and any consent required, to contact the individuals it responds to through the Service, including compliance with CASL.",
       },
     ],
   },
@@ -75,7 +79,7 @@ const sections: LegalSection[] = [
           "Keep the information confidential and ensure personnel are bound by confidentiality.",
           "Maintain the security measures described in Annex C and keep them appropriate to the sensitivity of the data.",
           "Assist the Clinic in responding to individuals' access, correction, and deletion requests.",
-          "Notify the Clinic without undue delay after becoming aware of a security breach affecting the information.",
+          "Notify the Clinic of a security breach affecting the information within the timeframe in Section 9.",
           "Help the Clinic meet its obligations under Applicable Privacy Laws, taking into account the nature of the processing.",
         ],
       },
@@ -95,7 +99,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Catchline's primary database is hosted in Canada (Montreal region). Certain sub-processors — notably the telephony and AI providers — may process limited data such as phone numbers and message text in the United States to deliver messages and generate replies. The Clinic acknowledges and instructs these transfers, which are made subject to appropriate safeguards.",
+        text: "Catchline's primary database is hosted in Canada (Montreal region). Certain sub-processors, notably the telephony and AI providers, may process limited data such as phone numbers and message text in the United States to deliver messages and generate replies. The Clinic acknowledges and instructs these transfers, which are made subject to appropriate safeguards.",
       },
     ],
   },
@@ -122,7 +126,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "If Catchline becomes aware of a breach of security safeguards involving the information, it will notify the Clinic without undue delay and provide the information the Clinic reasonably needs to assess the breach and meet its own notification obligations under PHIPA and PIPEDA.",
+        text: "If Catchline becomes aware of a breach of security safeguards involving the information, it will notify the Clinic without undue delay and in any event no later than 72 hours after discovery, and will provide the information the Clinic reasonably needs to assess the breach and meet its own notification obligations under PHIPA and PIPEDA.",
       },
     ],
   },
@@ -140,7 +144,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "This DPA applies for as long as Catchline processes the information for the Clinic. Obligations that by their nature should survive termination — including confidentiality and deletion — continue after it ends.",
+        text: "This DPA applies for as long as Catchline processes the information for the Clinic. Obligations that by their nature should survive termination, including confidentiality and deletion, continue after it ends.",
       },
     ],
   },
@@ -154,7 +158,7 @@ const sections: LegalSection[] = [
     ],
   },
   {
-    heading: "Annex A — Details of processing",
+    heading: "Annex A. Details of processing",
     blocks: [
       {
         type: "table",
@@ -167,40 +171,45 @@ const sections: LegalSection[] = [
             "Types of data",
             "Phone number, name, reason and message content (may include health information), urgency, booking intent, call records, staff login.",
           ],
-          ["Categories of individuals", "Callers/patients and clinic staff users."],
+          ["Categories of individuals", "Callers, patients, and clinic staff users."],
         ],
       },
     ],
   },
   {
-    heading: "Annex B — Approved sub-processors",
+    heading: "Annex B. Approved sub-processors",
     blocks: [
       {
         type: "table",
         columns: ["Sub-processor", "Purpose and location"],
         rows: [
-          ["Supabase", "Database and authentication — hosted in Canada (Montreal)."],
+          ["Supabase", "Database and authentication, hosted in Canada (Montreal)."],
           ["Vercel", "Application hosting."],
-          ["Twilio", "Calls and SMS — may process data in the United States."],
-          ["OpenAI / Anthropic", "Generating intake replies from message text — United States."],
+          ["Twilio", "Calls and SMS; may process data in the United States."],
+          ["OpenAI and Anthropic", "Generating intake replies from message text, in the United States."],
           ["Resend (if email enabled)", "Notification emails."],
         ],
       },
     ],
   },
   {
-    heading: "Annex C — Security measures",
+    heading: "Annex C. Security measures",
     blocks: [
       {
         type: "ul",
         items: [
           "Encryption in transit (HTTPS/TLS) across the website, dashboard, and webhooks.",
           "Multi-tenant isolation enforced at the database level so one clinic cannot access another's data.",
-          "Least-privilege handling of secrets; the privileged database key is server-side only.",
+          "Role-based access control and least-privilege handling of data and secrets; the privileged database key is server-side only.",
           "Append-only audit log of sensitive actions (replies, takeovers, settings changes) that cannot be altered or deleted.",
+          "A documented breach-response process, incident logging, regular database backups with a defined retention and purge schedule, and review of sub-processors before they are engaged.",
           "Validation and signature verification on incoming calls and messages; retries with idempotency to prevent duplicates.",
           "Dependency scanning and security headers, with patches applied as advisories arise.",
         ],
+      },
+      {
+        type: "p",
+        text: "Catchline maintains an internal information-security policy covering access control, employee access, breach response, backups, retention, incident logging, and vendor review, available to the Clinic on reasonable request.",
       },
     ],
   },
@@ -209,11 +218,11 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Clinic: [Clinic legal name] — Signed by [name], [title] — Date [ ].",
+        text: "Clinic: [Clinic legal name]. Signed by [name], [title]. Date: [ ].",
       },
       {
         type: "p",
-        text: `Catchline: ${BRAND.legalEntity} — Signed by Andrew Li, Founder — Date [ ].`,
+        text: `Catchline: ${BRAND.legalEntity}. Signed by Andrew Li, Founder. Date: [ ].`,
       },
       { type: "contact", email: BRAND.supportEmail },
     ],

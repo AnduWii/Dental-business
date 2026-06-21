@@ -20,7 +20,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# env files — never commit secrets
+# env files, never commit secrets
 .env
 .env*.local
 .env.development

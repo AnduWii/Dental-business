@@ -34,7 +34,7 @@ auth.users ─1:1─ profiles ──*:1── clinics ─1:*─ patients
 
 ## Tables
 
-### `clinics` — the tenant
+### `clinics`, the tenant
 | Column | Type | Notes |
 |---|---|---|
 | `id` | uuid PK | |
@@ -51,7 +51,7 @@ auth.users ─1:1─ profiles ──*:1── clinics ─1:*─ patients
 | `pilot_ends_at` | timestamptz | |
 | `created_at` / `updated_at` | timestamptz | `updated_at` auto-maintained by trigger |
 
-### `profiles` — links a Supabase auth user to a clinic
+### `profiles`, links a Supabase auth user to a clinic
 | Column | Type | Notes |
 |---|---|---|
 | `user_id` | uuid PK → `auth.users` | |
@@ -59,18 +59,18 @@ auth.users ─1:1─ profiles ──*:1── clinics ─1:*─ patients
 | `full_name` | text | |
 | `role` | enum | `owner` / `staff` |
 
-### `patients` — the callers (one row per phone per clinic)
+### `patients`, the callers (one row per phone per clinic)
 | Column | Type | Notes |
 |---|---|---|
 | `id` | uuid PK | |
 | `clinic_id` | uuid → clinics | |
 | `phone` | text | E.164 |
 | `name` | text | filled once captured |
-| `opted_out` | bool | set true on STOP — never text again |
+| `opted_out` | bool | set true on STOP, never text again |
 | `first_seen_at` / `last_contact_at` | timestamptz | |
 | | | **unique (`clinic_id`, `phone`)** |
 
-### `conversations` — one SMS thread + the captured lead
+### `conversations`, one SMS thread + the captured lead
 | Column | Type | Notes |
 |---|---|---|
 | `id` | uuid PK | |
@@ -87,7 +87,7 @@ auth.users ─1:1─ profiles ──*:1── clinics ─1:*─ patients
 
 Indexes: `(clinic_id, status)`, `(clinic_id, last_message_at desc)`.
 
-### `messages` — every SMS
+### `messages`, every SMS
 | Column | Type | Notes |
 |---|---|---|
 | `id` | uuid PK | |
@@ -100,7 +100,7 @@ Indexes: `(clinic_id, status)`, `(clinic_id, last_message_at desc)`.
 
 Index: `(conversation_id, created_at)`.
 
-### `call_events` — the missed-call audit log (the sales proof)
+### `call_events`, the missed-call audit log (the sales proof)
 | Column | Type | Notes |
 |---|---|---|
 | `id` | uuid PK | |
@@ -113,7 +113,7 @@ Index: `(conversation_id, created_at)`.
 
 Index: `(clinic_id, occurred_at desc)`.
 
-### `notifications` — clinic alert feed + send log
+### `notifications`, clinic alert feed + send log
 | Column | Type | Notes |
 |---|---|---|
 | `id` | uuid PK | |

@@ -1,5 +1,5 @@
 -- =====================================================================
--- Catchline — initial schema
+-- Catchline, initial schema
 -- Missed-call recovery for dental clinics.
 --
 -- Design principles:
@@ -41,7 +41,7 @@ create table clinics (
   notify_email                text,
   -- First automatic text-back sent the instant a call is missed.
   textback_message            text not null default
-    'Hi, this is {{clinic}}. Sorry we missed your call — we''re with a patient. Reply here and we''ll get you sorted. How can we help?',
+    'Hi, this is {{clinic}}. Sorry we missed your call, we''re with a patient. Reply here and we''ll get you sorted. How can we help?',
   ai_enabled                  boolean not null default true,
   ai_greeting                 text,
   subscription_status         subscription_status not null default 'pilot',
@@ -63,7 +63,7 @@ create table profiles (
 create index profiles_clinic_idx on profiles(clinic_id);
 
 -- ---------------------------------------------------------------------
--- patients  (the callers — one row per phone number per clinic)
+-- patients  (the callers, one row per phone number per clinic)
 -- ---------------------------------------------------------------------
 create table patients (
   id              uuid primary key default gen_random_uuid(),
@@ -116,7 +116,7 @@ create table messages (
 create index messages_conversation_idx on messages(conversation_id, created_at);
 
 -- ---------------------------------------------------------------------
--- call_events  (audit log of missed calls — also the "proof" the sale
+-- call_events  (audit log of missed calls, also the "proof" the sale
 -- is built on: "let's measure how many calls you actually missed")
 -- ---------------------------------------------------------------------
 create table call_events (
@@ -235,7 +235,7 @@ create policy "clinic notifications" on notifications
   for select using (clinic_id in (select user_clinic_ids()));
 
 -- =====================================================================
--- Realtime — let the dashboard receive live inserts/updates.
+-- Realtime, let the dashboard receive live inserts/updates.
 -- (On Supabase Cloud the publication already exists.)
 -- =====================================================================
 alter publication supabase_realtime add table messages;

@@ -11,7 +11,7 @@ regimes are:
 - **GDPR** applies only if serving EU residents; we support its core data-subject rights anyway.
 - **HIPAA** is **US** law; Catchline is generally **not** a HIPAA covered entity or business associate
   for Ontario clinics. If you ever sell to US dental practices, you'd need a BAA and a HIPAA review
-  before handling PHI — treat that as a gating decision, not a default.
+  before handling PHI, treat that as a gating decision, not a default.
 
 ## PII / PHI inventory (data minimization)
 We deliberately hold the **minimum**:
@@ -39,22 +39,22 @@ We do **not** store clinical records, treatment history, insurance, or payment d
 - **Erasure:** `select erase_patient('<clinic_id>', '+1...')` deletes a patient and cascades their
   conversations/messages/calls. `select erase_clinic('<clinic_id>')` removes an entire clinic.
 - **Retention:** `select purge_old_conversations(365)` deletes closed conversations older than a
-  year. Schedule it (Supabase `pg_cron`) — see go-live. Default policy: **purge closed
+  year. Schedule it (Supabase `pg_cron`), see go-live. Default policy: **purge closed
   conversations after 12 months**; tune per clinic agreement.
 
 ## Data residency & sub-processors
 - **Supabase** region is chosen at project creation (e.g., `us-east-1`). For Canadian data-residency
-  requirements, create the project in a **Canadian region** (`ca-central-1`) — decide before
+  requirements, create the project in a **Canadian region** (`ca-central-1`), decide before
   onboarding clinics with residency clauses.
 - Sub-processors: Supabase (DB/auth), Vercel (hosting), Twilio (SMS/voice), OpenAI/Anthropic (intake
   text), optionally Resend (email). List these in your clinic DPA.
 
 ## Recommended before first paying clinic
-1. ✅ **Privacy policy** + **clinic data-processing agreement** — published in-app at
+1. ✅ **Privacy policy** + **clinic data-processing agreement**, published in-app at
    [`/privacy`](../src/app/privacy/page.tsx) and [`/dpa`](../src/app/dpa/page.tsx) (linked from the
    site footer and the sign-up form). They cover what we collect, why, retention, sub-processors,
    residency, breach notice, and erasure. **Have counsel review the wording and complete the
    bracketed fields in the DPA (legal entity, signatures) before signing with a clinic.**
-2. Decide **data residency** (Canadian Supabase region if required). ✅ Done — `ca-central-1`.
+2. Decide **data residency** (Canadian Supabase region if required). ✅ Done, `ca-central-1`.
 3. Confirm the **AI provider's data-use terms** (ensure inputs aren't used for training; both
    OpenAI API and Anthropic API default to no-training for API data, but confirm and document).

@@ -1,4 +1,4 @@
-// Twilio helpers — SMS sending, webhook signature validation, and TwiML.
+// Twilio helpers, SMS sending, webhook signature validation, and TwiML.
 // Server only.
 import twilio from "twilio";
 import { env } from "@/lib/env";
@@ -60,7 +60,7 @@ export function missedCallTwiml(clinicName: string): string {
   );
 }
 
-// Empty TwiML — used when we reply to an SMS asynchronously via the REST API
+// Empty TwiML, used when we reply to an SMS asynchronously via the REST API
 // instead of inline, so Twilio doesn't also send a response.
 export const EMPTY_TWIML =
   '<?xml version="1.0" encoding="UTF-8"?><Response></Response>';

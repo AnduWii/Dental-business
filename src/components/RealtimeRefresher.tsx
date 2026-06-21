@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 // Subscribes to Postgres changes for a clinic and refreshes the server
-// components when something lands — so the inbox/feeds update live without
+// components when something lands, so the inbox/feeds update live without
 // us hand-rolling client state. Simple and reliable.
 export function RealtimeRefresher({
   table,

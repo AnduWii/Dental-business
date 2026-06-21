@@ -30,7 +30,7 @@ export default async function AdminPage() {
   if (!user) redirect("/login");
   if (!isAdminEmail(user.email)) redirect("/dashboard");
 
-  // Cross-tenant read via the service role (RLS bypassed — admins only).
+  // Cross-tenant read via the service role (RLS bypassed, admins only).
   const admin = createAdminClient();
   const { data: clinics } = await admin
     .from("clinics")

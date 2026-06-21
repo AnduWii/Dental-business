@@ -2,14 +2,14 @@
 
 Honest status of each hardening item for **Catchline V1**. Legend: ✅ Done · 🟡 Partial / appropriate
 for stage · ⏳ Deferred (with reason). This is a pre-revenue pilot for one-location dental clinics,
-so the bar is "secure, reliable, compliant for the data we hold" — not "Fortune-500 SRE." Items are
+so the bar is "secure, reliable, compliant for the data we hold", not "Fortune-500 SRE." Items are
 deferred only when implementing them now would be theater rather than risk reduction.
 
 | # | Item | Status | What we did / where |
 |---|---|---|---|
 | 1 | Input sanitization & injection prevention | ✅ | `src/lib/validation.ts` (length caps, control-char stripping, E.164/email/enum guards) wired into webhooks, API routes, and server actions. Supabase queries are parameterized (no SQLi); React escapes JSX (no stored XSS); TwiML output is escaped. |
 | 2 | AuthN, AuthZ, roles, permissions | ✅ | Supabase Auth (password + magic link). Postgres **RLS** on every table; `owner`/`staff` roles; founder **admin allow-list** (`src/lib/admin.ts`). API routes verify clinic membership (`requireClinicMember`). |
-| 3 | Session management & token expiry | 🟡 | Supabase JWT + refresh-token rotation; sessions refreshed in `middleware.ts`. JWT/refresh expiry is a Supabase setting — see go-live steps. |
+| 3 | Session management & token expiry | 🟡 | Supabase JWT + refresh-token rotation; sessions refreshed in `middleware.ts`. JWT/refresh expiry is a Supabase setting, see go-live steps. |
 | 4 | Secrets management | ✅ | All secrets in env vars; **service-role key is server-only**; `.env*` gitignored; nothing secret in `NEXT_PUBLIC_*`. Vercel "Sensitive" flag for the service-role key. |
 | 5 | HTTPS / TLS / cert rotation | ✅ | Vercel terminates TLS with auto-renewing managed certs. **HSTS** + security headers in `next.config.mjs`. |
 | 6 | Rate limiting & abuse prevention | 🟡 | Twilio **signature validation**; **auto-reply cost cap** per conversation (`src/lib/ratelimit.ts`); STOP/opt-out. Edge/IP rate-limiting (Upstash or Vercel Firewall) deferred until traffic warrants. |

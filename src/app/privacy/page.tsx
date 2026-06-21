@@ -3,7 +3,7 @@ import { BRAND } from "@/lib/constants";
 import { LegalPage, type LegalSection } from "@/components/LegalPage";
 
 export const metadata: Metadata = {
-  title: `Privacy Policy — ${BRAND.name}`,
+  title: `Privacy Policy · ${BRAND.name}`,
   description:
     "How Catchline collects, uses, stores, and protects information when it recovers missed calls for dental clinics.",
 };
@@ -16,7 +16,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Catchline provides missed-call recovery for dental clinics. When a call to a clinic goes unanswered, we text the caller back from the clinic's number, run a short automated intake to learn who they are and what they need, log the conversation, and alert the clinic's front desk.",
+        text: "Catchline provides missed-call recovery for dental clinics. When a call to a clinic goes unanswered, we text the caller back from the clinic's dedicated Catchline number, run a short automated intake to learn who they are and what they need, log the conversation, and alert the clinic's front desk.",
       },
       {
         type: "p",
@@ -24,7 +24,7 @@ const sections: LegalSection[] = [
       },
       {
         type: "note",
-        text: "If you are a patient or caller: the clinic you called decides what information it collects about you and how it is used. Catchline acts on that clinic's behalf. For requests about your information, you can contact the clinic directly or reach us at the address below and we will route it to the clinic.",
+        text: "If you are a patient or caller: the clinic you called decides what information it collects about you and how it is used. Catchline acts on that clinic's behalf. For requests about your information, you can contact the clinic directly, or reach us at the address below and we will route it to the clinic.",
       },
     ],
   },
@@ -68,6 +68,10 @@ const sections: LegalSection[] = [
         type: "p",
         text: "We do not sell your information, and we do not use the content of your messages to train AI models. Where an AI provider helps generate intake replies, it processes the text only to produce the response and not for its own training (this is the default for the OpenAI and Anthropic APIs we use).",
       },
+      {
+        type: "p",
+        text: "Catchline uses AI only for administrative intake and communication. It does not use AI to give medical or dental advice, to diagnose, to recommend or decide on treatment, or to make clinical judgments.",
+      },
     ],
   },
   {
@@ -79,7 +83,7 @@ const sections: LegalSection[] = [
       },
       {
         type: "p",
-        text: "You are always in control of the texts. Reply STOP at any time to opt out — we will stop texting that number, and the clinic's dashboard composer is disabled for it. Reply START to opt back in, and HELP for help. This is consistent with Canada's anti-spam law (CASL).",
+        text: "You are always in control of the texts. Reply STOP at any time to opt out, and we will stop texting that number and disable the clinic's dashboard composer for it. Reply START to opt back in, and HELP for help. This is consistent with Canada's anti-spam law (CASL).",
       },
     ],
   },
@@ -93,11 +97,11 @@ const sections: LegalSection[] = [
       {
         type: "ul",
         items: [
-          "Supabase — database and authentication (hosted in Canada).",
-          "Vercel — application hosting.",
-          "Twilio — sending and receiving calls and text messages.",
-          "OpenAI / Anthropic — generating intake replies from message text.",
-          "Resend (if email is enabled) — sending notification emails.",
+          "Supabase: database and authentication, hosted in Canada.",
+          "Vercel: application hosting.",
+          "Twilio: sending and receiving calls and text messages.",
+          "OpenAI and Anthropic: generating intake replies from message text.",
+          "Resend (if email is enabled): sending notification emails.",
         ],
       },
       {
@@ -111,7 +115,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Our primary database is hosted in Canada (Montreal region) to support Canadian data-residency expectations. Some of our service providers — for example, the telephony and AI providers that send your texts and generate replies — may process limited data such as your phone number and message text in the United States. By using the service you understand this information may be processed outside your province or country.",
+        text: "Our primary database is hosted in Canada (Montreal region) to support Canadian data-residency expectations. Some of our service providers, for example the telephony and AI providers that send your texts and generate replies, may process limited data such as your phone number and message text in the United States. By using the service you understand this information may be processed outside your province or country.",
       },
     ],
   },
@@ -134,9 +138,9 @@ const sections: LegalSection[] = [
       {
         type: "ul",
         items: [
-          "Access and correction — ask the clinic, or contact us, to see or fix your information.",
-          "Deletion — ask to have your information erased; we can remove a caller's data and everything linked to it.",
-          "Opt out of texts — reply STOP at any time.",
+          "Access and correction: ask the clinic, or contact us, to see or fix your information.",
+          "Deletion: ask to have your information erased, and we can remove a caller's data and everything linked to it.",
+          "Opt out of texts: reply STOP at any time.",
         ],
       },
       {
@@ -153,8 +157,9 @@ const sections: LegalSection[] = [
         items: [
           "Encryption in transit (HTTPS/TLS) for the website, dashboard, and webhooks.",
           "Strict separation between clinics so one clinic can never see another's data.",
-          "Least-privilege access to secrets and an append-only audit log of sensitive actions.",
+          "Role-based, least-privilege access to data and an append-only audit log of sensitive actions.",
           "Input validation and signature checks on incoming calls and messages.",
+          "A documented internal information-security policy covering access, breach response, backups, retention, and vendor review.",
         ],
       },
     ],
@@ -194,6 +199,10 @@ const sections: LegalSection[] = [
         text: "Catchline is operated by Catchline Services Inc. Questions about this policy or your information? We are happy to help.",
       },
       { type: "contact", email: BRAND.supportEmail },
+      {
+        type: "p",
+        text: "You can also reach us by mail at Catchline Services Inc., [mailing address].",
+      },
     ],
   },
 ];

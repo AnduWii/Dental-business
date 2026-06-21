@@ -1,11 +1,11 @@
 -- =====================================================================
--- Catchline — audit trail + data retention / erasure
+-- Catchline, audit trail + data retention / erasure
 -- Adds an append-only audit log (tamper-resistant at the DB level) and
 -- functions for right-to-erasure and retention purges.
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
--- audit_log — who did what, when. Append-only.
+-- audit_log, who did what, when. Append-only.
 -- ---------------------------------------------------------------------
 create table if not exists audit_log (
   id          uuid primary key default gen_random_uuid(),

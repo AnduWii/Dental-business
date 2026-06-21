@@ -47,11 +47,11 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
           Captured lead
         </h3>
         <dl className="mt-4 space-y-4 text-sm">
-          <Row label="Name" value={conversation.caller_name || patient?.name || "—"} />
+          <Row label="Name" value={conversation.caller_name || patient?.name || "-"} />
           <Row label="Phone" value={formatPhone(patient?.phone)} />
           <div>
             <dt className="text-slate-500">Reason</dt>
-            <dd className="mt-1 text-slate-900">{conversation.reason || "—"}</dd>
+            <dd className="mt-1 text-slate-900">{conversation.reason || "-"}</dd>
           </div>
           <div>
             <dt className="text-slate-500">Urgency</dt>
@@ -63,7 +63,7 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
             <dt className="text-slate-500">Booking intent</dt>
             <dd className="mt-1">
               {conversation.booking_intent === "unknown" ? (
-                "—"
+                "-"
               ) : (
                 <IntentBadge intent={conversation.booking_intent} />
               )}

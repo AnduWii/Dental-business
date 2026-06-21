@@ -10,7 +10,7 @@ export default defineConfig({
       reportsDirectory: "./coverage",
       // Enforce strong coverage on the pure business-logic modules. The AI
       // provider paths in intake.ts need network mocking (integration tests,
-      // deferred) — its safety-critical fallback is unit-tested separately.
+      // deferred), its safety-critical fallback is unit-tested separately.
       include: ["src/lib/validation.ts", "src/lib/admin.ts", "src/lib/format.ts"],
       thresholds: { lines: 80, functions: 80, statements: 80, branches: 70 },
     },

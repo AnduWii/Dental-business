@@ -9,8 +9,8 @@ describe("formatPhone", () => {
     expect(formatPhone("+447911123456")).toBe("+447911123456");
   });
   it("handles empty", () => {
-    expect(formatPhone(null)).toBe("—");
-    expect(formatPhone(undefined)).toBe("—");
+    expect(formatPhone(null)).toBe("-");
+    expect(formatPhone(undefined)).toBe("-");
   });
 });
 

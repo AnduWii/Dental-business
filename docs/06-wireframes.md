@@ -3,7 +3,7 @@
 Low-fidelity wireframes for every page. The shipped React matches these. Clean, calm, trust-first
 (it's healthcare); a single brand colour, lots of white space.
 
-## Landing — `/`
+## Landing, `/`
 ```
 ┌────────────────────────────────────────────────────────────┐
 │  Catchline                                  Log in   [Start ▸] │
@@ -13,7 +13,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 │                                                              │
 │   When a call goes unanswered, Catchline instantly texts the    │
 │   caller back, finds out what they need, and pages your      │
-│   front desk — so they book with you, not the dentist        │
+│   front desk, so they book with you, not the dentist        │
 │   down the road.                                             │
 │                                                              │
 │        [ Start your 14-day pilot ]   [ See how it works ]    │
@@ -24,7 +24,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 └────────────────────────────────────────────────────────────┘
 ```
 
-## Login — `/login`
+## Login, `/login`
 ```
 ┌───────────────────────────────┐
 │            Catchline             │
@@ -37,7 +37,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 └───────────────────────────────┘
 ```
 
-## Onboarding — `/onboarding`
+## Onboarding, `/onboarding`
 ```
 ┌───────────────────────────────────────┐
 │ Catchline                                 │
@@ -51,7 +51,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 └───────────────────────────────────────┘
 ```
 
-## Inbox — `/dashboard`
+## Inbox, `/dashboard`
 ```
 ┌───────────┬──────────────────────────────────────────────────┐
 │ Catchline    │  Inbox                                            │
@@ -70,7 +70,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 └───────────┴──────────────────────────────────────────────────┘
 ```
 
-## Conversation — `/conversations/:id`
+## Conversation, `/conversations/:id`
 ```
 ┌───────────┬─────────────────────────────────────┬───────────────┐
 │ Catchline    │ Sarah M.   (416) 555-0123           │ CAPTURED LEAD │
@@ -79,7 +79,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 │ Missed    │            Hi, this is Bright Smile… │ Reason knocked│
 │ Notif.    │ (system, 2:01pm)                    │   out tooth   │
 │ Settings  │  I knocked my tooth out  ◀(patient) │ Urgency 🔴 Emer│
-│           │            Call 911 / ER now — I'm   │ Intent  new pt│
+│           │            Call 911 / ER now, I'm   │ Intent  new pt│
 │           │            alerting the clinic ▶(ai) │ Status  needs │
 │           │  ...                                 │ Intake  done  │
 │           ├─────────────────────────────────────┤               │
@@ -88,7 +88,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
         message bubbles: patient = left/white · ai = right/blue · staff = right/black
 ```
 
-## Missed calls — `/missed-calls`
+## Missed calls, `/missed-calls`
 ```
 ┌───────────┬──────────────────────────────────────────────────┐
 │ ...nav... │ Missed calls                                      │
@@ -102,7 +102,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 └───────────┴──────────────┴───────────────┴───────────┴───────┘
 ```
 
-## Notifications — `/notifications`
+## Notifications, `/notifications`
 ```
 ┌───────────┬──────────────────────────────────────────────────┐
 │ ...nav... │ Notifications                                     │
@@ -119,7 +119,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 └───────────┴──────────────────────────────────────────────────┘
 ```
 
-## Settings — `/settings`
+## Settings, `/settings`
 ```
 ┌───────────┬──────────────────────────────────────────────────┐
 │ ...nav... │ Settings                                          │

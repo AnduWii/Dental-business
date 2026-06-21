@@ -2,7 +2,7 @@
   "name": "catchline",
   "version": "1.0.0",
   "private": true,
-  "description": "Catchline — missed-call recovery for dental clinics. When a clinic misses a call, the patient gets an instant text and the front desk gets paged.",
+  "description": "Catchline, missed-call recovery for dental clinics. When a clinic misses a call, the patient gets an instant text and the front desk gets paged.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -1,4 +1,4 @@
-# 13 · Disaster Recovery — RTO / RPO
+# 13 · Disaster Recovery, RTO / RPO
 
 ## Targets
 | Metric | Target (pilot) | How |
@@ -6,7 +6,7 @@
 | **RPO** (max data loss) | ≤ 24h on Free; **minutes** with PITR | Supabase daily backups (Free) or Point-in-Time Recovery (Pro add-on) |
 | **RTO** (time to restore) | ≤ 1 hour | Stateless app redeploys from Git in minutes; DB restore is the long pole |
 
-The app tier is **stateless** — all state is in Supabase. Recovery = restore the database + redeploy
+The app tier is **stateless**, all state is in Supabase. Recovery = restore the database + redeploy
 the code. There are no servers to rebuild.
 
 ## What can fail, and the response
@@ -21,7 +21,7 @@ the code. There are no servers to rebuild.
 
 ## Backups
 - **Enable Supabase backups** (Free = daily automated). For a real RPO, enable **PITR** (Pro) so you
-  can restore to any minute — recommended once you have paying clinics.
+  can restore to any minute, recommended once you have paying clinics.
 - Code + schema are version-controlled in Git (`supabase/migrations/*` is the schema of record).
 
 ## Restore runbook

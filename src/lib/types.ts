@@ -110,5 +110,5 @@ export interface Notification {
   created_at: string;
 }
 
-// Conversation joined with its patient — the shape the inbox renders.
+// Conversation joined with its patient, the shape the inbox renders.
 export type ConversationWithPatient = Conversation & { patient: Patient | null };

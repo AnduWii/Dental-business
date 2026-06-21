@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   if (!clinic) {
-    // Unknown number — be polite and hang up.
+    // Unknown number, be polite and hang up.
     return xml(missedCallTwiml("our office"));
   }
 
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // --- surface in the dashboard feed (no SMS page yet — that waits for a reply) ---
+  // --- surface in the dashboard feed (no SMS page yet, that waits for a reply) ---
   await admin.from("notifications").insert({
     clinic_id: clinic.id,
     conversation_id: conversationId,

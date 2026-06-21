@@ -34,4 +34,4 @@ jobs:
 
       - name: Dependency audit (high severity)
         run: npm audit --audit-level=high
-        continue-on-error: true # report, don't block — triaged via Dependabot
+        continue-on-error: true # report, don't block, triaged via Dependabot

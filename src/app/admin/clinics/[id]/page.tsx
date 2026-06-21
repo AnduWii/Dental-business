@@ -72,7 +72,7 @@ export default async function AdminClinicPage({ params }: { params: Promise<{ id
                     </span>
                     <span className="shrink-0 text-slate-400">{timeAgo(c.last_message_at)}</span>
                   </div>
-                  <p className="truncate text-slate-600">{c.reason || "—"}</p>
+                  <p className="truncate text-slate-600">{c.reason || "-"}</p>
                 </li>
               ))}
             </ul>

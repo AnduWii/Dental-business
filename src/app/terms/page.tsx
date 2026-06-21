@@ -3,7 +3,7 @@ import { BRAND } from "@/lib/constants";
 import { LegalPage, type LegalSection } from "@/components/LegalPage";
 
 export const metadata: Metadata = {
-  title: `Terms of Service — ${BRAND.name}`,
+  title: `Terms of Service · ${BRAND.name}`,
   description:
     "The terms that govern use of Catchline's missed-call recovery service by dental clinics.",
 };
@@ -25,11 +25,11 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "When a call to your clinic goes unanswered, Catchline texts the caller back from your number, runs a short automated intake to capture their name, reason, urgency, and booking intent, logs the conversation, and alerts your front desk. Your staff can take over any conversation at any time.",
+        text: "When a call to your clinic goes unanswered, Catchline texts the caller back from the dedicated Catchline number set up for your clinic, runs a short automated intake to capture their name, reason, urgency, and booking intent, logs the conversation, and alerts your front desk. Your staff can take over any conversation at any time.",
       },
       {
         type: "note",
-        text: "Catchline is not a medical or clinical service. It does not provide medical advice, diagnosis, triage, or treatment, and it does not book appointments or quote prices on your behalf. It is not a substitute for your clinical judgement or your staff. Callers with an emergency are directed to call 911 or go to an emergency room.",
+        text: "Catchline is not a medical or clinical service. It does not provide medical advice, diagnosis, triage, or treatment, and it does not book appointments or quote prices on your behalf. Catchline uses AI only for administrative intake and communication. It does not use AI to give medical or dental advice, to diagnose, to recommend or decide on treatment, or to make clinical judgments. When the assistant notes that a caller seems urgent, that is only to help your front desk prioritise and to prompt the caller to call 911 in an emergency; it is not a clinical assessment. Callers with an emergency are directed to call 911 or go to an emergency room.",
       },
     ],
   },
@@ -82,9 +82,12 @@ const sections: LegalSection[] = [
         items: [
           "You remain responsible for the care of your patients and for all clinical decisions; Catchline only handles intake conversations.",
           "You are the party responsible for the personal and health information involved (the custodian under PHIPA). See the Data Processing Agreement.",
-          "You are responsible for lawful messaging — that the people you text contacted you first and have not opted out.",
-          "You configure call forwarding to your Catchline number and keep your notification phone/email current.",
+          "You configure call forwarding to your Catchline number and keep your notification phone and email current.",
         ],
+      },
+      {
+        type: "p",
+        text: "You represent and warrant that you have the legal right to contact the callers you respond to through Catchline, and that your use of the service complies with CASL and all other applicable messaging laws. Responsibility for lawful messaging and for obtaining any required consent rests with you, not with Catchline.",
       },
     ],
   },
@@ -98,43 +101,61 @@ const sections: LegalSection[] = [
     ],
   },
   {
-    heading: "8. Third-party services",
+    heading: "8. Intellectual property",
     blocks: [
       {
         type: "p",
-        text: "Catchline relies on third-party providers — including telephony carriers, Twilio, AI providers, our database host, and our application host — to deliver the service. Message delivery and timing depend on carriers and other networks outside our control, and we are not responsible for their outages, delays, or actions.",
+        text: "Catchline Services Inc. owns all rights in the service, including the software, source code, dashboard, designs, content, and the Catchline name and trademarks. These Terms do not transfer any of those rights to you, and you may use the service only as these Terms allow. You keep ownership of your own data, including your clinic's information and your callers' information, and you grant us the limited rights needed to operate the service for you as described in the Privacy Policy and Data Processing Agreement.",
       },
     ],
   },
   {
-    heading: "9. Service availability and disclaimers",
+    heading: "9. Third-party services",
     blocks: [
       {
         type: "p",
-        text: "The service is provided on an \"as is\" and \"as available\" basis, and during a pilot it may still be evolving. We do not guarantee that the service will be uninterrupted or error-free, or that it will recover any particular number of patients or amount of revenue. To the fullest extent permitted by law, we disclaim all warranties not expressly stated in these Terms.",
+        text: "Catchline relies on third-party providers, including telephony carriers, Twilio, AI providers, our database host, and our application host, to deliver the service. Message delivery and timing depend on carriers and other networks outside our control, and we are not responsible for their outages, delays, or actions.",
       },
     ],
   },
   {
-    heading: "10. Limitation of liability",
+    heading: "10. Service availability and disclaimers",
     blocks: [
       {
         type: "p",
-        text: "To the fullest extent permitted by law, Catchline will not be liable for indirect, incidental, special, or consequential damages, or for lost profits, revenue, data, or goodwill. Our total liability arising out of or relating to the service will not exceed the fees you paid us in the three months before the event giving rise to the claim (or, during a free pilot, CAD $100).",
+        text: "The service is provided on an 'as is' and 'as available' basis, and during a pilot it may still be evolving. We do not guarantee that the service will be uninterrupted, timely, secure, or error-free; that any message will be delivered or delivered on time (delivery depends on carriers and networks we do not control); or that the service will recover any particular number of patients, bookings, or amount of revenue. To the fullest extent permitted by law, we disclaim all warranties and conditions not expressly stated in these Terms, including implied warranties of merchantability, fitness for a particular purpose, and non-infringement.",
       },
     ],
   },
   {
-    heading: "11. Indemnification",
+    heading: "11. Limitation of liability",
     blocks: [
       {
         type: "p",
-        text: "You agree to indemnify and hold Catchline harmless from claims, losses, and expenses arising out of your use of the service, your content, your messaging practices, or your breach of these Terms — including claims brought by your patients or callers that relate to your use of the service.",
+        text: "To the fullest extent permitted by law, Catchline will not be liable for indirect, incidental, special, or consequential damages, or for lost profits, revenue, bookings, data, or goodwill, even if advised of the possibility. Our total liability arising out of or relating to the service will not exceed the fees you paid us in the three months before the event giving rise to the claim, or, during a free pilot, CAD $100.",
       },
     ],
   },
   {
-    heading: "12. Suspension and termination",
+    heading: "12. Indemnification",
+    blocks: [
+      {
+        type: "p",
+        text: "You agree to indemnify and hold Catchline harmless from claims, losses, and expenses (including reasonable legal fees) arising out of your use of the service, your content, your messaging practices and compliance (including CASL and, where applicable, TCPA), your clinical care, or your breach of these Terms, including claims brought by your patients or callers that relate to your use of the service.",
+      },
+    ],
+  },
+  {
+    heading: "13. Dispute resolution",
+    blocks: [
+      {
+        type: "p",
+        text: "If a dispute arises, we will first try to resolve it informally; either party may start this by contacting the other in writing. If it is not resolved within 30 days, the dispute will be settled by confidential, binding arbitration seated in Ontario, Canada, before a single arbitrator, except that either party may bring a claim in small claims court or seek an injunction in court to protect its rights or confidential information. To the extent permitted by law, disputes will be handled on an individual basis, and you and Catchline waive any right to participate in a class or representative proceeding.",
+      },
+    ],
+  },
+  {
+    heading: "14. Suspension and termination",
     blocks: [
       {
         type: "p",
@@ -143,7 +164,7 @@ const sections: LegalSection[] = [
     ],
   },
   {
-    heading: "13. Changes",
+    heading: "15. Changes",
     blocks: [
       {
         type: "p",
@@ -152,16 +173,16 @@ const sections: LegalSection[] = [
     ],
   },
   {
-    heading: "14. Governing law",
+    heading: "16. Governing law",
     blocks: [
       {
         type: "p",
-        text: "These Terms are governed by the laws of the Province of Ontario and the federal laws of Canada applicable there, without regard to conflict-of-laws rules. The courts of Ontario have jurisdiction over any dispute.",
+        text: "These Terms are governed by the laws of the Province of Ontario and the federal laws of Canada applicable there, without regard to conflict-of-laws rules, and subject to the dispute-resolution section above.",
       },
     ],
   },
   {
-    heading: "15. Contact us",
+    heading: "17. Contact us",
     blocks: [
       {
         type: "p",

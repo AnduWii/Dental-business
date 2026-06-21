@@ -1,4 +1,4 @@
-# Catchline — missed-call recovery for dental clinics
+# Catchline, missed-call recovery for dental clinics
 
 > Every missed call, recovered.
 
@@ -6,7 +6,7 @@ When a dental clinic misses a call, **Catchline** instantly texts the caller bac
 conversation to capture their **name, reason, urgency, and booking intent**, logs everything, and
 **pages the front desk** so a human can take over and book the patient.
 
-It works **before any calendar integration exists** — the whole job of V1 is to recover the caller
+It works **before any calendar integration exists**, the whole job of V1 is to recover the caller
 and create a booking conversation. That's enough to sell.
 
 ---
@@ -21,7 +21,7 @@ deployable in under 30 days:
 | Frontend + Backend | **Next.js (App Router)** on **Vercel** | One codebase, one deploy. API routes *are* the Node backend. |
 | Database + Auth + Realtime | **Supabase** (Postgres) | DB, passwordless auth, Row Level Security and live updates in one free tier. |
 | SMS + Voice | **Twilio** | Industry-standard missed-call→text-back. Handles compliance (STOP/HELP). |
-| AI intake | **OpenAI** (or Anthropic) | Cheap, structured extraction. Optional — falls back to a scripted flow. |
+| AI intake | **OpenAI** (or Anthropic) | Cheap, structured extraction. Optional, falls back to a scripted flow. |
 
 Full reasoning, costs and trade-offs: [`docs/03-tech-stack.md`](docs/03-tech-stack.md).
 
@@ -37,7 +37,7 @@ Full reasoning, costs and trade-offs: [`docs/03-tech-stack.md`](docs/03-tech-sta
 | [`docs/06-wireframes.md`](docs/06-wireframes.md) | Wireframes for every page |
 | [`docs/07-roadmap.md`](docs/07-roadmap.md) | Week-by-week build plan |
 | [`docs/08-twilio-setup.md`](docs/08-twilio-setup.md) | Call forwarding, 10DLC & CASL compliance |
-| [`docs/10-production-readiness.md`](docs/10-production-readiness.md) | Hardening checklist: security, tests, compliance, DR — done / partial / deferred |
+| [`docs/10-production-readiness.md`](docs/10-production-readiness.md) | Hardening checklist: security, tests, compliance, DR, done / partial / deferred |
 | [`docs/11-security.md`](docs/11-security.md) | Threat model + controls |
 | [`docs/12-compliance-privacy.md`](docs/12-compliance-privacy.md) | PIPEDA/PHIPA/CASL, PII inventory, retention & erasure |
 | [`docs/13-disaster-recovery.md`](docs/13-disaster-recovery.md) | RTO/RPO + restore runbook |
@@ -86,7 +86,7 @@ Full reasoning, costs and trade-offs: [`docs/03-tech-stack.md`](docs/03-tech-sta
 - Node 18.18+ (Node 22 recommended)
 - A free [Supabase](https://supabase.com) project
 - A [Twilio](https://twilio.com) account + one phone number
-- (Optional) an OpenAI API key — without it, intake runs in scripted fallback mode
+- (Optional) an OpenAI API key, without it, intake runs in scripted fallback mode
 
 ### 2. Install
 ```bash
@@ -112,7 +112,7 @@ npx ngrok http 3000
 1. Sign in (magic link) and complete onboarding.
 2. In **Settings**, paste your Twilio number and copy the two webhook URLs shown there into the
    Twilio number's *Voice* and *Messaging* configuration.
-3. Enable conditional call forwarding on the clinic's real line — see
+3. Enable conditional call forwarding on the clinic's real line, see
    [`docs/08-twilio-setup.md`](docs/08-twilio-setup.md).
 
 ### 6. Deploy
@@ -131,7 +131,7 @@ npm run lint        # next lint
 ```
 
 ## Safety & compliance notes
-- The AI is an **intake assistant, not a receptionist** — it never books, prices, or gives
+- The AI is an **intake assistant, not a receptionist**, it never books, prices, or gives
   clinical advice. Suspected emergencies are escalated (call 911 / go to ER) and page the clinic.
 - STOP/START/HELP opt-out is honoured (CASL/TCPA). Opted-out patients are never texted.
 - Twilio webhook signatures are validated in production.

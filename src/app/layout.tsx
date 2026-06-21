@@ -3,7 +3,7 @@ import "./globals.css";
 import { BRAND } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: `${BRAND.name} — ${BRAND.tagline}`,
+  title: `${BRAND.name} · ${BRAND.tagline}`,
   description:
     "Catchline texts back dental patients the instant a call is missed, captures the lead, and pages your front desk.",
 };

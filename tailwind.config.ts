@@ -36,7 +36,7 @@ const config: Config = {
         },
       },
       boxShadow: {
-        // Soft, low-contrast elevation — no glow.
+        // Soft, low-contrast elevation, no glow.
         card: "0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06)",
       },
     },

@@ -1,6 +1,6 @@
 // Resilience helpers for outbound calls (AI, SMS, email): a timeout-bounded
 // fetch and exponential-backoff retry. The deterministic AI fallback acts as
-// the circuit breaker — if retries are exhausted we degrade, never hang.
+// the circuit breaker, if retries are exhausted we degrade, never hang.
 
 export async function fetchWithTimeout(
   url: string,

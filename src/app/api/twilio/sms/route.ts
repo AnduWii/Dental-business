@@ -1,8 +1,8 @@
 // =====================================================================
 // POST /api/twilio/sms
 //
-// Fires on every inbound text from a patient. We store it, and — unless a
-// human has taken over — run the AI intake, reply, capture the lead, and
+// Fires on every inbound text from a patient. We store it, and, unless a
+// human has taken over, run the AI intake, reply, capture the lead, and
 // page the clinic when there's something worth acting on.
 // =====================================================================
 import { NextRequest, NextResponse } from "next/server";
@@ -223,7 +223,7 @@ export async function POST(req: NextRequest) {
       conversationId: conversation.id,
       type: "new_lead",
       title: "New patient lead",
-      body: `${result.fields.caller_name || from} — ${result.fields.reason || "wants to talk"} (${intent})`,
+      body: `${result.fields.caller_name || from}, ${result.fields.reason || "wants to talk"} (${intent})`,
     });
   }
 

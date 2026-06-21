@@ -32,7 +32,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero — two columns: copy + live recovery card */}
+      {/* Hero, two columns: copy + live recovery card */}
       <section className="mx-auto grid max-w-[1080px] items-center gap-14 px-8 pb-16 pt-20 md:grid-cols-[1.05fr_0.95fr]">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-600">
@@ -44,7 +44,7 @@ export default function LandingPage() {
           </h1>
           <p className="mt-5 max-w-[30em] text-lg leading-relaxed text-slate-600">
             When a call to your clinic goes unanswered, {BRAND.name} texts the caller back, learns
-            what they need, and pages your front desk — so they book with you instead of the dentist
+            what they need, and pages your front desk, so they book with you instead of the dentist
             down the road.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
@@ -106,7 +106,7 @@ export default function LandingPage() {
                 ✓
               </span>
               <div className="text-xs text-slate-600">
-                <strong className="text-brand-900">Lead captured</strong> — emergency · ready to
+                <strong className="text-brand-900">Lead captured</strong>, emergency · ready to
                 book · front desk paged
               </div>
             </div>
