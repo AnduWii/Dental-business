@@ -5,8 +5,10 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        // System stack — no webfont fetch, renders crisp and neutral everywhere.
+        // "Public Sans" (from the design) with a system fallback so it renders
+        // instantly and never blocks the build.
         sans: [
+          "Public Sans",
           "ui-sans-serif",
           "system-ui",
           "-apple-system",

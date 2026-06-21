@@ -88,6 +88,52 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* See it work — sample recovered conversation */}
+      <section className="border-t border-slate-100 py-20">
+        <div className="mx-auto max-w-5xl px-6">
+          <h2 className="text-center text-2xl font-semibold text-slate-900">See it work</h2>
+          <p className="mx-auto mt-3 max-w-xl text-center leading-relaxed text-slate-600">
+            A real missed call, recovered in seconds — texted back, triaged, and handed to your
+            front desk with the details already captured.
+          </p>
+
+          <div className="mx-auto mt-10 max-w-sm rounded-3xl border border-slate-200 bg-white p-4 shadow-card">
+            <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-3">
+              <span className="text-sm font-semibold text-slate-900">Bright Smile Dental</span>
+              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">
+                Recall
+              </span>
+            </div>
+            <div className="space-y-2.5">
+              <Bubble side="out">
+                Hi, this is Bright Smile Dental — sorry we missed your call! Reply here and we&apos;ll
+                get you sorted. How can we help?
+              </Bubble>
+              <Bubble side="in">
+                Hi! Saw you missed my call. My wisdom tooth area is really swollen since last night.
+              </Bubble>
+              <Bubble side="out">
+                That can be a sign of infection and shouldn&apos;t wait. Any trouble breathing or
+                swallowing? Either way I&apos;ll get you the first available visit.
+              </Bubble>
+              <Bubble side="in">No trouble breathing, just really sore.</Bubble>
+              <Bubble side="out">
+                Thanks — flagging this as urgent. Our front desk will text you a same-day time
+                shortly. Can I get your name?
+              </Bubble>
+              <Bubble side="in">James Carter</Bubble>
+            </div>
+          </div>
+
+          <div className="mx-auto mt-6 flex max-w-sm flex-wrap justify-center gap-2 text-xs">
+            <Chip>James Carter</Chip>
+            <Chip tone="red">Urgency: High</Chip>
+            <Chip tone="teal">New patient</Chip>
+            <Chip tone="green">Front desk paged</Chip>
+          </div>
+        </div>
+      </section>
+
       {/* Offer */}
       <section className="py-20">
         <div className="mx-auto max-w-2xl px-6 text-center">
@@ -111,4 +157,37 @@ export default function LandingPage() {
       </footer>
     </main>
   );
+}
+
+function Bubble({ side, children }: { side: "in" | "out"; children: React.ReactNode }) {
+  const inbound = side === "in";
+  return (
+    <div className={`flex ${inbound ? "justify-start" : "justify-end"}`}>
+      <div
+        className={`max-w-[82%] rounded-2xl px-3.5 py-2 text-sm leading-snug ${
+          inbound
+            ? "rounded-bl-sm bg-slate-100 text-slate-800"
+            : "rounded-br-sm bg-brand-600 text-white"
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Chip({
+  children,
+  tone = "slate",
+}: {
+  children: React.ReactNode;
+  tone?: "slate" | "red" | "teal" | "green";
+}) {
+  const map = {
+    slate: "bg-slate-100 text-slate-700",
+    red: "bg-red-100 text-red-800",
+    teal: "bg-teal-100 text-teal-800",
+    green: "bg-emerald-100 text-emerald-800",
+  } as const;
+  return <span className={`rounded-full px-2.5 py-1 font-medium ${map[tone]}`}>{children}</span>;
 }
