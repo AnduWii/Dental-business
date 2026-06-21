@@ -1,8 +1,8 @@
 // Branding lives in one place so the SaaS name is a one-line change.
 export const BRAND = {
-  name: "Recall",
+  name: "Catchline",
   tagline: "Every missed call, recovered.",
-  supportEmail: "founders@tryrecall.com",
+  supportEmail: "founders@trycatchline.com",
 } as const;
 
 // Default copy used when a clinic hasn't customised its own.

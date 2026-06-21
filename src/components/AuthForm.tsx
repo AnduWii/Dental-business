@@ -100,7 +100,7 @@ export function AuthForm({
           href="/"
           className="flex h-[46px] w-[46px] items-center justify-center rounded-[13px] bg-brand-600 text-[22px] font-bold text-white"
         >
-          R
+          C
         </Link>
         <p className="text-sm text-slate-500">
           {mode === "signin" ? "Sign in to your clinic dashboard" : "Create your clinic account"}
@@ -219,7 +219,7 @@ export function AuthForm({
       </div>
 
       <p className="mt-5 text-center text-xs text-slate-400">
-        Recall is for dental clinics recovering missed-call patients.
+        Catchline is for dental clinics recovering missed-call patients.
       </p>
     </div>
   );

@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   }
 
   const caller = params.From; // original patient's number (preserved by forwarding)
-  const twilioNumber = params.To; // the clinic's Recall number
+  const twilioNumber = params.To; // the clinic's Catchline number
   const callSid = params.CallSid;
   const forwardedFrom = params.ForwardedFrom || null; // the clinic line that forwarded
 

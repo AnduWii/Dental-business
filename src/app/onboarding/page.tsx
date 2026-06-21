@@ -14,7 +14,7 @@ export default async function OnboardingPage() {
       <div className="w-full max-w-[460px]">
         <div className="flex items-center gap-2.5">
           <span className="flex h-[30px] w-[30px] items-center justify-center rounded-[9px] bg-brand-600 text-[15px] font-bold text-white">
-            R
+            C
           </span>
           <span className="text-[13px] font-semibold uppercase tracking-[0.1em] text-slate-400">
             Step 1 of 2 · Set up clinic

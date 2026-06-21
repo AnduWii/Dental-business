@@ -87,7 +87,7 @@ function EmptyState() {
     <div className="mt-20 text-center">
       <p className="text-lg font-medium text-slate-700">No conversations yet</p>
       <p className="mt-2 text-sm text-slate-500">
-        When a call is missed and forwarded to your Recall number, the text-back conversation will
+        When a call is missed and forwarded to your Catchline number, the text-back conversation will
         show up here. Set up call forwarding in{" "}
         <Link href="/settings" className="text-brand-600 underline">
           Settings

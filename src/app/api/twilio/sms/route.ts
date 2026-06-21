@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   }
 
   const from = params.From; // patient
-  const to = params.To; // clinic Recall number
+  const to = params.To; // clinic Catchline number
   const body = sanitizeText(params.Body, LIMITS.smsBody);
   const messageSid = params.MessageSid || params.SmsSid || null;
 

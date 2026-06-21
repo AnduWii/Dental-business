@@ -32,7 +32,7 @@ export function ClinicSettingsForm({
 
       <Section title="Phone & SMS">
         <Field
-          label="Recall phone number"
+          label="Catchline phone number"
           name="twilio_number"
           defaultValue={clinic.twilio_number ?? ""}
           placeholder="+16475550100"
@@ -108,7 +108,7 @@ export function ClinicSettingsForm({
           </li>
           <li>
             On the clinic&apos;s real line, enable <em>conditional call forwarding</em> (forward on
-            no-answer / busy) to the Recall number above.
+            no-answer / busy) to the Catchline number above.
           </li>
         </ol>
         <p className="text-xs text-slate-500">

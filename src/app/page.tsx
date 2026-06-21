@@ -6,7 +6,7 @@ function LogoMark({ size = "h-7 w-7 text-[15px]" }: { size?: string }) {
     <span
       className={`flex items-center justify-center rounded-lg bg-brand-600 font-bold text-white ${size}`}
     >
-      R
+      C
     </span>
   );
 }
@@ -131,7 +131,7 @@ export default function LandingPage() {
               {
                 n: "1",
                 title: "Call goes unanswered",
-                body: "Your line forwards missed and after-hours calls to your Recall number. Nothing changes for your staff.",
+                body: "Your line forwards missed and after-hours calls to your Catchline number. Nothing changes for your staff.",
               },
               {
                 n: "2",
@@ -141,7 +141,7 @@ export default function LandingPage() {
               {
                 n: "3",
                 title: "You get the lead",
-                body: "Recall captures their name, reason, urgency and booking intent, then pages your front desk to close.",
+                body: "Catchline captures their name, reason, urgency and booking intent, then pages your front desk to close.",
               },
             ].map((s) => (
               <div
