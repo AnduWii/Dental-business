@@ -128,12 +128,12 @@ export default function LandingPage() {
               {
                 n: "1",
                 title: "Call goes unanswered",
-                body: "Your line forwards missed and after-hours calls to your Catchline number. Nothing changes for your staff.",
+                body: "Your existing phone line forwards unanswered and after-hours calls to a dedicated Catchline number we set up for you. You keep your current number, and nothing changes for your staff.",
               },
               {
                 n: "2",
                 title: "The patient gets a text",
-                body: "Within seconds the caller hears from your clinic, and the conversation continues over SMS.",
+                body: "Within seconds, the caller gets a text from your dedicated Catchline number, and the conversation continues over SMS.",
               },
               {
                 n: "3",
