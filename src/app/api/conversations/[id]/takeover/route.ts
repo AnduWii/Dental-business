@@ -11,8 +11,9 @@ import type { ConversationMode, ConversationStatus } from "@/lib/types";
 const MODES: ConversationMode[] = ["ai", "human"];
 const STATUSES: ConversationStatus[] = ["active", "needs_attention", "handled", "closed"];
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const supabase = createClient();
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const status = oneOf(raw.status, STATUSES);
 
   const admin = createAdminClient();
-  const ctx = await requireClinicMember(admin, user.id, params.id);
+  const ctx = await requireClinicMember(admin, user.id, id);
   if (!ctx) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const patch: Record<string, string> = {};
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const { data: updated } = await admin
     .from("conversations")
     .update(patch)
-    .eq("id", params.id)
+    .eq("id", id)
     .select("*")
     .single();
 
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     clinicId: ctx.clinic.id,
     actorEmail: user.email,
     action: "conversation.takeover",
-    target: params.id,
+    target: id,
     metadata: patch,
   });
 

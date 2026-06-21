@@ -16,7 +16,7 @@ const ICON: Record<Notification["type"], string> = {
 
 export default async function NotificationsPage() {
   const { clinic } = await getDashboardContext();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Dashboard-channel rows are the user-facing feed (sms/email rows are send logs).
   const { data: notifications } = await supabase

@@ -7,8 +7,8 @@ import { env } from "@/lib/env";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
-export function createClient() {
-  const cookieStore = cookies();
+export async function createClient() {
+  const cookieStore = await cookies();
   return createServerClient(env.supabaseUrl(), env.supabaseAnonKey(), {
     cookies: {
       getAll() {

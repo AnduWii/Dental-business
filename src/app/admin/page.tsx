@@ -23,7 +23,7 @@ async function countFor(
 
 export default async function AdminPage() {
   // Gate: must be signed in AND a platform admin.
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

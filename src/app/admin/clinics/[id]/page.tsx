@@ -11,8 +11,9 @@ import type { Clinic, ConversationWithPatient } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminClinicPage({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export default async function AdminClinicPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -24,7 +25,7 @@ export default async function AdminClinicPage({ params }: { params: { id: string
   const { data: clinic } = await admin
     .from("clinics")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .maybeSingle<Clinic>();
   if (!clinic) notFound();
 

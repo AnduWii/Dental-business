@@ -7,13 +7,14 @@ import type { Conversation, Message, Patient } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-export default async function ConversationPage({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export default async function ConversationPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const supabase = await createClient();
 
   const { data: conversation } = await supabase
     .from("conversations")
     .select("*, patient:patients(*)")
-    .eq("id", params.id)
+    .eq("id", id)
     .maybeSingle<Conversation & { patient: Patient | null }>();
 
   if (!conversation) notFound();
@@ -21,7 +22,7 @@ export default async function ConversationPage({ params }: { params: { id: strin
   const { data: messages } = await supabase
     .from("messages")
     .select("*")
-    .eq("conversation_id", params.id)
+    .eq("conversation_id", id)
     .order("created_at", { ascending: true })
     .returns<Message[]>();
 

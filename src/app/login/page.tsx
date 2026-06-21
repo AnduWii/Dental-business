@@ -2,9 +2,14 @@ import { AuthForm } from "@/components/AuthForm";
 
 export const dynamic = "force-dynamic";
 
-export default function LoginPage({ searchParams }: { searchParams: { error?: string } }) {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
   const initialError =
-    searchParams?.error === "auth"
+    error === "auth"
       ? "That sign-in link was invalid or expired. Please try again."
       : "";
 

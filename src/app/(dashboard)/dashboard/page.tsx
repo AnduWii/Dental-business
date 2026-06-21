@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function InboxPage() {
   const { clinic } = await getDashboardContext();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: conversations } = await supabase
     .from("conversations")

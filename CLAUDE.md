@@ -22,6 +22,8 @@ new session: read this, then `README.md` and `docs/`.
   (Old `us-east-1` project to be deleted once the Canadian one is fully verified.)
 - **Hardening done (Steps 3 & 4):** input validation, security headers, append-only audit log,
   abuse/cost cap, RLS multi-tenancy, 27 unit tests + GitHub CI + Dependabot + secret scanning.
+- **Stack on Next 15.5.19** (upgraded from 14.2.35, still React 18). Dependency backlog triaged:
+  `npm audit` is **0 vulnerabilities** (was 21). Vitest is now v4; postcss pinned via `overrides`.
   ⚠️ The `main` **branch ruleset is currently DISABLED** (it blocked the deploy automation) —
   re-enable it with the deploy app on the bypass list once you add a collaborator.
 - **Legal pages live:** public **Privacy Policy** (`/privacy`) + clinic **DPA** (`/dpa`), linked from

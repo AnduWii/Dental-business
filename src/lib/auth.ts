@@ -17,7 +17,7 @@ export async function getDashboardContext(): Promise<{
   profile: Profile | null;
   clinic: Clinic | null;
 }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

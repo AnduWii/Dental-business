@@ -8,8 +8,9 @@ import { requireClinicMember } from "@/lib/auth";
 import { sanitizeText, LIMITS } from "@/lib/validation";
 import { logAudit } from "@/lib/audit";
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const supabase = createClient();
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!text) return NextResponse.json({ error: "Message body required" }, { status: 400 });
 
   const admin = createAdminClient();
-  const ctx = await requireClinicMember(admin, user.id, params.id);
+  const ctx = await requireClinicMember(admin, user.id, id);
   if (!ctx) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const { clinic, conversation } = ctx;
 

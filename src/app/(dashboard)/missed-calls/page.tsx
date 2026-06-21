@@ -11,7 +11,7 @@ type Row = CallEvent & { patient: Patient | null };
 
 export default async function MissedCallsPage() {
   const { clinic } = await getDashboardContext();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: calls } = await supabase
     .from("call_events")

@@ -10,7 +10,7 @@ import { logAudit } from "@/lib/audit";
 
 // Create the clinic + owner profile during onboarding.
 export async function createClinic(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -53,7 +53,7 @@ export async function createClinic(formData: FormData) {
 
 // Update clinic settings.
 export async function updateSettings(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -97,7 +97,7 @@ export async function updateSettings(formData: FormData) {
 // Admin edits ANY clinic's settings (hybrid model: you do "free setup" for a
 // clinic that owns its own dashboard). Gated to platform admins.
 export async function updateClinicAsAdmin(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
