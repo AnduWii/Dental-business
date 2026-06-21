@@ -9,7 +9,7 @@ export default function LoginPage({ searchParams }: { searchParams: { error?: st
       : "";
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6 py-12">
+    <main className="flex min-h-screen items-center justify-center bg-slate-100 px-6 py-12">
       <AuthForm initialMode="signin" initialError={initialError} />
     </main>
   );
