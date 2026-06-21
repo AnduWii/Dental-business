@@ -1,8 +1,8 @@
-# Recall — missed-call recovery for dental clinics
+# Catchline — missed-call recovery for dental clinics
 
 > Every missed call, recovered.
 
-When a dental clinic misses a call, **Recall** instantly texts the caller back, holds a short SMS
+When a dental clinic misses a call, **Catchline** instantly texts the caller back, holds a short SMS
 conversation to capture their **name, reason, urgency, and booking intent**, logs everything, and
 **pages the front desk** so a human can take over and book the patient.
 

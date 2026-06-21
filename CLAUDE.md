@@ -1,6 +1,6 @@
-# Recall — project guide & status
+# Catchline — project guide & status
 
-> Missed-call recovery for dental clinics. When a clinic misses a call, Recall texts the caller
+> Missed-call recovery for dental clinics. When a clinic misses a call, Catchline texts the caller
 > back, runs a short AI intake (name, reason, urgency, booking intent), logs it, and pages the
 > front desk. Full docs in [`README.md`](README.md) and [`docs/`](docs/).
 
@@ -38,7 +38,7 @@ run the launch checklist"*).
    line. **Submit A2P 10DLC registration early — it has multi-day lead time.** See `docs/08`.
 2. **(Optional) AI key:** add `OPENAI_API_KEY` to Vercel for smarter intake (scripted fallback
    works without it).
-3. **Buy a domain** (e.g. `tryrecall.com`), point Vercel at it, then update the 3 places that
+3. **Buy a domain** (e.g. `trycatchline.com`), point Vercel at it, then update the 3 places that
    reference the URL: `NEXT_PUBLIC_APP_URL` (Vercel) → Supabase Auth URL Configuration → Twilio
    webhooks. (See chat notes / `docs/08`.)
 4. **SMTP email (hardening 3c):** verify the domain in Resend, set Supabase Custom SMTP to send from
@@ -61,7 +61,7 @@ run the launch checklist"*).
 ---
 
 ## How to resume in a new chat
-> "Read `CLAUDE.md`, `README.md`, and `docs/`. We're building Recall (missed-call recovery for
+> "Read `CLAUDE.md`, `README.md`, and `docs/`. We're building Catchline (missed-call recovery for
 > dental clinics). Continue from the status in CLAUDE.md."
 
 ## Key commands

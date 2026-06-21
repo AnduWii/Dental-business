@@ -14,7 +14,7 @@ These are the only things required to put it on a clinic's real number and charg
 1. **Missed-call detection** — clinic forwards unanswered/after-hours calls to a Twilio number; the
    voice webhook records the missed call.
 2. **Instant text-back** — an automatic SMS goes to the caller within seconds, from the clinic's
-   Recall number.
+   Catchline number.
 3. **Two-way SMS conversation** — patient replies; the thread continues.
 4. **AI intake (narrow)** — a constrained assistant gathers **name, reason, urgency, booking
    intent**, then hands off. Not a receptionist.

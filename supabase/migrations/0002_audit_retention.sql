@@ -1,5 +1,5 @@
 -- =====================================================================
--- Recall — audit trail + data retention / erasure
+-- Catchline — audit trail + data retention / erasure
 -- Adds an append-only audit log (tamper-resistant at the DB level) and
 -- functions for right-to-erasure and retention purges.
 -- =====================================================================

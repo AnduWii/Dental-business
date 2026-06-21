@@ -1,5 +1,5 @@
 -- =====================================================================
--- Recall — initial schema
+-- Catchline — initial schema
 -- Missed-call recovery for dental clinics.
 --
 -- Design principles:

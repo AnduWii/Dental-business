@@ -6,12 +6,12 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 ## Landing — `/`
 ```
 ┌────────────────────────────────────────────────────────────┐
-│  Recall                                  Log in   [Start ▸] │
+│  Catchline                                  Log in   [Start ▸] │
 ├────────────────────────────────────────────────────────────┤
 │                  FOR DENTAL CLINICS                          │
 │        Stop losing patients you've already paid to reach.    │
 │                                                              │
-│   When a call goes unanswered, Recall instantly texts the    │
+│   When a call goes unanswered, Catchline instantly texts the    │
 │   caller back, finds out what they need, and pages your      │
 │   front desk — so they book with you, not the dentist        │
 │   down the road.                                             │
@@ -27,7 +27,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 ## Login — `/login`
 ```
 ┌───────────────────────────────┐
-│            Recall             │
+│            Catchline             │
 │      Log in to your dashboard │
 │   ┌─────────────────────────┐ │
 │   │ you@clinic.com          │ │
@@ -40,7 +40,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 ## Onboarding — `/onboarding`
 ```
 ┌───────────────────────────────────────┐
-│ Recall                                 │
+│ Catchline                                 │
 │ Let's set up your clinic.              │
 │ Clinic name      [________________]    │
 │ Your name        [________________]    │
@@ -54,7 +54,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 ## Inbox — `/dashboard`
 ```
 ┌───────────┬──────────────────────────────────────────────────┐
-│ Recall    │  Inbox                                            │
+│ Catchline    │  Inbox                                            │
 │ Bright    │  3 need attention · 5 active · 24 total           │
 │ Smile     ├──────────────────────────────────────────────────┤
 │           │ ┌──────────────────────────────────────────────┐ │
@@ -73,7 +73,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 ## Conversation — `/conversations/:id`
 ```
 ┌───────────┬─────────────────────────────────────┬───────────────┐
-│ Recall    │ Sarah M.   (416) 555-0123           │ CAPTURED LEAD │
+│ Catchline    │ Sarah M.   (416) 555-0123           │ CAPTURED LEAD │
 │           │ Autopilot is replying  [ Take over ]│ Name   Sarah M│
 │ Inbox     ├─────────────────────────────────────┤ Phone  (416)… │
 │ Missed    │            Hi, this is Bright Smile… │ Reason knocked│
@@ -126,7 +126,7 @@ Low-fidelity wireframes for every page. The shipped React matches these. Clean, 
 │           │ ┌─ Clinic ─────────────────────────────────────┐  │
 │           │ │ Name [Bright Smile Dental]  TZ [America/Tor] │  │
 │           │ ├─ Phone & SMS ───────────────────────────────┤  │
-│           │ │ Recall number [+1 647 555 0100]              │  │
+│           │ │ Catchline number [+1 647 555 0100]              │  │
 │           │ │ Messaging Service SID [MG… optional]         │  │
 │           │ ├─ Where we page you ─────────────────────────┤  │
 │           │ │ Front-desk mobile [+1 647 555 1234]          │  │

@@ -1,6 +1,6 @@
 # 10 · Production-Readiness Checklist
 
-Honest status of each hardening item for **Recall V1**. Legend: ✅ Done · 🟡 Partial / appropriate
+Honest status of each hardening item for **Catchline V1**. Legend: ✅ Done · 🟡 Partial / appropriate
 for stage · ⏳ Deferred (with reason). This is a pre-revenue pilot for one-location dental clinics,
 so the bar is "secure, reliable, compliant for the data we hold" — not "Fortune-500 SRE." Items are
 deferred only when implementing them now would be theater rather than risk reduction.

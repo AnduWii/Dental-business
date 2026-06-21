@@ -9,7 +9,7 @@ regimes are:
 - **PIPEDA** (federal private-sector privacy) and **PHIPA** (Ontario health-information privacy).
 - **CASL** (anti-spam) for the SMS messaging.
 - **GDPR** applies only if serving EU residents; we support its core data-subject rights anyway.
-- **HIPAA** is **US** law; Recall is generally **not** a HIPAA covered entity or business associate
+- **HIPAA** is **US** law; Catchline is generally **not** a HIPAA covered entity or business associate
   for Ontario clinics. If you ever sell to US dental practices, you'd need a BAA and a HIPAA review
   before handling PHI — treat that as a gating decision, not a default.
 
