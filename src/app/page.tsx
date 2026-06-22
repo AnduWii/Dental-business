@@ -121,7 +121,7 @@ export default function LandingPage() {
             How it works
           </p>
           <h2 className="mt-3 text-[34px] font-bold leading-[1.1] tracking-tight text-brand-900 sm:text-[40px]">
-            You miss the call. We catch the patient.
+            The catch line for patients who slip through.
           </h2>
           <p className="mx-auto mt-5 max-w-[34em] text-lg leading-relaxed text-slate-600">
             When your line goes unanswered, {BRAND.name} texts the caller back from a dedicated
