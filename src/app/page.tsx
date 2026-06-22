@@ -114,45 +114,20 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="how" className="border-t border-slate-100 bg-slate-50 py-[72px]">
-        <div className="mx-auto max-w-[1080px] px-8">
-          <p className="text-center text-[13px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+      {/* Why it matters, one human statement (no card deck) */}
+      <section id="how" className="border-t border-slate-100 bg-slate-50 py-[88px]">
+        <div className="mx-auto max-w-[720px] px-8 text-center">
+          <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-slate-400">
             How it works
           </p>
-          <h2 className="mt-2.5 text-center text-3xl font-bold tracking-tight text-brand-900">
-            The call you couldn&apos;t take, handled
+          <h2 className="mt-3 text-[34px] font-bold leading-[1.1] tracking-tight text-brand-900 sm:text-[40px]">
+            You miss the call. We catch the patient.
           </h2>
-          <div className="mt-11 grid gap-5 sm:grid-cols-3">
-            {[
-              {
-                n: "1",
-                title: "Nobody can pick up",
-                body: "Lunch rush, after hours, every line busy. The call that would have gone to voicemail forwards to a dedicated Catchline number instead. You keep your real number, and your front desk does not change a thing.",
-              },
-              {
-                n: "2",
-                title: "We text them back",
-                body: "Seconds later, the caller gets a warm text from your dedicated Catchline number and starts a real conversation, instead of leaving a message nobody calls back.",
-              },
-              {
-                n: "3",
-                title: "Your desk gets the full story",
-                body: "By the time someone is free, you already know who called, what they need, and whether they want to book. The hard part is done for you.",
-              },
-            ].map((s) => (
-              <div
-                key={s.n}
-                className="rounded-[14px] border border-slate-200 bg-white p-[26px] shadow-card"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-[11px] bg-brand-50 text-base font-bold text-brand-600">
-                  {s.n}
-                </div>
-                <h3 className="mt-[18px] text-[17px] font-semibold text-brand-900">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-500">{s.body}</p>
-              </div>
-            ))}
-          </div>
+          <p className="mx-auto mt-5 max-w-[34em] text-lg leading-relaxed text-slate-600">
+            When your line goes unanswered, {BRAND.name} texts the caller back from a dedicated
+            number, asks what they need, and pages your front desk, so they book with you before
+            they call the next clinic down the road.
+          </p>
         </div>
       </section>
 
