@@ -43,7 +43,7 @@ export default function LandingPage() {
             Stop losing patients you&apos;ve already paid to reach.
           </h1>
           <p className="mt-5 max-w-[30em] text-lg leading-relaxed text-slate-600">
-            When a call to your clinic goes unanswered, {BRAND.name} texts the caller back, learns
+            When a call to your clinic goes unanswered, {BRAND.name} texts the caller back, asks
             what they need, and pages your front desk, so they book with you instead of the dentist
             down the road.
           </p>
@@ -106,8 +106,8 @@ export default function LandingPage() {
                 ✓
               </span>
               <div className="text-xs text-slate-600">
-                <strong className="text-brand-900">Lead captured</strong>, emergency · ready to
-                book · front desk paged
+                <strong className="text-brand-900">Front desk paged.</strong> Maria wants the 2:30
+                slot, and your team has the whole story.
               </div>
             </div>
           </div>
@@ -121,24 +121,24 @@ export default function LandingPage() {
             How it works
           </p>
           <h2 className="mt-2.5 text-center text-3xl font-bold tracking-tight text-brand-900">
-            Every missed call, recovered
+            The call you couldn&apos;t take, handled
           </h2>
           <div className="mt-11 grid gap-5 sm:grid-cols-3">
             {[
               {
                 n: "1",
-                title: "Call goes unanswered",
-                body: "Your existing phone line forwards unanswered and after-hours calls to a dedicated Catchline number we set up for you. You keep your current number, and nothing changes for your staff.",
+                title: "Nobody can pick up",
+                body: "Lunch rush, after hours, every line busy. The call that would have gone to voicemail forwards to a dedicated Catchline number instead. You keep your real number, and your front desk does not change a thing.",
               },
               {
                 n: "2",
-                title: "The patient gets a text",
-                body: "Within seconds, the caller gets a text from your dedicated Catchline number, and the conversation continues over SMS.",
+                title: "We text them back",
+                body: "Seconds later, the caller gets a warm text from your dedicated Catchline number and starts a real conversation, instead of leaving a message nobody calls back.",
               },
               {
                 n: "3",
-                title: "You get the lead",
-                body: "Catchline captures their name, reason, urgency and booking intent, then pages your front desk to close.",
+                title: "Your desk gets the full story",
+                body: "By the time someone is free, you already know who called, what they need, and whether they want to book. The hard part is done for you.",
               },
             ].map((s) => (
               <div
