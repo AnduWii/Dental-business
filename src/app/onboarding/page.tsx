@@ -10,7 +10,7 @@ export default async function OnboardingPage() {
   if (clinic) redirect("/dashboard");
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-100 px-6 py-12">
+    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-12">
       <div className="w-full max-w-[460px]">
         <div className="flex items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -28,7 +28,7 @@ export default async function OnboardingPage() {
 
         <form
           action={createClinic}
-          className="mt-[26px] flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_6px_24px_rgba(31,45,61,0.06)]"
+          className="mt-[26px] flex flex-col gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
         >
           <Field label="Clinic name" name="name" placeholder="Bright Smile Dental" required />
           <Field label="Your name" name="full_name" placeholder="Dr. Jane Doe" />
@@ -48,7 +48,7 @@ export default async function OnboardingPage() {
           <input type="hidden" name="timezone" value="America/Toronto" />
           <button
             type="submit"
-            className="mt-1 w-full rounded-[9px] bg-brand-600 px-4 py-3 font-semibold text-white hover:bg-brand-700"
+            className="mt-1 w-full rounded-md bg-brand-600 px-4 py-3 font-semibold text-white transition-colors duration-150 hover:bg-brand-700"
           >
             Create my dashboard
           </button>
@@ -85,7 +85,7 @@ function Field({
         type={type}
         placeholder={placeholder}
         required={required}
-        className="w-full rounded-[9px] border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+        className="w-full rounded-md border border-slate-300 px-3 py-2.5 text-sm outline-none transition-colors duration-150 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
       />
       {hint && <p className="mt-1.5 text-xs text-slate-400">{hint}</p>}
     </div>

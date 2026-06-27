@@ -12,7 +12,7 @@ const NOT_CONFIGURED =
   "Sign-in isn't connected yet. Add your Supabase keys in Vercel (Settings → Environment Variables) and redeploy.";
 
 const inputClass =
-  "w-full rounded-[9px] border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-brand-500 focus:ring-1 focus:ring-brand-500";
+  "w-full rounded-md border border-slate-300 px-3 py-2.5 text-sm outline-none transition-colors duration-150 focus:border-brand-500 focus:ring-1 focus:ring-brand-500";
 const labelClass = "mb-1.5 block text-[13px] font-semibold text-slate-700";
 
 export function AuthForm({
@@ -105,9 +105,9 @@ export function AuthForm({
         </p>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_6px_24px_rgba(31,45,61,0.07)]">
+      <div className="mt-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
         {/* tabs */}
-        <div className="grid grid-cols-2 gap-1 rounded-[10px] border border-slate-200 bg-slate-100 p-1 text-sm">
+        <div className="grid grid-cols-2 gap-1 rounded-md border border-slate-200 bg-slate-100 p-1 text-sm">
           {(["signin", "signup"] as Mode[]).map((m) => (
             <button
               key={m}
@@ -118,8 +118,8 @@ export function AuthForm({
                 setError("");
                 setNotice("");
               }}
-              className={`rounded-md py-2 font-medium transition ${
-                mode === m ? "bg-white text-slate-900 shadow-card" : "text-slate-500 hover:text-slate-700"
+              className={`rounded-md py-2 font-medium transition-colors duration-150 ${
+                mode === m ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
               }`}
             >
               {m === "signin" ? "Sign in" : "Sign up"}
@@ -187,7 +187,7 @@ export function AuthForm({
             <button
               type="submit"
               disabled={busy}
-              className="mt-0.5 w-full rounded-[9px] bg-brand-600 px-4 py-2.5 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
+              className="mt-0.5 w-full rounded-md bg-brand-600 px-4 py-2.5 font-semibold text-white transition-colors duration-150 hover:bg-brand-700 disabled:opacity-60"
             >
               {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
             </button>
@@ -208,7 +208,7 @@ export function AuthForm({
               type="button"
               onClick={handleMagicLink}
               disabled={busy}
-              className="w-full rounded-[9px] border border-slate-300 bg-white px-4 py-2.5 font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+              className="w-full rounded-md border border-slate-300 bg-white px-4 py-2.5 font-semibold text-slate-700 transition-colors duration-150 hover:bg-slate-50 disabled:opacity-60"
             >
               Email me a magic link instead
             </button>

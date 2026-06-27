@@ -29,17 +29,17 @@ export default async function MissedCallsPage() {
     <div className="flex h-full flex-col">
       <RealtimeRefresher table="conversations" clinicId={clinic!.id} />
       <header className="border-b border-slate-200 bg-white px-8 py-5">
-        <h1 className="text-xl font-semibold">Missed calls</h1>
+        <h1 className="text-xl font-semibold text-brand-900">Missed calls</h1>
         <p className="mt-2 text-sm text-slate-600">
           <strong>{today}</strong> today · <strong>{list.length}</strong> recorded.
         </p>
       </header>
 
-      <div className="scroll-area flex-1 overflow-y-auto px-8 py-6">
+      <div className="scroll-area flex-1 overflow-y-auto bg-slate-50 px-8 py-6">
         {list.length === 0 ? (
           <p className="mt-20 text-center text-slate-500">No missed calls recorded yet.</p>
         ) : (
-          <table className="w-full overflow-hidden rounded-xl border border-slate-200 bg-white text-sm">
+          <table className="w-full overflow-hidden rounded-lg border border-slate-200 bg-white text-sm">
             <thead className="bg-slate-50 text-left text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Caller</th>

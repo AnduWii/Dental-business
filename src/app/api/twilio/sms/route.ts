@@ -213,7 +213,7 @@ export async function POST(req: NextRequest) {
       clinic,
       conversationId: conversation.id,
       type: "emergency",
-      title: "🚨 Possible emergency",
+      title: "Possible emergency",
       body: `${result.fields.caller_name || from}: ${result.fields.reason || body.slice(0, 140)}`,
     });
   } else if (result.fields.intake_complete && !wasComplete) {

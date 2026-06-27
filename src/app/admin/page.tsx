@@ -91,7 +91,7 @@ export default async function AdminPage() {
         </div>
 
         {/* Clinics table */}
-        <div className="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+        <div className="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 text-left text-slate-500">
               <tr>
@@ -142,7 +142,7 @@ export default async function AdminPage() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-card">
+    <div className="rounded-lg border border-slate-200 bg-white p-4">
       <p className="text-2xl font-semibold text-slate-900">{value}</p>
       <p className="mt-1 text-sm text-slate-500">{label}</p>
     </div>

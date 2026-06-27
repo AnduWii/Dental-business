@@ -101,7 +101,7 @@ export function LegalPage({
 }) {
   return (
     <main className="min-h-screen bg-white">
-      <header className="border-b border-slate-100 bg-white">
+      <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-[1080px] items-center justify-between px-8 py-4">
           <Link href="/" className="flex items-center gap-2.5">
             <LogoMark />
@@ -114,7 +114,7 @@ export function LegalPage({
       </header>
 
       <article className="mx-auto max-w-[760px] px-8 py-14">
-        <h1 className="text-[34px] font-bold leading-tight tracking-tight text-brand-900">
+        <h1 className="font-display text-[34px] font-semibold leading-tight tracking-tight text-brand-900">
           {title}
         </h1>
         <p className="mt-2 text-[13px] text-slate-400">Last updated {updated}</p>
@@ -132,7 +132,7 @@ export function LegalPage({
         ))}
       </article>
 
-      <footer className="border-t border-slate-100 py-7">
+      <footer className="border-t border-slate-200 py-7">
         <div className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-center gap-x-4 gap-y-2 px-8 text-[13px] text-slate-400">
           <span>
             © {new Date().getFullYear()} {BRAND.name}

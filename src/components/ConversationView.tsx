@@ -99,20 +99,20 @@ export function ConversationView({
           <p className="text-sm text-slate-500">{formatPhone(patientPhone)}</p>
         </div>
         <div className="flex items-center gap-3 text-sm">
-          <span className={mode === "ai" ? "text-brand-700" : "text-purple-700"}>
+          <span className={mode === "ai" ? "text-brand-700" : "text-slate-900"}>
             {mode === "ai" ? "Autopilot is replying" : "You're replying"}
           </span>
           {mode === "ai" ? (
             <button
               onClick={() => setTakeover("human")}
-              className="rounded-lg bg-slate-900 px-3 py-1.5 font-medium text-white hover:bg-slate-700"
+              className="rounded-md bg-slate-900 px-3 py-1.5 font-medium text-white transition-colors duration-150 hover:bg-slate-700"
             >
               Take over
             </button>
           ) : (
             <button
               onClick={() => setTakeover("ai")}
-              className="rounded-lg border border-slate-300 px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-50"
+              className="rounded-md border border-slate-300 px-3 py-1.5 font-medium text-slate-700 transition-colors duration-150 hover:bg-slate-50"
             >
               Hand back to autopilot
             </button>
@@ -161,12 +161,12 @@ export function ConversationView({
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder="Type a reply… (sending switches this thread to you)"
-                className="flex-1 resize-none rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="flex-1 resize-none rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
               <button
                 type="submit"
                 disabled={sending || !draft.trim()}
-                className="rounded-lg bg-brand-600 px-5 py-2.5 font-medium text-white hover:bg-brand-700 disabled:opacity-50"
+                className="rounded-md bg-brand-600 px-5 py-2.5 font-medium text-white transition-colors duration-150 hover:bg-brand-700 disabled:opacity-50"
               >
                 {sending ? "Sending…" : "Send"}
               </button>

@@ -10,9 +10,9 @@ export default async function SettingsPage() {
   if (!clinic) return null;
 
   return (
-    <div className="scroll-area h-full overflow-y-auto">
+    <div className="scroll-area h-full overflow-y-auto bg-slate-50">
       <header className="border-b border-slate-200 bg-white px-8 py-5">
-        <h1 className="text-xl font-semibold">Settings</h1>
+        <h1 className="text-xl font-semibold text-brand-900">Settings</h1>
       </header>
       <div className="mx-auto max-w-2xl px-8 py-8">
         <ClinicSettingsForm clinic={clinic} action={updateSettings} appUrl={env.appUrl()} />

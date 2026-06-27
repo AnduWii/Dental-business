@@ -30,7 +30,7 @@ export async function notifyClinic({ clinic, conversationId, type, title, body }
 
   // 2) SMS page to the front desk (the core "pager" alert).
   if (clinic.notify_phone && clinic.twilio_number) {
-    const smsBody = `🦷 ${title}\n${body}\n\nOpen: ${env.appUrl()}/conversations/${conversationId}`;
+    const smsBody = `${title}\n${body}\n\nOpen: ${env.appUrl()}/conversations/${conversationId}`;
     try {
       await sendSms({
         to: clinic.notify_phone,

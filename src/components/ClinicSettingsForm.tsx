@@ -90,7 +90,7 @@ export function ClinicSettingsForm({
 
       <button
         type="submit"
-        className="rounded-lg bg-brand-600 px-6 py-3 font-medium text-white hover:bg-brand-700"
+        className="rounded-md bg-brand-600 px-6 py-3 font-medium text-white transition-colors duration-150 hover:bg-brand-700"
       >
         Save settings
       </button>
@@ -122,7 +122,7 @@ export function ClinicSettingsForm({
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-6">
-      <h2 className="font-semibold">{title}</h2>
+      <h2 className="font-semibold text-brand-900">{title}</h2>
       {children}
     </section>
   );
