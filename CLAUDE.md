@@ -10,6 +10,11 @@ new session: read this, then `README.md` and `docs/`.
 > **Writing-style rule (applies to all site copy, SMS, and docs): never use em dashes.** Use commas,
 > periods, or parentheses instead. The AI intake prompt enforces this too. Keep the repo at zero
 > em dashes.
+>
+> **Design-system rule (applies to all UI): follow [`docs/15-design-system.md`](docs/15-design-system.md).**
+> Steel-blue accent on a near-monochrome base, Fraunces headings + Public Sans body, `rounded-md`
+> for primary buttons, `shadow-sm` max (no blur or glow), zero emojis, 150ms hover fades, and no
+> generic AI-slop phrasing.
 
 ---
 

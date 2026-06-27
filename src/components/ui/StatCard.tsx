@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 
-// A compact dashboard metric card. Uses the brand palette; "tone" tints the
-// number to flag urgency (alert) or activity (active).
+// One cell of the dashboard stat strip. Borderless by design: the parent strip
+// supplies the surrounding border and the dividers between cells (see the
+// inbox). "tone" tints the number to flag urgency (alert) or activity (active).
 export function StatCard({
   label,
   value,
@@ -14,9 +15,9 @@ export function StatCard({
   const valueColor =
     tone === "alert" ? "text-red-600" : tone === "active" ? "text-brand-600" : "text-brand-900";
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-card">
+    <div className="flex-1 px-5 py-4">
       <div className="text-xs font-medium uppercase tracking-wide text-slate-400">{label}</div>
-      <div className={`mt-2 text-3xl font-bold tabular-nums ${valueColor}`}>{value}</div>
+      <div className={`mt-1.5 text-3xl font-semibold tabular-nums ${valueColor}`}>{value}</div>
     </div>
   );
 }

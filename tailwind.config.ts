@@ -19,6 +19,8 @@ const config: Config = {
           "Arial",
           "sans-serif",
         ],
+        // Editorial serif for marketing headings (landing, legal). App UI stays sans.
+        display: ["Fraunces", "Georgia", "Cambria", "Times New Roman", "serif"],
       },
       colors: {
         // Muted steel-blue. Trustworthy, clinical, deliberately not neon.

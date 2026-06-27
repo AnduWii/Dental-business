@@ -35,7 +35,7 @@ export default async function InboxPage() {
       </header>
 
       <div className="scroll-area flex-1 overflow-y-auto bg-slate-50 px-8 py-6">
-        <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="mb-6 flex flex-col divide-y divide-slate-200 overflow-hidden rounded-lg border border-slate-200 bg-white sm:flex-row sm:divide-x sm:divide-y-0">
           <StatCard label="Need attention" value={needsAttention} tone="alert" />
           <StatCard label="Active" value={active} tone="active" />
           <StatCard label="Leads captured" value={leadsCaptured} />
@@ -49,7 +49,7 @@ export default async function InboxPage() {
               <li key={c.id}>
                 <Link
                   href={`/conversations/${c.id}`}
-                  className="block rounded-xl border border-slate-200 bg-white p-4 shadow-card transition hover:border-brand-300 hover:shadow-md"
+                  className="block rounded-lg border border-slate-200 bg-white p-4 transition-colors duration-150 hover:border-brand-400"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">

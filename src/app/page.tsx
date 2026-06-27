@@ -8,23 +8,43 @@ function LogoMark({ className = "h-8 w-auto" }: { className?: string }) {
   );
 }
 
+function Check({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M3.5 8.5l3 3 6-7" />
+    </svg>
+  );
+}
+
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-white">
-      {/* Sticky header */}
-      <header className="sticky top-0 z-20 border-b border-slate-100 bg-white/85 backdrop-blur">
+      {/* Header */}
+      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-[1080px] items-center justify-between px-8 py-4">
           <div className="flex items-center gap-2.5">
             <LogoMark />
             <span className="text-lg font-bold tracking-tight text-brand-900">{BRAND.name}</span>
           </div>
-          <nav className="flex items-center gap-5 text-sm">
-            <Link href="/login" className="font-medium text-slate-600 hover:text-slate-900">
+          <nav className="flex items-center gap-6 text-sm">
+            <Link
+              href="/login"
+              className="font-medium text-slate-600 transition-colors duration-150 hover:text-slate-900"
+            >
               Sign in
             </Link>
             <Link
               href="/signup"
-              className="rounded-lg bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700"
+              className="rounded-md bg-brand-600 px-4 py-2 font-semibold text-white transition-colors duration-150 hover:bg-brand-700"
             >
               Start a pilot
             </Link>
@@ -32,36 +52,35 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero, two columns: copy + live recovery card */}
-      <section className="mx-auto grid max-w-[1080px] items-center gap-14 px-8 pb-16 pt-20 md:grid-cols-[1.05fr_0.95fr]">
+      {/* Hero */}
+      <section className="mx-auto grid max-w-[1080px] items-center gap-16 px-8 pb-20 pt-24 md:grid-cols-[1.1fr_0.9fr]">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-600">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-400">
             Missed-call recovery for dental clinics
-          </div>
-          <h1 className="mt-5 text-[44px] font-bold leading-[1.05] tracking-tight text-brand-900 sm:text-[46px]">
+          </p>
+          <h1 className="mt-6 font-display text-[46px] font-semibold leading-[1.02] tracking-[-0.02em] text-brand-900 sm:text-[58px]">
             Stop losing patients you&apos;ve already paid to reach.
           </h1>
-          <p className="mt-5 max-w-[30em] text-lg leading-relaxed text-slate-600">
-            When a call to your clinic goes unanswered, {BRAND.name} texts the caller back, asks
-            what they need, and pages your front desk, so they book with you instead of the dentist
-            down the road.
+          <p className="mt-6 max-w-[32em] text-lg leading-relaxed text-slate-600">
+            When a call to your clinic goes unanswered, {BRAND.name} texts the caller back, asks what
+            they need, and pages your front desk, so they book with you instead of the dentist down
+            the road.
           </p>
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/signup"
-              className="rounded-[9px] bg-brand-600 px-[22px] py-[13px] font-semibold text-white hover:bg-brand-700"
+              className="rounded-md bg-brand-600 px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-brand-700"
             >
               Start your 14-day pilot
             </Link>
             <a
               href="#how"
-              className="rounded-[9px] border border-slate-300 bg-white px-[22px] py-[13px] font-semibold text-slate-700 hover:bg-slate-50"
+              className="rounded-md border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition-colors duration-150 hover:bg-slate-50"
             >
               How it works
             </a>
           </div>
-          <div className="mt-[18px] flex items-center gap-3.5 text-[13px] text-slate-400">
+          <div className="mt-5 flex items-center gap-3.5 text-[13px] text-slate-400">
             <span>Free setup</span>
             <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
             <span>No contract</span>
@@ -71,81 +90,77 @@ export default function LandingPage() {
         </div>
 
         {/* Live recovery card */}
-        <div className="relative">
-          <div className="absolute inset-0 translate-x-4 translate-y-[18px] rounded-[18px] bg-brand-50" />
-          <div className="relative overflow-hidden rounded-[18px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(31,45,61,0.12)]">
-            {/* card header */}
-            <div className="flex items-center gap-2.5 border-b border-slate-100 bg-slate-50 px-4 py-3">
-              <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-800">
-                MA
-              </span>
-              <div className="leading-tight">
-                <div className="text-sm font-semibold text-brand-900">Maria Alvarez</div>
-                <div className="text-[11px] text-slate-400">(617) 555-0142</div>
-              </div>
-              <span className="ml-auto inline-flex items-center rounded-full bg-red-100 px-2.5 py-1 text-[11px] font-semibold text-red-800">
-                Emergency
-              </span>
+        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center gap-2.5 border-b border-slate-100 bg-slate-50 px-4 py-3">
+            <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-800">
+              MA
+            </span>
+            <div className="leading-tight">
+              <div className="text-sm font-semibold text-brand-900">Maria Alvarez</div>
+              <div className="text-[11px] text-slate-400">(617) 555-0142</div>
             </div>
-            {/* conversation */}
-            <div className="flex flex-col gap-2.5 bg-[#fbfcfe] p-4">
-              <div className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900 shadow-sm">
-                Hi, I cracked a molar at lunch and it really hurts. Can I be seen today?
-              </div>
-              <div className="max-w-[78%] self-end rounded-[14px_14px_4px_14px] bg-brand-600 px-3 py-2 text-[13px] text-white">
-                So sorry, Maria! Dr. Okafor has a 2:30 emergency slot. Want me to hold it?
-                <div className="mt-1 text-[10px] text-white/70">Autopilot · just now</div>
-              </div>
-              <div className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900 shadow-sm">
-                Yes please!
-              </div>
+            <span className="ml-auto inline-flex items-center rounded-full bg-red-100 px-2.5 py-1 text-[11px] font-semibold text-red-800">
+              Emergency
+            </span>
+          </div>
+          <div className="flex flex-col gap-2.5 bg-[#fbfcfe] p-4">
+            <div className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900">
+              Hi, I cracked a molar at lunch and it really hurts. Can I be seen today?
             </div>
-            {/* lead captured */}
-            <div className="flex items-center gap-2.5 border-t border-slate-100 bg-white px-4 py-3">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-[13px] text-emerald-800">
-                ✓
-              </span>
-              <div className="text-xs text-slate-600">
-                <strong className="text-brand-900">Front desk paged.</strong> Maria wants the 2:30
-                slot, and your team has the whole story.
-              </div>
+            <div className="max-w-[78%] self-end rounded-[14px_14px_4px_14px] bg-brand-600 px-3 py-2 text-[13px] text-white">
+              So sorry, Maria. Dr. Okafor has a 2:30 emergency slot. Want me to hold it?
+              <div className="mt-1 text-[10px] text-white/70">Autopilot, just now</div>
+            </div>
+            <div className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900">
+              Yes please!
+            </div>
+          </div>
+          <div className="flex items-center gap-2.5 border-t border-slate-100 bg-white px-4 py-3">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+              <Check className="h-3.5 w-3.5" />
+            </span>
+            <div className="text-xs text-slate-600">
+              <strong className="text-brand-900">Front desk paged.</strong> Maria wants the 2:30
+              slot, and your team has the whole story.
             </div>
           </div>
         </div>
       </section>
 
-      {/* Why it matters, one human statement (no card deck) */}
-      <section id="how" className="border-t border-slate-100 bg-slate-50 py-[88px]">
-        <div className="mx-auto max-w-[720px] px-8 text-center">
-          <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+      {/* Why it matters */}
+      <section id="how" className="border-t border-slate-200 bg-slate-50 py-24">
+        <div className="mx-auto max-w-[860px] px-8">
+          <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-400">
             How it works
           </p>
-          <h2 className="mt-3 text-[34px] font-bold leading-[1.1] tracking-tight text-brand-900 sm:text-[40px]">
+          <h2 className="mt-4 max-w-[15em] font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.01em] text-brand-900 sm:text-[44px]">
             A catch line for patients that slip through the cracks.
           </h2>
-          <p className="mx-auto mt-5 max-w-[34em] text-lg leading-relaxed text-slate-600">
+          <p className="mt-6 max-w-[40em] text-lg leading-relaxed text-slate-600">
             When your line goes unanswered, {BRAND.name} texts the caller back from a dedicated
-            number, asks what they need, and pages your front desk, so they book with you before
-            they call the next clinic down the road.
+            number, asks what they need, and pages your front desk, so they book with you before they
+            call the next clinic down the road.
           </p>
         </div>
       </section>
 
       {/* Offer */}
-      <section className="py-[72px]">
-        <div className="mx-auto max-w-[680px] px-8">
-          <div className="rounded-[18px] border border-slate-200 bg-white p-10 text-center shadow-card">
-            <h2 className="text-[26px] font-bold tracking-tight text-brand-900">
-              See it on your own line first
-            </h2>
-            <p className="mx-auto mt-3.5 max-w-[34em] text-base leading-relaxed text-slate-600">
-              We start with a 14-day pilot on your real phone number. If it recovers patients, you
-              continue at <span className="font-bold text-brand-900">$150 CAD/month</span>. If it
-              doesn&apos;t, we remove it and you owe nothing.
-            </p>
+      <section className="py-24">
+        <div className="mx-auto max-w-[1080px] px-8">
+          <div className="grid items-center gap-10 border-t border-slate-200 pt-14 md:grid-cols-[1fr_auto]">
+            <div>
+              <h2 className="font-display text-[28px] font-semibold tracking-[-0.01em] text-brand-900 sm:text-[34px]">
+                See it on your own line first.
+              </h2>
+              <p className="mt-4 max-w-[42em] text-base leading-relaxed text-slate-600">
+                We start with a 14-day pilot on your real phone number. If it recovers patients, you
+                continue at <span className="font-semibold text-brand-900">$150 CAD per month</span>.
+                If it doesn&apos;t, we take it off and you owe nothing.
+              </p>
+            </div>
             <Link
               href="/signup"
-              className="mt-[26px] inline-block rounded-[9px] bg-brand-600 px-[26px] py-[13px] font-semibold text-white hover:bg-brand-700"
+              className="inline-block shrink-0 rounded-md bg-brand-600 px-7 py-3.5 font-semibold text-white transition-colors duration-150 hover:bg-brand-700"
             >
               Start a pilot
             </Link>
@@ -153,19 +168,19 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-slate-100 py-7">
+      <footer className="border-t border-slate-200 py-8">
         <div className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-center gap-x-4 gap-y-2 px-8 text-[13px] text-slate-400">
           <span>
-            © {new Date().getFullYear()} {BRAND.name} · {BRAND.tagline}
+            © {new Date().getFullYear()} {BRAND.name}. {BRAND.tagline}.
           </span>
           <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
-          <Link href="/terms" className="hover:text-slate-600">
+          <Link href="/terms" className="transition-colors duration-150 hover:text-slate-600">
             Terms
           </Link>
-          <Link href="/privacy" className="hover:text-slate-600">
+          <Link href="/privacy" className="transition-colors duration-150 hover:text-slate-600">
             Privacy
           </Link>
-          <Link href="/dpa" className="hover:text-slate-600">
+          <Link href="/dpa" className="transition-colors duration-150 hover:text-slate-600">
             Data Processing Agreement
           </Link>
         </div>
