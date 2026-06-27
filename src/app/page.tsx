@@ -53,13 +53,13 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="mx-auto grid max-w-[1080px] items-center gap-16 px-8 pb-20 pt-24 md:grid-cols-[1.1fr_0.9fr]">
+      <section className="mx-auto grid max-w-[1080px] items-center gap-16 px-8 pb-24 pt-28 md:grid-cols-[1.1fr_0.9fr]">
         <div>
           <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-400">
             Missed-call recovery for dental clinics
           </p>
-          <h1 className="mt-6 font-display text-[46px] font-semibold leading-[1.02] tracking-[-0.02em] text-brand-900 sm:text-[58px]">
-            Stop losing patients you&apos;ve already paid to reach.
+          <h1 className="mt-6 font-display text-[48px] font-semibold leading-[1.0] tracking-[-0.02em] text-brand-900 sm:text-[64px]">
+            Get more patients from the calls you already miss.
           </h1>
           <p className="mt-6 max-w-[32em] text-lg leading-relaxed text-slate-600">
             When a call to your clinic goes unanswered, {BRAND.name} texts the caller back, asks what
