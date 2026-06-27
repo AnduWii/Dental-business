@@ -8,6 +8,7 @@ const NAV = [
   { href: "/dashboard", label: "Inbox", Icon: InboxIcon },
   { href: "/missed-calls", label: "Missed calls", Icon: PhoneIcon },
   { href: "/notifications", label: "Notifications", Icon: BellIcon },
+  { href: "/billing", label: "Billing", Icon: CardIcon },
   { href: "/settings", label: "Settings", Icon: GearIcon },
 ];
 
@@ -96,6 +97,14 @@ function BellIcon({ className }: { className?: string }) {
     <Svg className={className}>
       <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
       <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+    </Svg>
+  );
+}
+function CardIcon({ className }: { className?: string }) {
+  return (
+    <Svg className={className}>
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="M2 10h20" />
     </Svg>
   );
 }

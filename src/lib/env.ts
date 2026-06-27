@@ -48,6 +48,11 @@ export const env = {
   resendKey: () => optional("RESEND_API_KEY"),
   notifyFromEmail: () => process.env.NOTIFY_FROM_EMAIL || "alerts@trycatchline.com",
 
+  // Stripe (billing). All optional; billing routes return 503 until these are set.
+  stripeSecretKey: () => optional("STRIPE_SECRET_KEY"),
+  stripeWebhookSecret: () => optional("STRIPE_WEBHOOK_SECRET"),
+  stripePriceId: () => optional("STRIPE_PRICE_ID"),
+
   // Extra platform-admin emails (comma-separated), merged with the defaults.
   adminEmails: () =>
     (process.env.ADMIN_EMAILS || "")
