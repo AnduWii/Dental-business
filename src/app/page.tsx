@@ -33,7 +33,10 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-[1080px] items-center justify-between px-8 py-4">
           <div className="flex items-center gap-2.5">
             <LogoMark />
-            <span className="text-lg font-bold tracking-tight text-brand-900">{BRAND.name}</span>
+            <span className="text-lg font-bold tracking-tight text-brand-900">
+              {BRAND.name}
+              <span className="align-top text-[0.6em] font-normal text-slate-400">™</span>
+            </span>
           </div>
           <nav className="flex items-center gap-6 text-sm">
             <Link

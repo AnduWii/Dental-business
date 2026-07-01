@@ -105,7 +105,10 @@ export function LegalPage({
         <div className="mx-auto flex max-w-[1080px] items-center justify-between px-8 py-4">
           <Link href="/" className="flex items-center gap-2.5">
             <LogoMark />
-            <span className="text-lg font-bold tracking-tight text-brand-900">{BRAND.name}</span>
+            <span className="text-lg font-bold tracking-tight text-brand-900">
+              {BRAND.name}
+              <span className="align-top text-[0.6em] font-normal text-slate-400">™</span>
+            </span>
           </Link>
           <Link href="/" className="text-sm font-medium text-slate-600 hover:text-slate-900">
             ← Back to home

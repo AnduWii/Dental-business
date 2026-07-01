@@ -62,3 +62,38 @@ For most SaaS, Class 9 and Class 42 are the backbone; add 38 on advice.
 3. Engage a Canadian trademark agent to file the wordmark and logo in Classes 9 and 42 (plus 38 on
    advice).
 4. Add a US filing only if and when you pursue US customers.
+
+## Preliminary clearance results (checked July 2026)
+A quick, non-professional search (web plus available registry mirrors) found:
+- The name is already in commercial use by at least two other businesses: **Catchline
+  Communications** (`catchlinecommunications.com`, content and authority marketing) and **Catchline
+  Agency** (`catchline.agency`, social and digital marketing). Both sit in marketing and
+  communications, which is adjacent to a messaging/communications SaaS, so there is a real
+  likelihood-of-confusion risk in related classes.
+- No registered "Catchline" mark for software or telecom was confirmed, but the official USPTO and
+  CIPO registers could not be queried directly here, so registration status is **unconfirmed**.
+- "Catchline" is also a semi-common word (a catchy headline), which weakens distinctiveness.
+
+Read: this is a **yellow flag, not a green light**. Before spending on a filing, get a professional
+clearance opinion, and seriously consider (a) filing a distinctive **logo/stylized mark** rather
+than the bare word, (b) claiming **narrowly in the software/SaaS class** to distance from the
+marketing users, and (c) keeping a **backup name** ready in case counsel advises against "Catchline".
+
+## Ready-to-file packet (fill the brackets, then submit)
+Everything a CIPO/USPTO form or an agent needs, so filing becomes form-filling:
+- **Applicant:** Catchline Services Inc. (once registered), [registered mailing address].
+- **Mark:** the wordmark "CATCHLINE", and separately a **logo/stylized mark** (recommended).
+- **Class 42 (core, SaaS):** "Software as a service (SaaS) featuring software for automated
+  missed-call recovery, text-message follow-up, and lead intake for dental and other clinics."
+- **Class 9 (software):** "Recorded and downloadable computer software for automated missed-call
+  recovery, text-message follow-up, and appointment-lead intake."
+- **Class 38 (optional, on advice):** "Telecommunications services, namely, transmission of text
+  messages on behalf of dental and other clinics."
+- **Filing basis (US):** if not yet used in US commerce, file intent-to-use (Section 1(b));
+  otherwise use-in-commerce (Section 1(a)) with a specimen (a screenshot of the live product
+  showing the mark).
+- **First-use date (Canada / US 1(a)):** [date of first public or commercial use].
+- **Where to file:** CIPO online (Canada); USPTO Trademark Center (US).
+
+Do not submit until the clearance opinion is back and the entity is registered. The live site now
+displays the "TM" symbol on the wordmark to assert common-law rights in the meantime.
