@@ -40,6 +40,12 @@ export default function LandingPage() {
             </span>
           </div>
           <nav className="flex items-center gap-6 text-sm">
+            <a
+              href="#how"
+              className="hidden font-medium text-slate-600 transition-colors duration-150 hover:text-slate-900 sm:block"
+            >
+              How it works
+            </a>
             <Link
               href="/login"
               className="font-medium text-slate-600 transition-colors duration-150 hover:text-slate-900"
@@ -66,7 +72,8 @@ export default function LandingPage() {
           </Reveal>
           <Reveal className="mt-6" delay={80}>
             <h1 className="font-display text-[48px] font-semibold leading-[1.0] tracking-[-0.02em] text-brand-900 sm:text-[64px]">
-              Get more patients from the calls you already miss.
+              Get more patients from the calls you already{" "}
+              <em className="italic text-brand-600">miss</em>.
             </h1>
           </Reveal>
           <Reveal className="mt-6" delay={160}>
@@ -124,28 +131,41 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-col gap-2.5 bg-[#fbfcfe] p-4">
               <Reveal
+                className="self-center text-[10px] font-medium uppercase tracking-[0.12em] text-slate-400"
+                delay={600}
+              >
+                Missed call · 12:41 PM
+              </Reveal>
+              <Reveal
+                className="max-w-[78%] self-end rounded-[14px_14px_4px_14px] bg-brand-600 px-3 py-2 text-[13px] text-white"
+                delay={1000}
+              >
+                Hi, this is Dr. Okafor&apos;s office. Sorry we missed your call. How can we help?
+                <div className="mt-1 text-[10px] text-white/70">Instant text-back</div>
+              </Reveal>
+              <Reveal
                 className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900"
-                delay={900}
+                delay={2100}
               >
                 Hi, I cracked a molar at lunch and it really hurts. Can I be seen today?
               </Reveal>
               <Reveal
                 className="max-w-[78%] self-end rounded-[14px_14px_4px_14px] bg-brand-600 px-3 py-2 text-[13px] text-white"
-                delay={2000}
+                delay={3300}
               >
                 So sorry, Maria. Dr. Okafor has a 2:30 emergency slot. Want me to hold it?
                 <div className="mt-1 text-[10px] text-white/70">Autopilot, just now</div>
               </Reveal>
               <Reveal
                 className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900"
-                delay={3100}
+                delay={4400}
               >
                 Yes please!
               </Reveal>
             </div>
             <Reveal
               className="flex items-center gap-2.5 border-t border-slate-100 bg-white px-4 py-3"
-              delay={4000}
+              delay={5300}
             >
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                 <Check className="h-3.5 w-3.5" />
@@ -179,6 +199,33 @@ export default function LandingPage() {
               they call the next clinic down the road.
             </p>
           </Reveal>
+
+          <div className="mt-14 border-t border-slate-200">
+            {[
+              {
+                title: "A call slips through",
+                body: "Lunch rush, both lines busy, or it's 9 PM. The call forwards to your Catchline number instead of dying in voicemail.",
+              },
+              {
+                title: "We text them back in seconds",
+                body: "Your dedicated number opens a conversation, finds out who's calling, what they need, and how urgent it is.",
+              },
+              {
+                title: "Your front desk closes it",
+                body: "Name, reason, urgency, and booking intent land in your inbox, and your desk gets paged to book them.",
+              },
+            ].map((s, i) => (
+              <Reveal key={s.title} delay={i * 120}>
+                <div className="grid items-baseline gap-2 border-b border-slate-200 py-7 sm:grid-cols-[64px_240px_1fr] sm:gap-8">
+                  <span className="font-display text-[26px] italic leading-none text-brand-300">
+                    0{i + 1}
+                  </span>
+                  <h3 className="text-[17px] font-semibold text-brand-900">{s.title}</h3>
+                  <p className="text-[15px] leading-relaxed text-slate-600">{s.body}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
