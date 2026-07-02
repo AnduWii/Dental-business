@@ -125,27 +125,27 @@ export default function LandingPage() {
             <div className="flex flex-col gap-2.5 bg-[#fbfcfe] p-4">
               <Reveal
                 className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900"
-                delay={500}
+                delay={900}
               >
                 Hi, I cracked a molar at lunch and it really hurts. Can I be seen today?
               </Reveal>
               <Reveal
                 className="max-w-[78%] self-end rounded-[14px_14px_4px_14px] bg-brand-600 px-3 py-2 text-[13px] text-white"
-                delay={800}
+                delay={2000}
               >
                 So sorry, Maria. Dr. Okafor has a 2:30 emergency slot. Want me to hold it?
                 <div className="mt-1 text-[10px] text-white/70">Autopilot, just now</div>
               </Reveal>
               <Reveal
                 className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900"
-                delay={1100}
+                delay={3100}
               >
                 Yes please!
               </Reveal>
             </div>
             <Reveal
               className="flex items-center gap-2.5 border-t border-slate-100 bg-white px-4 py-3"
-              delay={1400}
+              delay={4000}
             >
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                 <Check className="h-3.5 w-3.5" />
