@@ -199,33 +199,6 @@ export default function LandingPage() {
               they call the next clinic down the road.
             </p>
           </Reveal>
-
-          <div className="mt-14 border-t border-slate-200">
-            {[
-              {
-                title: "A call slips through",
-                body: "Lunch rush, both lines busy, or it's 9 PM. The call forwards to your Catchline number instead of dying in voicemail.",
-              },
-              {
-                title: "We text them back in seconds",
-                body: "Your dedicated number opens a conversation, finds out who's calling, what they need, and how urgent it is.",
-              },
-              {
-                title: "Your front desk closes it",
-                body: "Name, reason, urgency, and booking intent land in your inbox, and your desk gets paged to book them.",
-              },
-            ].map((s, i) => (
-              <Reveal key={s.title} delay={i * 120}>
-                <div className="grid items-baseline gap-2 border-b border-slate-200 py-7 sm:grid-cols-[64px_240px_1fr] sm:gap-8">
-                  <span className="font-display text-[26px] italic leading-none text-brand-300">
-                    0{i + 1}
-                  </span>
-                  <h3 className="text-[17px] font-semibold text-brand-900">{s.title}</h3>
-                  <p className="text-[15px] leading-relaxed text-slate-600">{s.body}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
