@@ -30,6 +30,10 @@ Every UI change must obey these. When a quick fix conflicts with the system, the
 ## Motion
 - Hover is a simple color fade, about 150ms (`transition-colors duration-150`).
 - No scale-ups, bounces, or spring animations.
+- Scroll reveals are allowed on **marketing pages only** (`src/components/Reveal.tsx`): a one-time
+  fade plus a rise of at most 16px, 400 to 600ms ease-out, staggered by small delays, and fully
+  disabled under `prefers-reduced-motion`. App surfaces (dashboard, forms) stay still.
+- No parallax, no scroll-jacking, no 3D or WebGL effects.
 
 ## Layout
 - Avoid perfectly symmetrical, repetitive marketing card grids. No three-card "feature deck."

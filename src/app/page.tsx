@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BRAND } from "@/lib/constants";
+import { Reveal } from "@/components/Reveal";
 
 function LogoMark({ className = "h-8 w-auto" }: { className?: string }) {
   return (
@@ -58,92 +59,126 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="mx-auto grid max-w-[1080px] items-center gap-16 px-8 pb-24 pt-28 md:grid-cols-[1.1fr_0.9fr]">
         <div>
-          <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-            Missed-call recovery for dental clinics
-          </p>
-          <h1 className="mt-6 font-display text-[48px] font-semibold leading-[1.0] tracking-[-0.02em] text-brand-900 sm:text-[64px]">
-            Get more patients from the calls you already miss.
-          </h1>
-          <p className="mt-6 max-w-[32em] text-lg leading-relaxed text-slate-600">
-            When a call to your clinic goes unanswered, {BRAND.name} texts the caller back, asks what
-            they need, and pages your front desk, so they book with you instead of the dentist down
-            the road.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/signup"
-              className="rounded-md bg-brand-600 px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-brand-700"
-            >
-              Start your 14-day pilot
-            </Link>
-            <a
-              href="#how"
-              className="rounded-md border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition-colors duration-150 hover:bg-slate-50"
-            >
-              How it works
-            </a>
-          </div>
-          <div className="mt-5 flex items-center gap-3.5 text-[13px] text-slate-400">
-            <span>Free setup</span>
-            <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
-            <span>No contract</span>
-            <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
-            <span>Cancel anytime</span>
-          </div>
+          <Reveal>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+              Missed-call recovery for dental clinics
+            </p>
+          </Reveal>
+          <Reveal className="mt-6" delay={80}>
+            <h1 className="font-display text-[48px] font-semibold leading-[1.0] tracking-[-0.02em] text-brand-900 sm:text-[64px]">
+              Get more patients from the calls you already miss.
+            </h1>
+          </Reveal>
+          <Reveal className="mt-6" delay={160}>
+            <p className="max-w-[32em] text-lg leading-relaxed text-slate-600">
+              When a call to your clinic goes unanswered, {BRAND.name} texts the caller back, asks
+              what they need, and pages your front desk, so they book with you instead of the
+              dentist down the road.
+            </p>
+          </Reveal>
+          <Reveal className="mt-8" delay={240}>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/signup"
+                className="rounded-md bg-brand-600 px-6 py-3 font-semibold text-white transition-colors duration-150 hover:bg-brand-700"
+              >
+                Start your 14-day pilot
+              </Link>
+              <a
+                href="#how"
+                className="rounded-md border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition-colors duration-150 hover:bg-slate-50"
+              >
+                How it works
+              </a>
+            </div>
+          </Reveal>
+          <Reveal className="mt-5" delay={320}>
+            <div className="flex items-center gap-3.5 text-[13px] text-slate-400">
+              <span>Free setup</span>
+              <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
+              <span>No contract</span>
+              <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
+              <span>Cancel anytime</span>
+            </div>
+          </Reveal>
         </div>
 
-        {/* Live recovery card */}
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-          <div className="flex items-center gap-2.5 border-b border-slate-100 bg-slate-50 px-4 py-3">
-            <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-800">
-              MA
-            </span>
-            <div className="leading-tight">
-              <div className="text-sm font-semibold text-brand-900">Maria Alvarez</div>
-              <div className="text-[11px] text-slate-400">(617) 555-0142</div>
+        {/* Live recovery card: the conversation plays itself out on arrival */}
+        <Reveal className="relative" delay={160}>
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 translate-x-3 translate-y-3 rounded-lg border border-brand-100 bg-brand-50"
+          />
+          <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div className="flex items-center gap-2.5 border-b border-slate-100 bg-slate-50 px-4 py-3">
+              <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-800">
+                MA
+              </span>
+              <div className="leading-tight">
+                <div className="text-sm font-semibold text-brand-900">Maria Alvarez</div>
+                <div className="text-[11px] text-slate-400">(617) 555-0142</div>
+              </div>
+              <span className="ml-auto inline-flex items-center rounded-full bg-red-100 px-2.5 py-1 text-[11px] font-semibold text-red-800">
+                Emergency
+              </span>
             </div>
-            <span className="ml-auto inline-flex items-center rounded-full bg-red-100 px-2.5 py-1 text-[11px] font-semibold text-red-800">
-              Emergency
-            </span>
+            <div className="flex flex-col gap-2.5 bg-[#fbfcfe] p-4">
+              <Reveal
+                className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900"
+                delay={500}
+              >
+                Hi, I cracked a molar at lunch and it really hurts. Can I be seen today?
+              </Reveal>
+              <Reveal
+                className="max-w-[78%] self-end rounded-[14px_14px_4px_14px] bg-brand-600 px-3 py-2 text-[13px] text-white"
+                delay={800}
+              >
+                So sorry, Maria. Dr. Okafor has a 2:30 emergency slot. Want me to hold it?
+                <div className="mt-1 text-[10px] text-white/70">Autopilot, just now</div>
+              </Reveal>
+              <Reveal
+                className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900"
+                delay={1100}
+              >
+                Yes please!
+              </Reveal>
+            </div>
+            <Reveal
+              className="flex items-center gap-2.5 border-t border-slate-100 bg-white px-4 py-3"
+              delay={1400}
+            >
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                <Check className="h-3.5 w-3.5" />
+              </span>
+              <div className="text-xs text-slate-600">
+                <strong className="text-brand-900">Front desk paged.</strong> Maria wants the 2:30
+                slot, and your team has the whole story.
+              </div>
+            </Reveal>
           </div>
-          <div className="flex flex-col gap-2.5 bg-[#fbfcfe] p-4">
-            <div className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900">
-              Hi, I cracked a molar at lunch and it really hurts. Can I be seen today?
-            </div>
-            <div className="max-w-[78%] self-end rounded-[14px_14px_4px_14px] bg-brand-600 px-3 py-2 text-[13px] text-white">
-              So sorry, Maria. Dr. Okafor has a 2:30 emergency slot. Want me to hold it?
-              <div className="mt-1 text-[10px] text-white/70">Autopilot, just now</div>
-            </div>
-            <div className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900">
-              Yes please!
-            </div>
-          </div>
-          <div className="flex items-center gap-2.5 border-t border-slate-100 bg-white px-4 py-3">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-              <Check className="h-3.5 w-3.5" />
-            </span>
-            <div className="text-xs text-slate-600">
-              <strong className="text-brand-900">Front desk paged.</strong> Maria wants the 2:30
-              slot, and your team has the whole story.
-            </div>
-          </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* Why it matters */}
       <section id="how" className="border-t border-slate-200 bg-slate-50 py-24">
         <div className="mx-auto max-w-[860px] px-8">
-          <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-            How it works
-          </p>
-          <h2 className="mt-4 max-w-[15em] font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.01em] text-brand-900 sm:text-[44px]">
-            A catch line for patients that slip through the cracks.
-          </h2>
-          <p className="mt-6 max-w-[40em] text-lg leading-relaxed text-slate-600">
-            When your line goes unanswered, {BRAND.name} texts the caller back from a dedicated
-            number, asks what they need, and pages your front desk, so they book with you before they
-            call the next clinic down the road.
-          </p>
+          <Reveal>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+              How it works
+            </p>
+          </Reveal>
+          <Reveal className="mt-4" delay={100}>
+            <h2 className="max-w-[15em] font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.01em] text-brand-900 sm:text-[44px]">
+              A catch line for patients that slip through the cracks.
+            </h2>
+          </Reveal>
+          <Reveal className="mt-6" delay={200}>
+            <p className="max-w-[40em] text-lg leading-relaxed text-slate-600">
+              When your line goes unanswered, {BRAND.name} texts the caller back from a dedicated
+              number, asks what they need, and pages your front desk, so they book with you before
+              they call the next clinic down the road.
+            </p>
+          </Reveal>
         </div>
       </section>
 
@@ -151,7 +186,7 @@ export default function LandingPage() {
       <section className="py-24">
         <div className="mx-auto max-w-[1080px] px-8">
           <div className="grid items-center gap-10 border-t border-slate-200 pt-14 md:grid-cols-[1fr_auto]">
-            <div>
+            <Reveal>
               <h2 className="font-display text-[28px] font-semibold tracking-[-0.01em] text-brand-900 sm:text-[34px]">
                 See it on your own line first.
               </h2>
@@ -160,13 +195,15 @@ export default function LandingPage() {
                 continue at <span className="font-semibold text-brand-900">$150 CAD per month</span>.
                 If it doesn&apos;t, we take it off and you owe nothing.
               </p>
-            </div>
-            <Link
-              href="/signup"
-              className="inline-block shrink-0 rounded-md bg-brand-600 px-7 py-3.5 font-semibold text-white transition-colors duration-150 hover:bg-brand-700"
-            >
-              Start a pilot
-            </Link>
+            </Reveal>
+            <Reveal delay={140}>
+              <Link
+                href="/signup"
+                className="inline-block shrink-0 rounded-md bg-brand-600 px-7 py-3.5 font-semibold text-white transition-colors duration-150 hover:bg-brand-700"
+              >
+                Start a pilot
+              </Link>
+            </Reveal>
           </div>
         </div>
       </section>

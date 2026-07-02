@@ -109,6 +109,7 @@ export async function POST(req: NextRequest) {
   });
 
   // --- text the caller back instantly (unless they've opted out) ---
+  let textbackSent = false;
   if (!patient!.opted_out) {
     const body = clinic.textback_message.replaceAll("{{clinic}}", clinic.name);
     try {
@@ -118,6 +119,7 @@ export async function POST(req: NextRequest) {
         messagingServiceSid: clinic.twilio_messaging_service_sid || undefined,
         body,
       });
+      textbackSent = true;
       await admin.from("messages").insert({
         clinic_id: clinic.id,
         conversation_id: conversationId,
@@ -143,7 +145,9 @@ export async function POST(req: NextRequest) {
     type: "missed_call",
     channel: "dashboard",
     title: "Missed call",
-    body: `Missed call from ${caller}. Text-back sent.`,
+    body: textbackSent
+      ? `Missed call from ${caller}. Text-back sent.`
+      : `Missed call from ${caller}. No text-back sent${patient!.opted_out ? " (patient opted out)" : ""}.`,
     status: "sent",
   });
 

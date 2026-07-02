@@ -21,9 +21,11 @@ export default async function MissedCallsPage() {
     .returns<Row[]>();
 
   const list = calls ?? [];
-  const today = list.filter(
-    (c) => new Date(c.occurred_at).toDateString() === new Date().toDateString(),
-  ).length;
+  // Count "today" in the clinic's timezone, not the server's (Vercel runs UTC,
+  // so late-evening calls would otherwise roll into tomorrow).
+  const tz = clinic!.timezone || "America/Toronto";
+  const dayInTz = (d: string | number) => new Date(d).toLocaleDateString("en-CA", { timeZone: tz });
+  const today = list.filter((c) => dayInTz(c.occurred_at) === dayInTz(Date.now())).length;
 
   return (
     <div className="flex h-full flex-col">
