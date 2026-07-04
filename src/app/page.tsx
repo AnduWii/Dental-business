@@ -40,12 +40,6 @@ export default function LandingPage() {
             </span>
           </div>
           <nav className="flex items-center gap-6 text-sm">
-            <a
-              href="#how"
-              className="hidden font-medium text-slate-600 transition-colors duration-150 hover:text-slate-900 sm:block"
-            >
-              How it works
-            </a>
             <Link
               href="/login"
               className="font-medium text-slate-600 transition-colors duration-150 hover:text-slate-900"
@@ -95,7 +89,7 @@ export default function LandingPage() {
                 href="#how"
                 className="rounded-md border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition-colors duration-150 hover:bg-slate-50"
               >
-                How it works
+                See it in action
               </a>
             </div>
           </Reveal>
@@ -183,16 +177,11 @@ export default function LandingPage() {
       <section id="how" className="border-t border-slate-200 bg-slate-50 py-24">
         <div className="mx-auto max-w-[860px] px-8">
           <Reveal>
-            <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-              How it works
-            </p>
-          </Reveal>
-          <Reveal className="mt-4" delay={100}>
             <h2 className="max-w-[15em] font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.01em] text-brand-900 sm:text-[44px]">
               A catch line for patients that slip through the cracks.
             </h2>
           </Reveal>
-          <Reveal className="mt-6" delay={200}>
+          <Reveal className="mt-6" delay={120}>
             <p className="max-w-[40em] text-lg leading-relaxed text-slate-600">
               When your line goes unanswered, {BRAND.name} texts the caller back from a dedicated
               number, asks what they need, and pages your front desk, so they book with you before
