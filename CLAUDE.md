@@ -13,39 +13,78 @@ new session: read this, then `README.md` and `docs/`.
 >
 > **Design-system rule (applies to all UI): follow [`docs/15-design-system.md`](docs/15-design-system.md).**
 > Steel-blue accent on a near-monochrome base, Newsreader headings + Public Sans body, `rounded-md`
-> for primary buttons, `shadow-sm` max (no blur or glow), zero emojis, 150ms hover fades, and no
-> generic AI-slop phrasing.
+> for primary buttons, `shadow-sm` max (no blur or glow), zero emojis in the UI, 150ms hover fades,
+> scroll reveals only per the rules in docs/15, no AI-slop phrasing, and **never sets of three**
+> (no card trios, numbered steps, or icon grids; the owner rejects these on sight).
 
 ---
 
-## ✅ Current status (updated 2026-06-21)
-- **V1 built and deployed** on Vercel (`main` auto-deploys; project "dental-business",
-  URL `dental-business-dusky.vercel.app`).
-- **Design:** Public Sans typeface; landing has a two-column hero with a live "phone" SMS recovery
-  card (cracked-molar emergency → booked → lead captured). Muted steel-blue brand palette.
+## ▶ Immediate next steps (where we left off, 2026-07-05)
+Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-live-runbook.md)):
+1. In Vercel (project **catchline**, the one connected to `AnduWii/Dental-business`), add env vars
+   `TWILIO_ACCOUNT_SID` + `TWILIO_AUTH_TOKEN`, and verify `NEXT_PUBLIC_APP_URL` is exactly
+   `https://dental-business-dusky.vercel.app`. Redeploy.
+2. In Twilio, on **+1 (437) 476-9802**: set Voice "A call comes in" (Webhook, POST) to
+   `<app-url>/api/twilio/voice` and Messaging "A message comes in" to `<app-url>/api/twilio/sms`.
+   Also finish adding the **Voice channel** in the number's compliance wizard (Messaging was done).
+3. In the app: `/admin`, open the clinic, set Catchline number `+14374769802`, front-desk mobile =
+   owner's cell, AI on, save.
+4. Live test: text the number, then call it; verify the AI replies, the front-desk page lands, and
+   the lead shows in `/dashboard`.
+
+## ✅ Current status (updated 2026-07-05)
+- **V1 built and deployed** on Vercel: project **"catchline"** (owned by the `vibe-coders3` scope),
+  `main` auto-deploys, URL **`dental-business-dusky.vercel.app`**. The `catchline.vercel.app` name
+  is taken by another project, so the dusky URL stays until the real domain is bought. **Vercel is
+  on Pro** (the free tier got paused by an unrelated project, `stockanalyzer`/shorts-analytics,
+  which burned the CPU cap; it has been deleted. Consider setting a Spend Management cap).
+- **Design system in place** ([`docs/15`](docs/15-design-system.md)): Newsreader serif headings
+  (Fraunces was retired as an AI-tell) + Public Sans body, steel-blue accent, semantic tints only
+  (red/emerald/amber), one ink band max per page, scroll reveals via `src/components/Reveal.tsx`
+  (16px/550ms, reduced-motion safe, no-JS safe), zero emojis in the UI (SVG icons instead).
+- **Landing page v2 (long form):** hero with an animated SMS demo that plays out on load (missed
+  call stamp, instant text-back, intake, staff handoff, captured-lead ledger), the slogan section
+  ("A catch line for patients that slip through the cracks."), a dark ink "Where patients go
+  missing" band (two lived scenes), a dashboard inbox peek, a $150 offer block, a 6-question FAQ
+  (native accordions), and a closing CTA. **Demo honesty rule: the AI never offers or books times
+  on the page, a named staff member does** (matches the Terms; keep it that way).
 - **Auth works:** sign up / sign in (password + magic link) + platform-admin allow-list
   (`andrewbirdie777@gmail.com` → `/admin`). Configured via `src/lib/constants.ts` / `ADMIN_EMAILS`.
 - **Hybrid onboarding:** clinics self-sign-up and own their dashboard; the admin can configure any
   clinic at `/admin/clinics/[id]` (the "free setup").
-- **Data residency:** on Supabase **`ca-central-1` (Montreal)** for Canadian/PHIPA comfort. Old
-  `us-east-1` project has been deleted.
-- **Hardening done (Steps 3 & 4):** input validation, security headers, append-only audit log,
-  abuse/cost cap, RLS multi-tenancy, 27 unit tests + GitHub CI + Dependabot + secret scanning.
-- **Stack on Next 15.5.19** (upgraded from 14.2.35, still React 18). Dependency backlog triaged:
-  `npm audit` is **0 vulnerabilities** (was 21). Vitest is now v4; postcss pinned via `overrides`.
-  ⚠️ The `main` **branch ruleset is currently DISABLED** (it blocked the deploy automation) -
-  re-enable it with the deploy app on the bypass list once you add a collaborator.
-- **Legal pages live, lawyer-reviewed (v1):** public **Privacy Policy** (`/privacy`),
-  **Terms of Service** (`/terms`), and clinic **DPA** (`/dpa`), linked from the footer + sign-up
-  form. Lawyer-ready copies in `docs/legal/`. Acted on the lawyer's first review: added an IP
-  section, an AI-clinical disclaimer (no diagnosis/treatment/clinical urgency), a CASL clinic
-  warranty, a 72-hour breach-notice timing, arbitration + class-action waiver, stronger liability
-  language, and an internal security policy (`docs/14-information-security.md`). Legal entity:
-  **Catchline Services Inc.** (not yet registered).
+- **Twilio: in progress.** Account upgraded (Individual for now, ~$20 balance, auto-recharge OFF),
+  MFA on. **Canadian number purchased: +1 (437) 476-9802 (Toronto), SMS+MMS+Voice.** Messaging
+  compliance wizard completed; Voice channel add + webhooks + env keys + live test remain (see
+  "Immediate next steps"). Switch the account to Business after the entity is registered, then do
+  A2P 10DLC only if/when texting US patients (Canadian traffic doesn't need it).
+- **Stripe paywall scaffolded, dormant** until keys are set: `/billing` page + sidebar item,
+  `/api/stripe/{checkout,portal,webhook}`, `src/lib/stripe.ts` (no SDK dependency), soft
+  payment-needed banner in the dashboard layout (non-blocking by design). ⚠️ Migration
+  `supabase/migrations/0003_billing.sql` has **NOT been applied to Supabase yet**, run it before
+  turning billing on. Env vars: `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`.
+- **Trademark:** ™ shown on the wordmark (common-law claim). [`docs/16`](docs/16-trademark-brief.md)
+  has the filing brief + a ready-to-file packet (classes 9/42/38 wording). Preliminary clearance is
+  a **yellow flag**: "Catchline Communications" and "Catchline Agency" already operate in
+  marketing/communications. Get a professional clearance opinion before paying to file; file after
+  the entity exists; keep a backup name in mind.
+- **Data residency:** Supabase **`ca-central-1` (Montreal)** for Canadian/PHIPA comfort.
+- **Hardening done:** input validation, security headers, append-only audit log, abuse/cost cap,
+  RLS multi-tenancy, Twilio signature checks, 27 unit tests + CI + Dependabot + secret scanning.
+  MFA enabled on Google/Vercel/Supabase/Twilio (owner task, done 2026-07).
+- **Review fixes (2026-07):** missed-call notification only claims "Text-back sent" when true;
+  Missed-calls "today" counts in the clinic's timezone; OpenGraph metadata with a crash-safe
+  `metadataBase` (a malformed `NEXT_PUBLIC_APP_URL` can no longer break deploys).
+- **Stack: Next 15.5.19** (React 18), Vitest 4, `npm audit` 0 vulnerabilities. ⚠️ The `main`
+  **branch ruleset is DISABLED** (it blocked deploy automation), re-enable with a bypass once a
+  collaborator is added.
+- **Legal pages live, lawyer-reviewed (scored 8.5-9/10):** Privacy Policy (`/privacy`), Terms
+  (`/terms`), DPA (`/dpa`), linked from footer + sign-up. Lawyer-ready copies in `docs/legal/`.
+  Legal entity: **Catchline Services Inc. (not yet registered)**.
   ⏳ Still to do: fill the **[mailing address]** placeholder in the Privacy Policy + DPA, register
-  the entity, and get a final counsel re-review (including an Ontario PHIPA review) before signing.
-- **Pricing:** introductory **$150 CAD/month** per clinic (after a 14-day pilot); revisit later.
-- **NOT yet live for real calls**, Twilio isn't connected (see below).
+  the entity, final counsel re-review (incl. Ontario PHIPA) before signing a clinic.
+- **Pricing:** introductory **$150 CAD/month** per clinic (after a 14-day pilot). Consistent across
+  site + Terms; keep the pitch deck/pilot agreement/invoices at the same number.
+- **NOT yet live for real calls** until the "Immediate next steps" above are finished.
 
 ---
 
@@ -53,36 +92,35 @@ new session: read this, then `README.md` and `docs/`.
 When you land your first client, run this list (open a new chat and say *"I got my first client -
 run the launch checklist"*).
 
-1. **Connect Twilio (required to send/receive anything).** Buy a local number; add
-   `TWILIO_ACCOUNT_SID` + `TWILIO_AUTH_TOKEN` (+ optional `TWILIO_MESSAGING_SERVICE_SID`) to Vercel;
-   set the number's Voice + Messaging webhooks; set up conditional call forwarding on the clinic's
-   line. **Submit A2P 10DLC registration early, it has multi-day lead time.** See `docs/08`.
-   (You can connect a Twilio number *now* to test the full call→text→intake flow on your own phone;
-   it is only *required* by your first clinic, not gated to it.)
+1. **Finish Twilio** (see "Immediate next steps" + [`docs/17`](docs/17-twilio-go-live-runbook.md)):
+   env keys, webhooks, clinic config, live test, then the clinic's conditional call forwarding.
+   For a real clinic: move the Twilio account to **Business** (after incorporation). A2P 10DLC only
+   for US-bound texting.
 2. **(Optional) AI key:** add `OPENAI_API_KEY` to Vercel for smarter intake (scripted fallback
    works without it).
 3. **Buy a domain** (e.g. `trycatchline.com`), point Vercel at it, then update the 3 places that
    reference the URL: `NEXT_PUBLIC_APP_URL` (Vercel) → Supabase Auth URL Configuration → Twilio
    webhooks. (See chat notes / `docs/08`.)
-4. **SMTP email (hardening 3c):** verify the domain in Resend, set Supabase Custom SMTP to send from
+4. **SMTP email:** verify the domain in Resend, set Supabase Custom SMTP to send from
    `noreply@yourdomain`. (Built-in Supabase email works until then.)
-5. **Supabase Pro (hardening Step 5):** upgrade for daily backups; add **PITR** once you run 2–3
-   clinics.
-6. **Data residency (Step 6): ✅ DONE**, on `ca-central-1` (Montreal). Old `us-east-1` project
-   deleted.
-7. **Retention (Step 7): ✅ DONE**, `pg_cron` job `purge-old-conversations` scheduled (monthly
-   `select purge_old_conversations(365);`). Verify any time with `select * from cron.job;`.
-8. **Privacy policy + clinic DPA (Step 8): ✅ DONE**, published in-app at `/privacy` and `/dpa`
-   (linked from the site footer + sign-up form). Source: `src/app/{privacy,dpa}/page.tsx`. ⚠️ Before
-   signing a clinic, have counsel review the wording and fill the DPA's bracketed fields (legal
-   entity name, signatures).
-9. **Terms of Service: ✅ DONE**, published at `/terms`. Lawyer-ready copies of the Privacy
-   Policy, DPA, and Terms are in `docs/legal/` (counsel review still pending).
+5. **Turn on the paywall:** apply `supabase/migrations/0003_billing.sql`, create the $150 CAD/month
+   recurring price in Stripe, add `STRIPE_SECRET_KEY` + `STRIPE_PRICE_ID` + `STRIPE_WEBHOOK_SECRET`
+   to Vercel, point a Stripe webhook at `/api/stripe/webhook`, test with the 4242 card.
+6. **Supabase Pro:** upgrade for daily backups; add **PITR** once you run 2-3 clinics.
+7. **Data residency: ✅ DONE**, on `ca-central-1` (Montreal).
+8. **Retention: ✅ DONE**, `pg_cron` job `purge-old-conversations` (monthly
+   `select purge_old_conversations(365);`). Verify with `select * from cron.job;`.
+9. **Privacy policy + DPA + Terms: ✅ DONE** (published in-app; counsel re-review + mailing address
+   still pending, see status).
+10. **Entity + insurance:** register Catchline Services Inc., get the final counsel re-review
+    (Ontario PHIPA), and buy cyber/professional liability insurance before signing a clinic.
 
 ## 🔧 Deferred / optional (not blocking launch)
-- MFA + session inactivity timeouts (Supabase Auth).
+- MFA + session inactivity timeouts for clinic users (Supabase Auth).
 - **Re-enable the `main` branch ruleset** (currently disabled) once you add a collaborator, and
   add the deploy app to its bypass list so automated deploys aren't blocked.
+- Hard paywall gating (the billing banner is soft/non-blocking today; flip to blocking later).
+- Trademark filing (after entity + clearance opinion, `docs/16`).
 - Integration/e2e tests (Playwright), strict Content-Security-Policy, load/chaos testing, rationale
   in `docs/10-production-readiness.md`.
 
@@ -101,6 +139,9 @@ npm run typecheck  # tsc --noEmit
 ```
 
 ## Where things live
-- Architecture + data model: `docs/02`, `docs/04`.
+- Architecture + data model: `docs/02`, `docs/04`. Twilio setup: `docs/08` + runbook `docs/17`.
+- Design system: `docs/15`. Trademark: `docs/16`.
 - Webhooks: `src/app/api/twilio/{voice,sms}`. AI intake: `src/lib/ai/intake.ts`.
+- Billing: `src/app/api/stripe/*`, `src/lib/stripe.ts`, `/billing` page, migration `0003`.
+- Landing: `src/app/page.tsx` (+ `src/components/Reveal.tsx` for scroll motion).
 - Admin: `src/app/admin/`. Brand name: `src/lib/constants.ts`.
