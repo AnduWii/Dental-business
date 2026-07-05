@@ -6,8 +6,18 @@ import { env } from "@/lib/env";
 const description =
   "Catchline texts back dental patients the instant a call is missed, captures the lead, and pages your front desk.";
 
+// A malformed NEXT_PUBLIC_APP_URL (e.g. missing https://) must never break the
+// build; without a base, Next just skips absolute OG URLs.
+function metadataBase(): URL | undefined {
+  try {
+    return new URL(env.appUrl());
+  } catch {
+    return undefined;
+  }
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL(env.appUrl()),
+  metadataBase: metadataBase(),
   title: `${BRAND.name} · ${BRAND.tagline}`,
   description,
   openGraph: {
