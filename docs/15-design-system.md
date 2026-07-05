@@ -8,13 +8,19 @@ Every UI change must obey these. When a quick fix conflicts with the system, the
 - Near-monochrome base: white, `slate` neutrals, and ink (`brand-900`) for text.
 - One accent only: the steel-blue `brand` scale (see `tailwind.config.ts`), used sparingly for
   primary actions and key emphasis.
+- Semantic tints are allowed in small doses (chips, badges, status): red for emergency, emerald
+  for success, amber for missed/warning. Never as section colors or decoration.
+- A full-bleed ink band (`brand-900` background) may be used for at most one marketing section
+  per page.
 - Never use Tailwind `indigo`, `violet`, or `purple`. No gradients. Solid colors only.
 
 ## Typography
 - Two families, never one for everything:
-  - Marketing headings (landing, legal, marketing sections): `font-display` (Fraunces, a serif),
-    for editorial contrast and gravitas.
+  - Marketing headings (landing, legal, marketing sections): `font-display` (Newsreader, a serif),
+    for editorial contrast and gravitas. (Fraunces was retired in July 2026 after it became a
+    default AI-generated-site tell; if Newsreader ever reaches that status, swap again.)
   - Body, and all dense app UI (dashboard, forms): `font-sans` (Public Sans).
+- Avoid AI-default fonts entirely: Inter and Fraunces are tells.
 - Build hierarchy with size and weight, not color tricks. Strong, large H1; distinctly smaller
   H2/H3. Vary sizes across sections; avoid one uniform heading size everywhere.
 

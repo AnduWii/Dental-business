@@ -12,7 +12,7 @@ new session: read this, then `README.md` and `docs/`.
 > em dashes.
 >
 > **Design-system rule (applies to all UI): follow [`docs/15-design-system.md`](docs/15-design-system.md).**
-> Steel-blue accent on a near-monochrome base, Fraunces headings + Public Sans body, `rounded-md`
+> Steel-blue accent on a near-monochrome base, Newsreader headings + Public Sans body, `rounded-md`
 > for primary buttons, `shadow-sm` max (no blur or glow), zero emojis, 150ms hover fades, and no
 > generic AI-slop phrasing.
 
