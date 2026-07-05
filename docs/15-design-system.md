@@ -20,7 +20,11 @@ Every UI change must obey these. When a quick fix conflicts with the system, the
     for editorial contrast and gravitas. (Fraunces was retired in July 2026 after it became a
     default AI-generated-site tell; if Newsreader ever reaches that status, swap again.)
   - Body, and all dense app UI (dashboard, forms): `font-sans` (Public Sans).
-- Avoid AI-default fonts entirely: Inter and Fraunces are tells.
+  - Micro-labels, timestamps, and log-style captions on marketing pages: `font-mono`
+    (Fragment Mono), the "switchboard" voice. Uppercase, small (9 to 12px), tracked, and never
+    bolded (the family ships one weight). Use it for eyebrows, chips, and annotation lines, not
+    for body text.
+- Avoid AI-default fonts entirely: Inter, Fraunces, and Instrument Serif are tells.
 - Build hierarchy with size and weight, not color tricks. Strong, large H1; distinctly smaller
   H2/H3. Vary sizes across sections; avoid one uniform heading size everywhere.
 

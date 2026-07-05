@@ -103,7 +103,7 @@ export default function LandingPage() {
       <section className="mx-auto grid max-w-[1080px] items-center gap-16 px-8 pb-24 pt-28 md:grid-cols-[1.1fr_0.9fr]">
         <div>
           <Reveal>
-            <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
               Missed-call recovery for dental clinics
             </p>
           </Reveal>
@@ -169,7 +169,7 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-col gap-2.5 bg-[#fbfcfe] p-4">
               <Reveal
-                className="self-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-800"
+                className="self-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-amber-800"
                 delay={600}
               >
                 Missed call · 12:41 PM
@@ -179,7 +179,9 @@ export default function LandingPage() {
                 delay={1000}
               >
                 Hi, this is Dr. Okafor&apos;s office. Sorry we missed your call. How can we help?
-                <div className="mt-1 text-[10px] text-white/70">Instant text-back</div>
+                <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.1em] text-white/70">
+                  Instant text-back
+                </div>
               </Reveal>
               <Reveal
                 className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900"
@@ -193,7 +195,9 @@ export default function LandingPage() {
               >
                 That sounds painful, Maria. I&apos;ve marked this urgent and paged the front desk.
                 If they can fit you in today, what time works?
-                <div className="mt-1 text-[10px] text-white/70">Autopilot, intake only</div>
+                <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.1em] text-white/70">
+                  Autopilot, intake only
+                </div>
               </Reveal>
               <Reveal
                 className="max-w-[78%] self-start rounded-[14px_14px_14px_4px] border border-slate-100 bg-white px-3 py-2 text-[13px] text-brand-900"
@@ -206,7 +210,9 @@ export default function LandingPage() {
                 delay={5400}
               >
                 Hi Maria, it&apos;s Sana at the front desk. We can take you at 2:30 today. Want it?
-                <div className="mt-1 text-[10px] text-white/70">Your staff, taking over</div>
+                <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.1em] text-white/70">
+                  Your staff, taking over
+                </div>
               </Reveal>
             </div>
             <Reveal
@@ -232,7 +238,7 @@ export default function LandingPage() {
                 ["Booking", "Today, after 1"],
               ].map(([label, value]) => (
                 <div key={label} className="bg-white px-3.5 py-2.5">
-                  <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400">
+                  <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-slate-400">
                     {label}
                   </div>
                   <div
@@ -246,6 +252,9 @@ export default function LandingPage() {
               ))}
             </Reveal>
           </div>
+          <Reveal className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-slate-400" delay={7400}>
+            Two minutes, reconstructed · Example conversation
+          </Reveal>
         </Reveal>
       </section>
 
@@ -277,7 +286,7 @@ export default function LandingPage() {
           </Reveal>
           <div className="mt-12 grid gap-12 md:grid-cols-2 md:gap-16">
             <Reveal delay={120}>
-              <span className="inline-flex items-center rounded-full border border-amber-300/40 px-3 py-1 font-display text-sm italic text-amber-300">
+              <span className="inline-flex items-center rounded-full border border-amber-300/40 px-3 py-1 font-mono text-xs tracking-[0.08em] text-amber-300">
                 12:40 PM
               </span>
               <p className="mt-4 text-[17px] leading-relaxed text-slate-300">
@@ -288,7 +297,7 @@ export default function LandingPage() {
               </p>
             </Reveal>
             <Reveal delay={240}>
-              <span className="inline-flex items-center rounded-full border border-amber-300/40 px-3 py-1 font-display text-sm italic text-amber-300">
+              <span className="inline-flex items-center rounded-full border border-amber-300/40 px-3 py-1 font-mono text-xs tracking-[0.08em] text-amber-300">
                 9:05 PM
               </span>
               <p className="mt-4 text-[17px] leading-relaxed text-slate-300">
@@ -299,9 +308,10 @@ export default function LandingPage() {
             </Reveal>
           </div>
           <Reveal className="mt-12" delay={200}>
-            <p className="max-w-[36em] border-t border-white/10 pt-8 text-[15px] leading-relaxed text-slate-400">
-              {BRAND.name} sits quietly behind your existing line for exactly these minutes. Not a
-              new phone system, not a receptionist replacement, a catch line.
+            <p className="max-w-[38em] border-t border-white/10 pt-8 text-[15px] leading-relaxed text-slate-400">
+              Nobody did anything wrong. The clinic was busy, the patient moved on, and the
+              schedule never knew the difference. {BRAND.name} sits quietly behind your existing
+              line for exactly these minutes.
             </p>
           </Reveal>
         </div>
@@ -334,9 +344,9 @@ export default function LandingPage() {
             <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-5 py-3.5">
                 <span className="text-sm font-semibold text-brand-900">Inbox</span>
-                <span className="text-xs text-slate-500">
-                  <strong className="text-red-600">1</strong> needs attention ·{" "}
-                  <strong className="text-brand-600">4</strong> active
+                <span className="font-mono text-[11px] text-slate-500">
+                  <span className="text-red-600">1</span> needs attention ·{" "}
+                  <span className="text-brand-600">4</span> active
                 </span>
               </div>
               <div className="divide-y divide-slate-100">
@@ -378,8 +388,8 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
-              <div className="border-t border-slate-100 bg-slate-50 px-5 py-2.5 text-[11px] text-slate-400">
-                Example data. This is the live dashboard your clinic signs into.
+              <div className="border-t border-slate-100 bg-slate-50 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.1em] text-slate-400">
+                Example data · This is the live dashboard your clinic signs into
               </div>
             </div>
           </Reveal>
@@ -394,7 +404,9 @@ export default function LandingPage() {
               <div className="font-display text-[56px] font-semibold leading-none tracking-[-0.02em] text-brand-900">
                 $150
               </div>
-              <div className="mt-1 text-[13px] text-slate-500">CAD per month, after the pilot</div>
+              <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.08em] text-slate-500">
+                CAD per month, after the pilot
+              </div>
             </Reveal>
             <Reveal delay={120}>
               <h2 className="font-display text-[26px] font-semibold tracking-[-0.01em] text-brand-900 sm:text-[30px]">

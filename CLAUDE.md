@@ -12,7 +12,8 @@ new session: read this, then `README.md` and `docs/`.
 > em dashes.
 >
 > **Design-system rule (applies to all UI): follow [`docs/15-design-system.md`](docs/15-design-system.md).**
-> Steel-blue accent on a near-monochrome base, Newsreader headings + Public Sans body, `rounded-md`
+> Steel-blue accent on a near-monochrome base, Newsreader headings + Public Sans body + Fragment
+> Mono micro-labels, `rounded-md`
 > for primary buttons, `shadow-sm` max (no blur or glow), zero emojis in the UI, 150ms hover fades,
 > scroll reveals only per the rules in docs/15, no AI-slop phrasing, and **never sets of three**
 > (no card trios, numbered steps, or icon grids; the owner rejects these on sight).
