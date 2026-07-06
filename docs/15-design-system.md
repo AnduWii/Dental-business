@@ -11,9 +11,11 @@ Every UI change must obey these. When a quick fix conflicts with the system, the
 - Semantic tints are allowed in small doses (chips, badges, status): red for emergency, emerald
   for success, amber for missed/warning. Never as section colors or decoration.
 - Ink bands (`brand-900` background) are the page's dark counterpoint: at most two per marketing
-  page (currently the problem band and the pricing band), plus the slim recovery-ticker strip.
-  On ink, flat offset outlines are allowed for note cards (a hard `8px 8px 0` shadow with zero
-  blur); this is a border treatment, not an elevation effect. Blur stays banned everywhere.
+  page (currently the problem band and the pricing band). On ink, flat offset outlines are allowed
+  for note cards (a hard `8px 8px 0` shadow with zero blur); this is a border treatment, not an
+  elevation effect. Blur stays banned everywhere.
+- No boxed feature/inclusion grids of any count (the owner rejects 3-up and 4-up card grids on
+  sight), and no mono "log ticker" strips with arrow chains. Render lists as prose sentences.
 - Never use Tailwind `indigo`, `violet`, or `purple`. No gradients. Solid colors only.
 
 ## Typography

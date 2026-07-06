@@ -69,13 +69,6 @@ const FAQ: Array<{ q: string; a: string }> = [
   },
 ];
 
-const INCLUDED: Array<[string, string]> = [
-  ["A dedicated Catchline number for your clinic.", "You keep your current number."],
-  ["Instant text-back and guided intake.", "Name, reason, urgency, and booking intent."],
-  ["Front desk paging by text.", "Plus the shared inbox and the missed-call log."],
-  ["Setup done with you.", "Including call forwarding on your existing line."],
-];
-
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-white">
@@ -135,12 +128,6 @@ export default function LandingPage() {
               >
                 Start your 14-day pilot
               </Link>
-              <a
-                href="#how"
-                className="rounded-md border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition-colors duration-150 hover:bg-slate-50"
-              >
-                See it in action
-              </a>
             </div>
           </Reveal>
           <Reveal className="mt-5" delay={320}>
@@ -264,30 +251,8 @@ export default function LandingPage() {
         </Reveal>
       </section>
 
-      {/* Recovery ticker: the whole product in one log line */}
-      <section id="how" className="border-b border-white/10 bg-brand-900">
-        <div className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-x-8 gap-y-2 px-8 py-4">
-          <Reveal>
-            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-slate-300">
-              <span className="text-amber-300">Missed 12:41</span>
-              <span className="mx-2 text-slate-500">→</span>
-              <span>Texted 12:41</span>
-              <span className="mx-2 text-slate-500">→</span>
-              <span>Paged 12:43</span>
-              <span className="mx-2 text-slate-500">→</span>
-              <span className="text-emerald-300">Booked 2:30</span>
-            </p>
-          </Reveal>
-          <Reveal delay={150}>
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
-              One recovered patient, in real time
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
       {/* Where patients go missing: the ink band */}
-      <section className="bg-brand-900 py-24">
+      <section id="how" className="bg-brand-900 py-24">
         <div className="mx-auto max-w-[1080px] px-8">
           <Reveal>
             <h2 className="font-display text-[36px] leading-[1.06] tracking-[-0.01em] text-white sm:text-[48px]">
@@ -467,15 +432,14 @@ export default function LandingPage() {
               No contract, cancel anytime.
             </p>
           </Reveal>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {INCLUDED.map(([lead, rest], i) => (
-              <Reveal key={lead} delay={i * 90}>
-                <div className="h-full border border-white/25 p-5 text-sm leading-relaxed text-slate-300">
-                  <strong className="font-semibold text-white">{lead}</strong> {rest}
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <Reveal className="mt-4" delay={240}>
+            <p className="max-w-[44em] text-[16px] leading-relaxed text-slate-300">
+              The price covers everything: your dedicated Catchline number (you keep your current
+              one), the instant text-back and intake, front desk paging with the shared inbox and
+              missed-call log, and setup done with you, including the call forwarding on your
+              existing line.
+            </p>
+          </Reveal>
           <Reveal className="mt-10" delay={200}>
             <Link
               href="/signup"
