@@ -20,8 +20,9 @@ const config: Config = {
           "sans-serif",
         ],
         // Editorial serif for marketing headings (landing, legal). App UI stays sans.
-        // Newsreader replaced Fraunces (Fraunces became an AI-default tell).
-        display: ["Newsreader", "Georgia", "Cambria", "Times New Roman", "serif"],
+        // Young Serif ships one weight only: build hierarchy with size, never bold it.
+        // (Fraunces, then Newsreader, were retired; see docs/15.)
+        display: ["Young Serif", "Georgia", "Cambria", "Times New Roman", "serif"],
         // "Switchboard" mono voice: micro-labels, timestamps, log-style captions.
         // Fragment Mono ships regular weight only; never bold it.
         mono: ["Fragment Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],

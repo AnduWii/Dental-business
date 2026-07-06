@@ -10,21 +10,25 @@ Every UI change must obey these. When a quick fix conflicts with the system, the
   primary actions and key emphasis.
 - Semantic tints are allowed in small doses (chips, badges, status): red for emergency, emerald
   for success, amber for missed/warning. Never as section colors or decoration.
-- A full-bleed ink band (`brand-900` background) may be used for at most one marketing section
-  per page.
+- Ink bands (`brand-900` background) are the page's dark counterpoint: at most two per marketing
+  page (currently the problem band and the pricing band), plus the slim recovery-ticker strip.
+  On ink, flat offset outlines are allowed for note cards (a hard `8px 8px 0` shadow with zero
+  blur); this is a border treatment, not an elevation effect. Blur stays banned everywhere.
 - Never use Tailwind `indigo`, `violet`, or `purple`. No gradients. Solid colors only.
 
 ## Typography
-- Two families, never one for everything:
-  - Marketing headings (landing, legal, marketing sections): `font-display` (Newsreader, a serif),
-    for editorial contrast and gravitas. (Fraunces was retired in July 2026 after it became a
-    default AI-generated-site tell; if Newsreader ever reaches that status, swap again.)
+- Three voices, each with one job:
+  - Marketing headings (landing, legal, marketing sections): `font-display` (Young Serif). It
+    ships a single weight: build hierarchy with size, never bold it, and don't italicize it (no
+    italic cut; use color for emphasis instead). Fraunces, then Newsreader, were retired after
+    becoming AI-generated-site tells; if Young Serif ever reaches that status, swap again.
   - Body, and all dense app UI (dashboard, forms): `font-sans` (Public Sans).
   - Micro-labels, timestamps, and log-style captions on marketing pages: `font-mono`
     (Fragment Mono), the "switchboard" voice. Uppercase, small (9 to 12px), tracked, and never
-    bolded (the family ships one weight). Use it for eyebrows, chips, and annotation lines, not
-    for body text.
-- Avoid AI-default fonts entirely: Inter, Fraunces, and Instrument Serif are tells.
+    bolded (the family ships one weight). Use it for eyebrows, chips, tickers, and annotation
+    lines, not for body text.
+- Avoid AI-default fonts entirely: Inter, Fraunces, Newsreader (retired here), and Instrument
+  Serif are tells.
 - Build hierarchy with size and weight, not color tricks. Strong, large H1; distinctly smaller
   H2/H3. Vary sizes across sections; avoid one uniform heading size everywhere.
 

@@ -69,6 +69,13 @@ const FAQ: Array<{ q: string; a: string }> = [
   },
 ];
 
+const INCLUDED: Array<[string, string]> = [
+  ["A dedicated Catchline number for your clinic.", "You keep your current number."],
+  ["Instant text-back and guided intake.", "Name, reason, urgency, and booking intent."],
+  ["Front desk paging by text.", "Plus the shared inbox and the missed-call log."],
+  ["Setup done with you.", "Including call forwarding on your existing line."],
+];
+
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-white">
@@ -100,7 +107,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="mx-auto grid max-w-[1080px] items-center gap-16 px-8 pb-24 pt-28 md:grid-cols-[1.1fr_0.9fr]">
+      <section className="mx-auto grid max-w-[1080px] items-center gap-16 px-8 pb-20 pt-24 md:grid-cols-[1.05fr_0.95fr]">
         <div>
           <Reveal>
             <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
@@ -108,9 +115,9 @@ export default function LandingPage() {
             </p>
           </Reveal>
           <Reveal className="mt-6" delay={80}>
-            <h1 className="font-display text-[48px] font-semibold leading-[1.02] tracking-[-0.02em] text-brand-900 sm:text-[64px]">
+            <h1 className="font-display text-[44px] leading-[1.04] tracking-[-0.01em] text-brand-900 sm:text-[58px]">
               Get more patients from the calls you already{" "}
-              <em className="italic text-brand-600">miss</em>.
+              <em className="not-italic text-brand-500">miss</em>.
             </h1>
           </Reveal>
           <Reveal className="mt-6" delay={160}>
@@ -137,13 +144,9 @@ export default function LandingPage() {
             </div>
           </Reveal>
           <Reveal className="mt-5" delay={320}>
-            <div className="flex items-center gap-3.5 text-[13px] text-slate-400">
-              <span>Free setup</span>
-              <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
-              <span>No contract</span>
-              <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
-              <span>Cancel anytime</span>
-            </div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+              Free setup · No contract · Cancel anytime
+            </p>
           </Reveal>
         </div>
 
@@ -252,18 +255,99 @@ export default function LandingPage() {
               ))}
             </Reveal>
           </div>
-          <Reveal className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-slate-400" delay={7400}>
+          <Reveal
+            className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-slate-400"
+            delay={7400}
+          >
             Two minutes, reconstructed · Example conversation
           </Reveal>
         </Reveal>
       </section>
 
+      {/* Recovery ticker: the whole product in one log line */}
+      <section id="how" className="border-b border-white/10 bg-brand-900">
+        <div className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-x-8 gap-y-2 px-8 py-4">
+          <Reveal>
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-slate-300">
+              <span className="text-amber-300">Missed 12:41</span>
+              <span className="mx-2 text-slate-500">→</span>
+              <span>Texted 12:41</span>
+              <span className="mx-2 text-slate-500">→</span>
+              <span>Paged 12:43</span>
+              <span className="mx-2 text-slate-500">→</span>
+              <span className="text-emerald-300">Booked 2:30</span>
+            </p>
+          </Reveal>
+          <Reveal delay={150}>
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
+              One recovered patient, in real time
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Where patients go missing: the ink band */}
+      <section className="bg-brand-900 py-24">
+        <div className="mx-auto max-w-[1080px] px-8">
+          <Reveal>
+            <h2 className="font-display text-[36px] leading-[1.06] tracking-[-0.01em] text-white sm:text-[48px]">
+              Where patients go missing.
+            </h2>
+          </Reveal>
+          <div className="mt-14 grid gap-14 md:grid-cols-2 md:gap-16">
+            <Reveal delay={120}>
+              <div className="flex items-baseline gap-3">
+                <span className="font-display text-[56px] leading-none text-white sm:text-[72px]">
+                  12:40
+                </span>
+                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-amber-300">
+                  PM · The lunch rush
+                </span>
+              </div>
+              <p className="mt-5 max-w-[34em] text-[16px] leading-relaxed text-slate-300">
+                Both hygienists are turning rooms, the desk is checking out a family of four, and
+                the phone rings twice, then stops. Nobody hears it. That caller had a cracked molar
+                and a free afternoon, and they are already dialing the next clinic on the list.
+              </p>
+            </Reveal>
+            <Reveal delay={240}>
+              <div className="flex items-baseline gap-3">
+                <span className="font-display text-[56px] leading-none text-white sm:text-[72px]">
+                  9:05
+                </span>
+                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-amber-300">
+                  PM · Long after close
+                </span>
+              </div>
+              <p className="mt-5 max-w-[34em] text-[16px] leading-relaxed text-slate-300">
+                The toothache someone ignored all week finally wins. They call, get voicemail, and
+                hang up without leaving a message. In the morning there is nothing to return, and
+                no record they ever called.
+              </p>
+            </Reveal>
+          </div>
+          <Reveal className="mt-14" delay={200}>
+            <div className="max-w-[44em] border border-white/40 p-6 shadow-[8px_8px_0_rgba(240,244,248,0.14)]">
+              <p className="text-[15px] leading-relaxed text-slate-200">
+                Nobody did anything wrong. The clinic was busy, the patient moved on, and the
+                schedule never knew the difference. {BRAND.name} sits behind your existing line for
+                exactly these minutes. Not a new phone system, not a receptionist replacement,{" "}
+                <strong className="font-semibold text-white">a catch line.</strong>
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* The slogan statement */}
-      <section id="how" className="border-t border-slate-200 bg-slate-50 py-24">
+      <section className="py-24">
         <div className="mx-auto max-w-[860px] px-8">
           <Reveal>
-            <h2 className="max-w-[15em] font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.01em] text-brand-900 sm:text-[44px]">
-              A catch line for patients that slip through the cracks.
+            <h2 className="max-w-[16em] font-display text-[32px] leading-[1.1] tracking-[-0.01em] text-brand-900 sm:text-[42px]">
+              A catch line for patients that slip through{" "}
+              <span className="text-brand-500 underline decoration-brand-200 decoration-2 underline-offset-4">
+                the cracks.
+              </span>
             </h2>
           </Reveal>
           <Reveal className="mt-6" delay={120}>
@@ -276,53 +360,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Where patients go missing: the ink band */}
-      <section className="bg-brand-900 py-24">
-        <div className="mx-auto max-w-[1080px] px-8">
-          <Reveal>
-            <h2 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.01em] text-white sm:text-[44px]">
-              Where patients go missing.
-            </h2>
-          </Reveal>
-          <div className="mt-12 grid gap-12 md:grid-cols-2 md:gap-16">
-            <Reveal delay={120}>
-              <span className="inline-flex items-center rounded-full border border-amber-300/40 px-3 py-1 font-mono text-xs tracking-[0.08em] text-amber-300">
-                12:40 PM
-              </span>
-              <p className="mt-4 text-[17px] leading-relaxed text-slate-300">
-                The lunch rush. Both hygienists are turning rooms, the desk is checking out a
-                family of four, and the phone rings twice, then stops. Nobody hears it. That caller
-                had a cracked molar and a free afternoon, and they are already dialing the next
-                clinic on the list.
-              </p>
-            </Reveal>
-            <Reveal delay={240}>
-              <span className="inline-flex items-center rounded-full border border-amber-300/40 px-3 py-1 font-mono text-xs tracking-[0.08em] text-amber-300">
-                9:05 PM
-              </span>
-              <p className="mt-4 text-[17px] leading-relaxed text-slate-300">
-                Long after close. The toothache someone ignored all week finally wins. They call,
-                get voicemail, and hang up without leaving a message. In the morning there is
-                nothing to return, and no record they ever called.
-              </p>
-            </Reveal>
-          </div>
-          <Reveal className="mt-12" delay={200}>
-            <p className="max-w-[38em] border-t border-white/10 pt-8 text-[15px] leading-relaxed text-slate-400">
-              Nobody did anything wrong. The clinic was busy, the patient moved on, and the
-              schedule never knew the difference. {BRAND.name} sits quietly behind your existing
-              line for exactly these minutes.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
       {/* The part your team sees */}
-      <section className="py-24">
+      <section className="border-y border-slate-200 bg-slate-50 py-24">
         <div className="mx-auto grid max-w-[1080px] items-center gap-14 px-8 md:grid-cols-[0.9fr_1.1fr]">
           <div>
             <Reveal>
-              <h2 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.01em] text-brand-900 sm:text-[40px]">
+              <h2 className="font-display text-[32px] leading-[1.1] tracking-[-0.01em] text-brand-900 sm:text-[40px]">
                 The part your team sees.
               </h2>
             </Reveal>
@@ -396,37 +439,51 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Offer */}
-      <section className="border-t border-slate-200 bg-slate-50 py-24">
+      {/* The deal: dark pricing band */}
+      <section className="bg-brand-900 py-24">
         <div className="mx-auto max-w-[1080px] px-8">
-          <div className="grid items-center gap-10 md:grid-cols-[auto_1fr_auto]">
-            <Reveal>
-              <div className="font-display text-[56px] font-semibold leading-none tracking-[-0.02em] text-brand-900">
+          <Reveal>
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+              See it on your own line first
+            </p>
+          </Reveal>
+          <Reveal className="mt-6" delay={100}>
+            <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
+              <span className="font-display text-[80px] leading-none text-white sm:text-[104px]">
                 $150
-              </div>
-              <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.08em] text-slate-500">
-                CAD per month, after the pilot
-              </div>
-            </Reveal>
-            <Reveal delay={120}>
-              <h2 className="font-display text-[26px] font-semibold tracking-[-0.01em] text-brand-900 sm:text-[30px]">
-                See it on your own line first.
-              </h2>
-              <p className="mt-3 max-w-[40em] text-base leading-relaxed text-slate-600">
-                We start with a 14-day pilot on your real phone number. If it recovers patients,
-                you continue. If it doesn&apos;t, we take it off your line and you owe nothing. No
-                contract, cancel anytime.
-              </p>
-            </Reveal>
-            <Reveal delay={220}>
-              <Link
-                href="/signup"
-                className="inline-block shrink-0 rounded-md bg-brand-600 px-7 py-3.5 font-semibold text-white transition-colors duration-150 hover:bg-brand-700"
-              >
-                Start a pilot
-              </Link>
-            </Reveal>
+              </span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">
+                CAD per month · After the free 14-day pilot
+              </span>
+            </div>
+          </Reveal>
+          <Reveal className="mt-6" delay={180}>
+            <p className="max-w-[44em] text-[16px] leading-relaxed text-slate-300">
+              We start with a 14-day pilot on your real phone number. If it recovers patients, you
+              continue.{" "}
+              <strong className="font-semibold text-white">
+                If it doesn&apos;t, we take it off your line and you owe nothing.
+              </strong>{" "}
+              No contract, cancel anytime.
+            </p>
+          </Reveal>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            {INCLUDED.map(([lead, rest], i) => (
+              <Reveal key={lead} delay={i * 90}>
+                <div className="h-full border border-white/25 p-5 text-sm leading-relaxed text-slate-300">
+                  <strong className="font-semibold text-white">{lead}</strong> {rest}
+                </div>
+              </Reveal>
+            ))}
           </div>
+          <Reveal className="mt-10" delay={200}>
+            <Link
+              href="/signup"
+              className="inline-block rounded-md bg-white px-7 py-3.5 font-semibold text-brand-900 transition-colors duration-150 hover:bg-slate-100"
+            >
+              Start a pilot
+            </Link>
+          </Reveal>
         </div>
       </section>
 
@@ -434,7 +491,7 @@ export default function LandingPage() {
       <section className="py-24">
         <div className="mx-auto max-w-[860px] px-8">
           <Reveal>
-            <h2 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.01em] text-brand-900 sm:text-[40px]">
+            <h2 className="font-display text-[32px] leading-[1.1] tracking-[-0.01em] text-brand-900 sm:text-[40px]">
               Questions dentists actually ask.
             </h2>
           </Reveal>
@@ -454,15 +511,24 @@ export default function LandingPage() {
           <Reveal className="mt-6" delay={120}>
             <p className="text-[13px] text-slate-400">
               The fine print lives in our{" "}
-              <Link href="/terms" className="underline transition-colors duration-150 hover:text-slate-600">
+              <Link
+                href="/terms"
+                className="underline transition-colors duration-150 hover:text-slate-600"
+              >
                 Terms
               </Link>
               ,{" "}
-              <Link href="/privacy" className="underline transition-colors duration-150 hover:text-slate-600">
+              <Link
+                href="/privacy"
+                className="underline transition-colors duration-150 hover:text-slate-600"
+              >
                 Privacy Policy
               </Link>
               , and{" "}
-              <Link href="/dpa" className="underline transition-colors duration-150 hover:text-slate-600">
+              <Link
+                href="/dpa"
+                className="underline transition-colors duration-150 hover:text-slate-600"
+              >
                 Data Processing Agreement
               </Link>
               .
@@ -471,29 +537,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Closing */}
-      <section className="border-t border-slate-200 bg-slate-50 py-24">
-        <div className="mx-auto max-w-[720px] px-8 text-center">
-          <Reveal>
-            <h2 className="font-display text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] text-brand-900 sm:text-[40px]">
-              The next missed call doesn&apos;t have to slip through.
-            </h2>
-          </Reveal>
-          <Reveal className="mt-5" delay={120}>
-            <p className="text-lg leading-relaxed text-slate-600">
-              Put {BRAND.name} behind your line this week. Free setup, and the first 14 days are on
-              us.
-            </p>
-          </Reveal>
-          <Reveal className="mt-8" delay={220}>
-            <Link
-              href="/signup"
-              className="inline-block rounded-md bg-brand-600 px-7 py-3.5 font-semibold text-white transition-colors duration-150 hover:bg-brand-700"
-            >
-              Start your 14-day pilot
-            </Link>
-          </Reveal>
-        </div>
+      {/* Sign-off */}
+      <section className="pb-10">
+        <p className="text-center font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400">
+          A catch line for patients that slip through the cracks
+        </p>
       </section>
 
       <footer className="border-t border-slate-200 py-8">

@@ -12,7 +12,7 @@ new session: read this, then `README.md` and `docs/`.
 > em dashes.
 >
 > **Design-system rule (applies to all UI): follow [`docs/15-design-system.md`](docs/15-design-system.md).**
-> Steel-blue accent on a near-monochrome base, Newsreader headings + Public Sans body + Fragment
+> Steel-blue accent on a near-monochrome base, Young Serif headings + Public Sans body + Fragment
 > Mono micro-labels, `rounded-md`
 > for primary buttons, `shadow-sm` max (no blur or glow), zero emojis in the UI, 150ms hover fades,
 > scroll reveals only per the rules in docs/15, no AI-slop phrasing, and **never sets of three**
@@ -39,16 +39,20 @@ Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-l
   is taken by another project, so the dusky URL stays until the real domain is bought. **Vercel is
   on Pro** (the free tier got paused by an unrelated project, `stockanalyzer`/shorts-analytics,
   which burned the CPU cap; it has been deleted. Consider setting a Spend Management cap).
-- **Design system in place** ([`docs/15`](docs/15-design-system.md)): Newsreader serif headings
-  (Fraunces was retired as an AI-tell) + Public Sans body, steel-blue accent, semantic tints only
-  (red/emerald/amber), one ink band max per page, scroll reveals via `src/components/Reveal.tsx`
-  (16px/550ms, reduced-motion safe, no-JS safe), zero emojis in the UI (SVG icons instead).
-- **Landing page v2 (long form):** hero with an animated SMS demo that plays out on load (missed
-  call stamp, instant text-back, intake, staff handoff, captured-lead ledger), the slogan section
-  ("A catch line for patients that slip through the cracks."), a dark ink "Where patients go
-  missing" band (two lived scenes), a dashboard inbox peek, a $150 offer block, a 6-question FAQ
-  (native accordions), and a closing CTA. **Demo honesty rule: the AI never offers or books times
-  on the page, a named staff member does** (matches the Terms; keep it that way).
+- **Design system in place** ([`docs/15`](docs/15-design-system.md)): Young Serif display headings
+  (Fraunces, then Newsreader, retired as AI-tells; single weight, size-based hierarchy, never
+  bold/italic) + Public Sans body + Fragment Mono "switchboard" micro-labels, steel-blue accent,
+  semantic tints only (red/emerald/amber), up to two ink bands per page + the ticker strip, scroll
+  reveals via `src/components/Reveal.tsx` (16px/550ms, reduced-motion safe, no-JS safe), zero
+  emojis in the UI (SVG icons instead).
+- **Landing page v3 ("Young Serif" direction, owner-picked):** hero with the animated SMS demo
+  (missed call stamp, instant text-back, intake, staff handoff, captured-lead ledger, mono
+  caption), a **recovery ticker** strip (Missed 12:41 → Texted 12:41 → Paged 12:43 → Booked 2:30),
+  the dark "Where patients go missing" band with giant serif numerals and an offset-outline note
+  card, the slogan section (accented "the cracks."), a dashboard inbox peek, a **dark $150
+  pricing band** with a 4-item included grid, a 6-question FAQ (native accordions), and a mono
+  sign-off strip. **Demo honesty rule: the AI never offers or books times on the page, a named
+  staff member does** (matches the Terms; keep it that way).
 - **Auth works:** sign up / sign in (password + magic link) + platform-admin allow-list
   (`andrewbirdie777@gmail.com` → `/admin`). Configured via `src/lib/constants.ts` / `ADMIN_EMAILS`.
 - **Hybrid onboarding:** clinics self-sign-up and own their dashboard; the admin can configure any
