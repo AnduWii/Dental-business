@@ -309,10 +309,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-[860px] px-8">
           <Reveal>
             <h2 className="max-w-[16em] font-display text-[32px] leading-[1.1] tracking-[-0.01em] text-brand-900 sm:text-[42px]">
-              A catch line for patients that slip through{" "}
-              <span className="text-brand-500 underline decoration-brand-200 decoration-2 underline-offset-4">
-                the cracks.
-              </span>
+              A catch line for patients that slip through the cracks.
             </h2>
           </Reveal>
           <Reveal className="mt-6" delay={120}>
