@@ -47,13 +47,14 @@ Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-l
   reveals via `src/components/Reveal.tsx` (16px/550ms, reduced-motion safe, no-JS safe), zero
   emojis in the UI (SVG icons instead).
 - **Landing page v3 ("Young Serif" direction, owner-picked):** hero (single CTA) with the animated
-  SMS demo (missed call stamp, instant text-back, intake, staff handoff, captured-lead ledger,
-  mono caption), the dark "Where patients go missing" band with giant serif numerals and an
-  offset-outline note card, the slogan section, a dashboard inbox peek,
-  a **dark $150 pricing band** (what's-included as prose, no card grid), a 6-question FAQ (native
-  accordions), and a mono sign-off strip. Owner removed as AI-tells: the recovery-ticker strip,
-  the 4-item included grid, and the "See it in action" button. **Demo honesty rule: the AI never
-  offers or books times on the page, a named staff member does** (matches the Terms).
+  SMS demo (missed call stamp, instant text-back, intake, staff handoff, mono caption), the slogan
+  section, a dashboard inbox peek, a **dark $150 pricing band** (what's-included as prose, no card
+  grid), a 6-question FAQ (native accordions), and a mono sign-off strip. Owner removed as
+  AI-tells: the recovery-ticker strip, the 4-item included grid, the "See it in action" button,
+  the captured-lead ledger row on the demo card, the "Where patients go missing" ink band (giant
+  numerals + note card), heading trailing periods, and colored accent words in headings (one
+  survives: "miss" in the hero). **Demo honesty rule: the AI never offers or books times on the
+  page, a named staff member does** (matches the Terms).
 - **Auth works:** sign up / sign in (password + magic link) + platform-admin allow-list
   (`andrewbirdie777@gmail.com` → `/admin`). Configured via `src/lib/constants.ts` / `ADMIN_EMAILS`.
 - **Hybrid onboarding:** clinics self-sign-up and own their dashboard; the admin can configure any

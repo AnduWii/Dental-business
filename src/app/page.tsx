@@ -217,91 +217,14 @@ export default function LandingPage() {
                 before anyone picked up a phone.
               </div>
             </Reveal>
-            <Reveal
-              className="grid grid-cols-2 gap-px border-t border-slate-100 bg-slate-100 sm:grid-cols-4"
-              delay={6900}
-            >
-              {[
-                ["Name", "Maria Alvarez"],
-                ["Reason", "Cracked molar"],
-                ["Urgency", "Emergency"],
-                ["Booking", "Today, after 1"],
-              ].map(([label, value]) => (
-                <div key={label} className="bg-white px-3.5 py-2.5">
-                  <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-slate-400">
-                    {label}
-                  </div>
-                  <div
-                    className={`mt-0.5 text-xs font-semibold ${
-                      value === "Emergency" ? "text-red-700" : "text-brand-900"
-                    }`}
-                  >
-                    {value}
-                  </div>
-                </div>
-              ))}
-            </Reveal>
           </div>
           <Reveal
             className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-slate-400"
-            delay={7400}
+            delay={6900}
           >
             Two minutes, reconstructed · Example conversation
           </Reveal>
         </Reveal>
-      </section>
-
-      {/* Where patients go missing: the ink band */}
-      <section id="how" className="bg-brand-900 py-24">
-        <div className="mx-auto max-w-[1080px] px-8">
-          <Reveal>
-            <h2 className="font-display text-[36px] leading-[1.06] tracking-[-0.01em] text-white sm:text-[48px]">
-              Where patients go missing
-            </h2>
-          </Reveal>
-          <div className="mt-14 grid gap-14 md:grid-cols-2 md:gap-16">
-            <Reveal delay={120}>
-              <div className="flex items-baseline gap-3">
-                <span className="font-display text-[56px] leading-none text-white sm:text-[72px]">
-                  12:40
-                </span>
-                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-amber-300">
-                  PM · The lunch rush
-                </span>
-              </div>
-              <p className="mt-5 max-w-[34em] text-[16px] leading-relaxed text-slate-300">
-                Both hygienists are turning rooms, the desk is checking out a family of four, and
-                the phone rings twice, then stops. Nobody hears it. That caller had a cracked molar
-                and a free afternoon, and they are already dialing the next clinic on the list.
-              </p>
-            </Reveal>
-            <Reveal delay={240}>
-              <div className="flex items-baseline gap-3">
-                <span className="font-display text-[56px] leading-none text-white sm:text-[72px]">
-                  9:05
-                </span>
-                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-amber-300">
-                  PM · Long after close
-                </span>
-              </div>
-              <p className="mt-5 max-w-[34em] text-[16px] leading-relaxed text-slate-300">
-                The toothache someone ignored all week finally wins. They call, get voicemail, and
-                hang up without leaving a message. In the morning there is nothing to return, and
-                no record they ever called.
-              </p>
-            </Reveal>
-          </div>
-          <Reveal className="mt-14" delay={200}>
-            <div className="max-w-[44em] border border-white/40 p-6 shadow-[8px_8px_0_rgba(240,244,248,0.14)]">
-              <p className="text-[15px] leading-relaxed text-slate-200">
-                Nobody did anything wrong. The clinic was busy, the patient moved on, and the
-                schedule never knew the difference. {BRAND.name} sits behind your existing line for
-                exactly these minutes. Not a new phone system, not a receptionist replacement,{" "}
-                <strong className="font-semibold text-white">a catch line.</strong>
-              </p>
-            </div>
-          </Reveal>
-        </div>
       </section>
 
       {/* The slogan statement */}
