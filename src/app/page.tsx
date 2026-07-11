@@ -110,7 +110,7 @@ export default function LandingPage() {
           <Reveal className="mt-6" delay={80}>
             <h1 className="font-display text-[44px] leading-[1.04] tracking-[-0.01em] text-brand-900 sm:text-[58px]">
               Get more patients from the calls you already{" "}
-              <em className="not-italic text-brand-500">miss</em>.
+              <em className="not-italic text-brand-500">miss</em>
             </h1>
           </Reveal>
           <Reveal className="mt-6" delay={160}>
@@ -256,7 +256,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-[1080px] px-8">
           <Reveal>
             <h2 className="font-display text-[36px] leading-[1.06] tracking-[-0.01em] text-white sm:text-[48px]">
-              Where patients go missing.
+              Where patients go missing
             </h2>
           </Reveal>
           <div className="mt-14 grid gap-14 md:grid-cols-2 md:gap-16">
@@ -309,7 +309,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-[860px] px-8">
           <Reveal>
             <h2 className="max-w-[16em] font-display text-[32px] leading-[1.1] tracking-[-0.01em] text-brand-900 sm:text-[42px]">
-              A catch line for patients that slip through the cracks.
+              A catch line for patients that slip through the cracks
             </h2>
           </Reveal>
           <Reveal className="mt-6" delay={120}>
@@ -328,7 +328,7 @@ export default function LandingPage() {
           <div>
             <Reveal>
               <h2 className="font-display text-[32px] leading-[1.1] tracking-[-0.01em] text-brand-900 sm:text-[40px]">
-                The part your team sees.
+                The part your team sees
               </h2>
             </Reveal>
             <Reveal className="mt-5" delay={120}>
@@ -453,7 +453,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-[860px] px-8">
           <Reveal>
             <h2 className="font-display text-[32px] leading-[1.1] tracking-[-0.01em] text-brand-900 sm:text-[40px]">
-              Questions dentists actually ask.
+              Questions dentists actually ask
             </h2>
           </Reveal>
           <div className="mt-10">

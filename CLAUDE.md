@@ -15,7 +15,8 @@ new session: read this, then `README.md` and `docs/`.
 > Steel-blue accent on a near-monochrome base, Young Serif headings + Public Sans body + Fragment
 > Mono micro-labels, `rounded-md`
 > for primary buttons, `shadow-sm` max (no blur or glow), zero emojis in the UI, 150ms hover fades,
-> scroll reveals only per the rules in docs/15, no AI-slop phrasing, and **never sets of three**
+> scroll reveals only per the rules in docs/15, no trailing periods on display headings, no
+> AI-slop phrasing, and **never sets of three**
 > (no card trios, numbered steps, or icon grids; the owner rejects these on sight).
 
 ---
@@ -48,7 +49,7 @@ Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-l
 - **Landing page v3 ("Young Serif" direction, owner-picked):** hero (single CTA) with the animated
   SMS demo (missed call stamp, instant text-back, intake, staff handoff, captured-lead ledger,
   mono caption), the dark "Where patients go missing" band with giant serif numerals and an
-  offset-outline note card, the slogan section (accented "the cracks."), a dashboard inbox peek,
+  offset-outline note card, the slogan section, a dashboard inbox peek,
   a **dark $150 pricing band** (what's-included as prose, no card grid), a 6-question FAQ (native
   accordions), and a mono sign-off strip. Owner removed as AI-tells: the recovery-ticker strip,
   the 4-item included grid, and the "See it in action" button. **Demo honesty rule: the AI never

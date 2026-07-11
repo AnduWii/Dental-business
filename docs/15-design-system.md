@@ -59,6 +59,8 @@ Every UI change must obey these. When a quick fix conflicts with the system, the
   anti-symmetry rule targets marketing and content sections.
 
 ## Copy
+- Display headings never end in a period. The short declarative headline with a trailing full
+  stop is an AI-copy tell. Questions keep their question mark; body copy keeps normal punctuation.
 - Humanized and specific. Write like the person who runs the business talking to a dentist.
 - No filler superlatives or security theater ("relentlessly secure", "next-level", "seamless",
   "powerful", "cutting-edge"). Say the concrete thing instead.
