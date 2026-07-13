@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { BRAND } from "@/lib/constants";
 import { Reveal } from "@/components/Reveal";
-import { BrandMark } from "@/components/BrandMark";
+
+function LogoMark({ className = "h-8 w-auto" }: { className?: string }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/icon.png" alt="" className={className} />
+  );
+}
 
 function Check({ className = "" }: { className?: string }) {
   return (
@@ -70,7 +76,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-[1080px] items-center justify-between px-8 py-4">
           <div className="flex items-center gap-2.5">
-            <BrandMark className="h-8 w-8" />
+            <LogoMark />
             <span className="text-lg font-bold tracking-tight text-brand-900">
               {BRAND.name}
               <span className="align-top text-[0.6em] font-normal text-slate-400">™</span>

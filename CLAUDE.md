@@ -55,11 +55,11 @@ Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-l
   numerals + note card), heading trailing periods, and colored accent words in headings (one
   survives: "miss" in the hero). **Demo honesty rule: the AI never offers or books times on the
   page, a named staff member does** (matches the Terms).
-- **Brand mark shipped (owner picked Wordmark B, "the catch line"):** two points + one sagging
-  stroke (phone wire / net / smile), inline SVG in `src/components/BrandMark.tsx`, favicon at
-  `src/app/icon.svg`. Old tooth logo files removed. This mark is the candidate logo for the
-  trademark filing (docs/16). Empty states follow one-message-one-next-step
-  (`src/components/ui/EmptyState.tsx`).
+- **Brand mark: original logo retained.** The "catch line" Wordmark B (two points + sagging
+  stroke) was implemented, then reverted at the owner's request; the original image logo
+  (`public/logo.png` / `public/icon.png` / favicon `src/app/icon.png`) is back everywhere.
+  Wordmark B stays on file as a candidate for the stylized trademark filing (docs/16). Empty
+  states follow one-message-one-next-step (`src/components/ui/EmptyState.tsx`).
 - **Auth works:** sign up / sign in (password + magic link) + platform-admin allow-list
   (`andrewbirdie777@gmail.com` → `/admin`). Configured via `src/lib/constants.ts` / `ADMIN_EMAILS`.
 - **Hybrid onboarding:** clinics self-sign-up and own their dashboard; the admin can configure any

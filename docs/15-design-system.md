@@ -68,11 +68,9 @@ Every UI change must obey these. When a quick fix conflicts with the system, the
 - Never use em dashes (see the writing-style rule in `CLAUDE.md`). Use commas, periods, parentheses.
 
 ## Brand mark
-- The mark is "the catch line" (owner-picked Wordmark B): two fixed points and one sagging stroke
-  between them, a phone wire, a net, and a faint smile at once. One weight, no motion, no swoosh.
-- Source of truth: `src/components/BrandMark.tsx` (used in every header) and `src/app/icon.svg`
-  (favicon / app icon). Ink square, `#f0f4f8` stroke, corner radius 14/64.
-- Don't restyle it per surface; it is the same mark everywhere, at any size.
+- The logo is the original Catchline image mark (`public/logo.png`, `public/icon.png`, favicon at
+  `src/app/icon.png`). The "catch line" Wordmark B (two points, one sagging stroke) was tried and
+  reverted by the owner; it remains a candidate for the stylized trademark filing only (docs/16).
 
 ## Empty states
 - One quiet message and one next step (`src/components/ui/EmptyState.tsx`). No illustrations, no
