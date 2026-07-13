@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BRAND } from "@/lib/constants";
+import { BrandMark } from "@/components/BrandMark";
 
 const NAV = [
   { href: "/dashboard", label: "Inbox", Icon: InboxIcon },
@@ -19,8 +20,7 @@ export function Sidebar({ clinicName, isAdmin = false }: { clinicName: string; i
   return (
     <aside className="flex w-[248px] shrink-0 flex-col border-r border-slate-200 bg-white">
       <div className="flex items-center gap-2.5 px-[18px] pb-3.5 pt-[18px]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/icon.png" alt="" className="h-[34px] w-auto" />
+        <BrandMark className="h-[34px] w-[34px]" />
         <div className="min-w-0 leading-tight">
           <div className="text-base font-bold text-brand-900">{BRAND.name}</div>
           <div className="truncate text-xs text-slate-400">{clinicName}</div>

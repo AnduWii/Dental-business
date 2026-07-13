@@ -4,6 +4,7 @@ import { getDashboardContext } from "@/lib/auth";
 import { RealtimeRefresher } from "@/components/RealtimeRefresher";
 import { UrgencyBadge, StatusBadge, ModeBadge, IntentBadge } from "@/components/ui/badges";
 import { StatCard } from "@/components/ui/StatCard";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { formatPhone, timeAgo } from "@/lib/format";
 import type { ConversationWithPatient } from "@/lib/types";
 
@@ -42,7 +43,12 @@ export default async function InboxPage() {
           <StatCard label="Total" value={list.length} />
         </div>
         {list.length === 0 ? (
-          <EmptyState />
+          <EmptyState
+            title="No conversations yet"
+            body="When a call is missed and forwarded to your Catchline number, the text-back conversation lands here with the caller's details."
+            actionHref="/settings"
+            actionLabel="Set up call forwarding"
+          />
         ) : (
           <ul className="space-y-2">
             {list.map((c) => (
@@ -82,18 +88,3 @@ export default async function InboxPage() {
   );
 }
 
-function EmptyState() {
-  return (
-    <div className="mt-20 text-center">
-      <p className="text-lg font-medium text-slate-700">No conversations yet</p>
-      <p className="mt-2 text-sm text-slate-500">
-        When a call is missed and forwarded to your Catchline number, the text-back conversation will
-        show up here. Set up call forwarding in{" "}
-        <Link href="/settings" className="text-brand-600 underline">
-          Settings
-        </Link>
-        .
-      </p>
-    </div>
-  );
-}

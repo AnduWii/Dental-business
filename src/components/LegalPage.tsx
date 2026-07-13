@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BRAND } from "@/lib/constants";
+import { BrandMark } from "@/components/BrandMark";
 
 // ---------------------------------------------------------------------------
 // A small, data-driven renderer for legal/policy pages (privacy, DPA).
@@ -17,12 +18,6 @@ export type LegalBlock =
 
 export type LegalSection = { heading: string; blocks: LegalBlock[] };
 
-function LogoMark() {
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src="/icon.png" alt="" className="h-8 w-auto" />
-  );
-}
 
 function Block({ block }: { block: LegalBlock }) {
   switch (block.type) {
@@ -104,7 +99,7 @@ export function LegalPage({
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-[1080px] items-center justify-between px-8 py-4">
           <Link href="/" className="flex items-center gap-2.5">
-            <LogoMark />
+            <BrandMark className="h-8 w-8" />
             <span className="text-lg font-bold tracking-tight text-brand-900">
               {BRAND.name}
               <span className="align-top text-[0.6em] font-normal text-slate-400">™</span>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { env } from "@/lib/env";
+import { BrandMark } from "@/components/BrandMark";
 
 type Mode = "signin" | "signup";
 
@@ -96,9 +97,12 @@ export function AuthForm({
   return (
     <div className="w-full max-w-[400px]">
       <div className="flex flex-col items-center gap-3">
-        <Link href="/" aria-label="Catchline home">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="Catchline" className="h-16 w-auto" />
+        <Link href="/" aria-label="Catchline home" className="flex items-center gap-3">
+          <BrandMark className="h-11 w-11" />
+          <span className="text-2xl font-bold tracking-tight text-brand-900">
+            Catchline
+            <span className="align-top text-[0.55em] font-normal text-slate-400">™</span>
+          </span>
         </Link>
         <p className="text-sm text-slate-500">
           {mode === "signin" ? "Sign in to your clinic dashboard" : "Create your clinic account"}

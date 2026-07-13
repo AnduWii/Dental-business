@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getDashboardContext } from "@/lib/auth";
 import { createClinic } from "@/app/(dashboard)/actions";
+import { BrandMark } from "@/components/BrandMark";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +14,7 @@ export default async function OnboardingPage() {
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-12">
       <div className="w-full max-w-[460px]">
         <div className="flex items-center gap-2.5">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/icon.png" alt="" className="h-[30px] w-auto" />
+          <BrandMark className="h-[30px] w-[30px]" />
           <span className="text-[13px] font-semibold uppercase tracking-[0.1em] text-slate-400">
             Step 1 of 2 · Set up clinic
           </span>

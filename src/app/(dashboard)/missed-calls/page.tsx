@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getDashboardContext } from "@/lib/auth";
 import { RealtimeRefresher } from "@/components/RealtimeRefresher";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { formatPhone, formatDateTime } from "@/lib/format";
 import type { CallEvent, Patient } from "@/lib/types";
 
@@ -39,7 +40,12 @@ export default async function MissedCallsPage() {
 
       <div className="scroll-area flex-1 overflow-y-auto bg-slate-50 px-8 py-6">
         {list.length === 0 ? (
-          <p className="mt-20 text-center text-slate-500">No missed calls recorded yet.</p>
+          <EmptyState
+            title="No missed calls yet"
+            body="When your line forwards an unanswered call to Catchline, it shows up here with its text-back status."
+            actionHref="/settings"
+            actionLabel="Check your phone setup"
+          />
         ) : (
           <table className="w-full overflow-hidden rounded-lg border border-slate-200 bg-white text-sm">
             <thead className="bg-slate-50 text-left text-slate-500">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getDashboardContext } from "@/lib/auth";
 import { RealtimeRefresher } from "@/components/RealtimeRefresher";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { timeAgo } from "@/lib/format";
 import type { Notification } from "@/lib/types";
 
@@ -32,7 +33,12 @@ export default async function NotificationsPage() {
 
       <div className="scroll-area flex-1 overflow-y-auto bg-slate-50 px-8 py-6">
         {list.length === 0 ? (
-          <p className="mt-20 text-center text-slate-500">Nothing yet.</p>
+          <EmptyState
+            title="No notifications yet"
+            body="New leads, emergencies, and patient replies land here the moment they happen."
+            actionHref="/dashboard"
+            actionLabel="Open the inbox"
+          />
         ) : (
           <ul className="space-y-2">
             {list.map((n) => {
