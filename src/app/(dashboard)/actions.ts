@@ -132,3 +132,38 @@ export async function updateClinicAsAdmin(formData: FormData) {
 
   revalidatePath(`/admin/clinics/${clinicId}`);
 }
+
+// Admin deletes a clinic (used to clean up test/duplicate clinics). The schema
+// cascades: patients, conversations, messages, call events, and notifications
+// go with it; owner profiles get clinic_id set to null (they can onboard
+// again); audit rows survive unlinked. Gated to platform admins.
+export async function deleteClinicAsAdmin(clinicId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || !isAdminEmail(user.email)) redirect("/login");
+  if (!clinicId) return;
+
+  const admin = createAdminClient();
+  const { data: clinic } = await admin
+    .from("clinics")
+    .select("id, name")
+    .eq("id", clinicId)
+    .maybeSingle();
+  if (!clinic) return;
+
+  // Log first: the audit row's clinic_id is set null by the delete, but the
+  // action and target name survive.
+  await logAudit({
+    clinicId,
+    actorEmail: user.email,
+    action: "admin.clinic_delete",
+    target: clinic.name,
+  });
+
+  const { error } = await admin.from("clinics").delete().eq("id", clinicId);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin");
+}

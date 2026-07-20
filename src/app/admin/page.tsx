@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminEmail } from "@/lib/auth";
 import { formatDateTime } from "@/lib/format";
 import { BRAND } from "@/lib/constants";
+import { ClinicRowMenu } from "@/components/ClinicRowMenu";
 import type { Clinic } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -101,12 +102,15 @@ export default async function AdminPage() {
                 <th className="px-4 py-3 font-medium">Leads</th>
                 <th className="px-4 py-3 font-medium">Missed</th>
                 <th className="px-4 py-3 font-medium">Added</th>
+                <th className="px-2 py-3">
+                  <span className="sr-only">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-slate-400">
+                  <td colSpan={7} className="px-4 py-10 text-center text-slate-400">
                     No clinics yet.{" "}
                     <Link href="/onboarding" className="text-brand-600 underline">
                       Create one
@@ -129,6 +133,13 @@ export default async function AdminPage() {
                     <td className="px-4 py-3 text-slate-600">{r.leads}</td>
                     <td className="px-4 py-3 text-slate-600">{r.missed}</td>
                     <td className="px-4 py-3 text-slate-500">{formatDateTime(r.clinic.created_at)}</td>
+                    <td className="px-2 py-3 text-right">
+                      <ClinicRowMenu
+                        clinicId={r.clinic.id}
+                        clinicName={r.clinic.name}
+                        hasNumber={Boolean(r.clinic.twilio_number)}
+                      />
+                    </td>
                   </tr>
                 ))
               )}
