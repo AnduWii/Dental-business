@@ -23,6 +23,10 @@ new session: read this, then `README.md` and `docs/`.
 
 ## ▶ Immediate next steps (where we left off, 2026-07-05)
 Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-live-runbook.md)):
+0. **Run migration `supabase/migrations/0004_audit_unlink.sql` in the Supabase SQL editor.**
+   Without it, deleting any clinic fails with "audit_log is append-only" (the audit FK's
+   set-null collides with the append-only trigger; 0004 drops the FK and keeps the clinic id
+   as history). This also fixes `erase_clinic()`.
 1. In Vercel (project **catchline**, the one connected to `AnduWii/Dental-business`), add env vars
    `TWILIO_ACCOUNT_SID` + `TWILIO_AUTH_TOKEN`, and verify `NEXT_PUBLIC_APP_URL` is exactly
    `https://dental-business-dusky.vercel.app`. Redeploy.

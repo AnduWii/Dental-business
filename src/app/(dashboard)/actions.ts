@@ -136,7 +136,8 @@ export async function updateClinicAsAdmin(formData: FormData) {
 // Admin deletes a clinic (used to clean up test/duplicate clinics). The schema
 // cascades: patients, conversations, messages, call events, and notifications
 // go with it; owner profiles get clinic_id set to null (they can onboard
-// again); audit rows survive unlinked. Gated to platform admins.
+// again); audit rows are untouched and keep the clinic id as history
+// (migration 0004 removed their FK, the append-only trigger forbids updates).
 // Never throws: returns { ok, error } so the UI can show what went wrong
 // instead of crashing to the generic application-error page.
 export async function deleteClinicAsAdmin(

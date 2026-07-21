@@ -1,0 +1,14 @@
+-- =====================================================================
+-- Fix: clinic deletion vs the append-only audit log.
+--
+-- audit_log.clinic_id was declared ON DELETE SET NULL, but the append-only
+-- triggers from 0002 (rightly) block every UPDATE, so the FK's set-null fired
+-- the trigger and ANY clinic delete failed with "audit_log is append-only".
+-- This broke both the admin clinic delete and the erase_clinic() closure path.
+--
+-- Resolution: drop the FK and keep clinic_id as a plain uuid. Audit rows now
+-- permanently record which clinic they were about, even after that clinic is
+-- deleted (better for an audit trail than scrubbing the link), and the
+-- append-only guarantee stays fully intact.
+-- =====================================================================
+alter table audit_log drop constraint if exists audit_log_clinic_id_fkey;
