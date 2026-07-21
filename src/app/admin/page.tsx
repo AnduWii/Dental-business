@@ -92,17 +92,19 @@ export default async function AdminPage() {
         </div>
 
         {/* Clinics table */}
-        <div className="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+        {/* No overflow-hidden here: the row menus must be able to overhang the
+            container. Corners are rounded on the head cells instead. */}
+        <div className="mt-8 rounded-lg border border-slate-200 bg-white">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 text-left text-slate-500">
               <tr>
-                <th className="px-4 py-3 font-medium">Clinic</th>
+                <th className="rounded-tl-lg px-4 py-3 font-medium">Clinic</th>
                 <th className="px-4 py-3 font-medium">Plan</th>
                 <th className="px-4 py-3 font-medium">Conversations</th>
                 <th className="px-4 py-3 font-medium">Leads</th>
                 <th className="px-4 py-3 font-medium">Missed</th>
                 <th className="px-4 py-3 font-medium">Added</th>
-                <th className="px-2 py-3">
+                <th className="rounded-tr-lg px-2 py-3">
                   <span className="sr-only">Actions</span>
                 </th>
               </tr>

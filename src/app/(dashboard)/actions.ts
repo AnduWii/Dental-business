@@ -137,33 +137,44 @@ export async function updateClinicAsAdmin(formData: FormData) {
 // cascades: patients, conversations, messages, call events, and notifications
 // go with it; owner profiles get clinic_id set to null (they can onboard
 // again); audit rows survive unlinked. Gated to platform admins.
-export async function deleteClinicAsAdmin(clinicId: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user || !isAdminEmail(user.email)) redirect("/login");
-  if (!clinicId) return;
+// Never throws: returns { ok, error } so the UI can show what went wrong
+// instead of crashing to the generic application-error page.
+export async function deleteClinicAsAdmin(
+  clinicId: string,
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user || !isAdminEmail(user.email)) return { ok: false, error: "Not authorized." };
+    if (!clinicId) return { ok: false, error: "Missing clinic id." };
 
-  const admin = createAdminClient();
-  const { data: clinic } = await admin
-    .from("clinics")
-    .select("id, name")
-    .eq("id", clinicId)
-    .maybeSingle();
-  if (!clinic) return;
+    const admin = createAdminClient();
+    const { data: clinic } = await admin
+      .from("clinics")
+      .select("id, name")
+      .eq("id", clinicId)
+      .maybeSingle();
+    if (!clinic) return { ok: true };
 
-  // Log first: the audit row's clinic_id is set null by the delete, but the
-  // action and target name survive.
-  await logAudit({
-    clinicId,
-    actorEmail: user.email,
-    action: "admin.clinic_delete",
-    target: clinic.name,
-  });
+    // Log first: the audit row's clinic_id is set null by the delete, but the
+    // action and target name survive.
+    await logAudit({
+      clinicId,
+      actorEmail: user.email,
+      action: "admin.clinic_delete",
+      target: clinic.name,
+    });
 
-  const { error } = await admin.from("clinics").delete().eq("id", clinicId);
-  if (error) throw new Error(error.message);
+    const { error } = await admin.from("clinics").delete().eq("id", clinicId);
+    if (error) return { ok: false, error: error.message };
 
-  revalidatePath("/admin");
+    revalidatePath("/admin");
+    revalidatePath("/dashboard");
+    return { ok: true };
+  } catch (err) {
+    console.error("[admin] clinic delete failed:", err);
+    return { ok: false, error: err instanceof Error ? err.message : "Delete failed." };
+  }
 }

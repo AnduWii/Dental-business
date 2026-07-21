@@ -28,7 +28,10 @@ export function ClinicRowMenu({
     if (!window.confirm(warning)) return;
     setOpen(false);
     startTransition(async () => {
-      await deleteClinicAsAdmin(clinicId);
+      const result = await deleteClinicAsAdmin(clinicId);
+      if (!result.ok) {
+        window.alert(`Could not delete "${clinicName}": ${result.error}`);
+      }
     });
   }
 
