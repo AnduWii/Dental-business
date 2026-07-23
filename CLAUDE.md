@@ -150,7 +150,7 @@ run the launch checklist"*).
 ```bash
 npm run dev        # local dev
 npm run build      # production build
-npm run test       # 27 unit tests
+npm run test       # 30 unit tests
 npm run typecheck  # tsc --noEmit
 ```
 

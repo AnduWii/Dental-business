@@ -63,6 +63,26 @@ function detectEmergencyText(text: string): boolean {
   return EMERGENCY_PATTERNS.test(text);
 }
 
+// Pull a plausible name out of a free-text reply ("thanks, I'm Andrew" ->
+// "Andrew"). Used by the scripted fallback only; the LLM path extracts names
+// itself. Returns null when the text doesn't look like it contains a name,
+// so the script re-asks instead of storing garbage.
+export function extractName(text: string): string | null {
+  let t = text.trim();
+  // Drop leading pleasantries.
+  t = t.replace(/^(thanks|thank you|thx|hi|hey|hello|good (morning|afternoon|evening))[,.!\s]*/i, "");
+  // Prefer whatever follows an introduction phrase.
+  const intro = t.match(/(?:i'?m|it'?s|this is|my name'?s|my name is|call me|name is)\s+(.+)/i);
+  if (intro) t = intro[1];
+  // Keep word characters only, then cap at three words (first, middle, last).
+  t = t.replace(/[^a-z' -]/gi, " ").replace(/\s+/g, " ").trim();
+  if (!t) return null;
+  const words = t.split(" ").slice(0, 3);
+  // Obvious non-names mean the patient answered something else; don't capture.
+  if (/^(yes|yeah|yep|no|nope|ok|okay|sure|thanks|please)$/i.test(words[0])) return null;
+  return words.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ").slice(0, 60) || null;
+}
+
 function systemPrompt(clinicName: string): string {
   return [
     `You are the text-message intake assistant for ${clinicName}, a dental clinic.`,
@@ -252,7 +272,7 @@ function runFallback(ctx: IntakeContext): IntakeResult {
 
   let caller_name = fields.caller_name;
   let reason = fields.reason;
-  if (!caller_name && askedName && lastText && history.length >= 2) caller_name = lastText.slice(0, 80);
+  if (!caller_name && askedName && lastText && history.length >= 2) caller_name = extractName(lastText);
   else if (!reason && askedReason && lastText) reason = lastText.slice(0, 280);
 
   if (emergency) {
