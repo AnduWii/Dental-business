@@ -156,6 +156,8 @@ npm run typecheck  # tsc --noEmit
 
 ## Where things live
 - Architecture + data model: `docs/02`, `docs/04`. Twilio setup: `docs/08` + runbook `docs/17`.
+- **Landing a client: follow [`docs/18-clinic-onboarding.md`](docs/18-clinic-onboarding.md)**
+  (per-clinic playbook: buy their number, webhooks, configure, test, carrier forwarding, pilot).
 - Design system: `docs/15`. Trademark: `docs/16`.
 - Webhooks: `src/app/api/twilio/{voice,sms}`. AI intake: `src/lib/ai/intake.ts`.
 - Billing: `src/app/api/stripe/*`, `src/lib/stripe.ts`, `/billing` page, migration `0003`.
