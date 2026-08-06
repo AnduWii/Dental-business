@@ -83,4 +83,4 @@ Catchline is a tool for dental clinics and is not directed at children. A parent
 We may update this policy from time to time. When we do, we will revise the date at the top of this page. Material changes will be communicated to clinics using the service.
 
 ## Contact us
-Catchline is operated by Catchline Services Inc. Questions about this policy or your information? Email us at founders@trycatchline.com. You can also reach us by mail at Catchline Services Inc., [mailing address].
+Catchline is operated by Catchline Services Inc. Questions about this policy or your information? Email us at team.catchlineservices@gmail.com. You can also reach us by mail at Catchline Services Inc., [mailing address].

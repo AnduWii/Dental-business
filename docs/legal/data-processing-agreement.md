@@ -93,4 +93,4 @@ Catchline maintains an internal information-security policy covering access cont
 - Clinic: [Clinic legal name]. Signed by [name], [title]. Date: [ ].
 - Catchline: Catchline Services Inc. Signed by Andrew Li, Founder. Date: [ ].
 
-Contact: founders@trycatchline.com
+Contact: team.catchlineservices@gmail.com

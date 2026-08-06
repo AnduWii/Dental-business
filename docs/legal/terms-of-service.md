@@ -68,4 +68,4 @@ We may update the service and these Terms from time to time. If we make material
 These Terms are governed by the laws of the Province of Ontario and the federal laws of Canada applicable there, without regard to conflict-of-laws rules, and subject to the dispute-resolution section above.
 
 ## 17. Contact us
-Questions about these Terms? Email us at founders@trycatchline.com.
+Questions about these Terms? Email us at team.catchlineservices@gmail.com.
