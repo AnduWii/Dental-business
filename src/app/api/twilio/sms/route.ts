@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
       clinic,
       conversationId: conversation.id,
       type: "new_message",
-      title: "New patient reply",
+      title: clinic.vertical === "real_estate" ? "New client reply" : "New patient reply",
       body: `${conversation.caller_name || patient!.name || from}: ${body.slice(0, 140)}`,
     });
     return xml(EMPTY_TWIML);
@@ -156,6 +156,7 @@ export async function POST(req: NextRequest) {
 
   const result = await runIntake({
     clinicName: clinic.name,
+    vertical: clinic.vertical ?? "dental",
     history: turns,
     current: {
       caller_name: conversation.caller_name,
@@ -222,7 +223,7 @@ export async function POST(req: NextRequest) {
       clinic,
       conversationId: conversation.id,
       type: "new_lead",
-      title: "New patient lead",
+      title: clinic.vertical === "real_estate" ? "New client lead" : "New patient lead",
       body: `${result.fields.caller_name || from}, ${result.fields.reason || "wants to talk"} (${intent})`,
     });
   }

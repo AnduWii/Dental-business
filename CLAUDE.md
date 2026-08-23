@@ -1,8 +1,8 @@
 # Catchline, project guide & status
 
-> Missed-call recovery for dental clinics. When a clinic misses a call, Catchline texts the caller
-> back, runs a short AI intake (name, reason, urgency, booking intent), logs it, and pages the
-> front desk. Full docs in [`README.md`](README.md) and [`docs/`](docs/).
+> Missed-call recovery for dental clinics and real estate offices. When a business misses a call,
+> Catchline texts the caller back, runs a short AI intake (name, reason, urgency, booking intent),
+> logs it, and pages the team. Full docs in [`README.md`](README.md) and [`docs/`](docs/).
 
 This file is the at-a-glance status + the **"before first paying clinic"** checklist. If you're a
 new session: read this, then `README.md` and `docs/`.
@@ -57,7 +57,7 @@ public URL Twilio calls, or signature validation 403s every webhook.
 
 **Database changes** are hand-applied: write `supabase/migrations/NNNN_*.sql`, run it in the
 Supabase SQL editor, and record it in this file (0001 schema+RLS, 0002 audit/retention, 0003
-billing NOT YET APPLIED, 0004 audit FK unlink). `audit_log` is append-only via triggers and its
+billing NOT YET APPLIED, 0004 audit FK unlink, 0005 clinics.vertical NOT YET APPLIED). `audit_log` is append-only via triggers and its
 `clinic_id` deliberately has NO foreign key (0004) so clinic deletes don't violate the triggers.
 The dashboard is server components + `RealtimeRefresher` (postgres_changes → `router.refresh()`),
 not client state.
@@ -68,8 +68,12 @@ project, real fix: Supabase Pro). Vercel deployment-hash URLs (`catchline-xxxxx-
 are per-deploy throwaways, never configure anything against them. The demo conversation on the
 landing page must never show the AI offering/booking appointment times (Terms consistency).
 
-## ▶ Immediate next steps (where we left off, 2026-07-05)
+## ▶ Immediate next steps (where we left off, 2026-08-23)
 Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-live-runbook.md)):
+0a. **Run migration `supabase/migrations/0005_vertical.sql` in the Supabase SQL editor.** It adds
+   `clinics.vertical` ('dental' | 'real_estate'), which drives the vertical-aware intake prompt
+   and the Business-type selector in onboarding/settings. The app degrades gracefully until then
+   (reads default to dental; writes retry without the column), but the selector won't persist.
 0. **Run migration `supabase/migrations/0004_audit_unlink.sql` in the Supabase SQL editor.**
    Without it, deleting any clinic fails with "audit_log is append-only" (the audit FK's
    set-null collides with the append-only trigger; 0004 drops the FK and keeps the clinic id
@@ -85,7 +89,21 @@ Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-l
 4. Live test: text the number, then call it; verify the AI replies, the front-desk page lands, and
    the lead shows in `/dashboard`.
 
-## ✅ Current status (updated 2026-07-05)
+## ✅ Current status (updated 2026-08-23)
+- **Real estate vertical shipped (2026-08):** second landing page at **`/real-estate`** (same v3
+  structure and design system, real estate copy, cross-linked with the dental page in nav +
+  footer), `clinics.vertical` ('dental' | 'real_estate', migration **0005 NOT YET APPLIED**),
+  vertical-aware AI intake (real estate prompt: never quotes/negotiates prices, never gives real
+  estate/legal/financial advice, never confirms showings, an agent does; scripted fallback asks
+  for an agent callback instead of an appointment), Business-type selector in onboarding and
+  settings (real estate signups get a "we're with a client" text-back default), vertical-aware
+  notification titles ("New client lead"). **Privacy Policy, Terms, and DPA generalized** to cover
+  both verticals: businesses instead of clinics, PHIPA scoped to dental custodians, TRESA/RECO
+  named for real estate, "not a brokerage" disclaimer added, DPA reworded around "the Customer".
+  Demo honesty rule carries over: on `/real-estate` the AI never offers showing times, a named
+  agent does. Note: `docs/legal/` lawyer copies are now BEHIND the in-app legal pages, refresh
+  them before the next counsel review. Dashboard vocabulary ("patient") is still dental-flavored
+  internally; fine for both, genericize later if a real estate client signs.
 - **V1 built and deployed** on Vercel: project **"catchline"** (owned by the `vibe-coders3` scope),
   `main` auto-deploys, URL **`dental-business-dusky.vercel.app`**. The `catchline.vercel.app` name
   is taken by another project, so the dusky URL stays until the real domain is bought. **Vercel is

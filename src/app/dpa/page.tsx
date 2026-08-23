@@ -5,10 +5,10 @@ import { LegalPage, type LegalSection } from "@/components/LegalPage";
 export const metadata: Metadata = {
   title: `Data Processing Agreement · ${BRAND.name}`,
   description:
-    "The data-processing terms between Catchline and the dental clinics it serves, covering roles, security, sub-processors, residency, breach notice, and deletion.",
+    "The data-processing terms between Catchline and the dental clinics and real estate offices it serves, covering roles, security, sub-processors, residency, breach notice, and deletion.",
 };
 
-const UPDATED = "June 21, 2026";
+const UPDATED = "August 23, 2026";
 
 const sections: LegalSection[] = [
   {
@@ -16,11 +16,11 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "note",
-        text: "Template: complete the bracketed fields and have it reviewed by counsel before signing. This Data Processing Agreement (DPA) forms part of the service agreement between the clinic (the customer) and Catchline.",
+        text: "Template: complete the bracketed fields and have it reviewed by counsel before signing. This Data Processing Agreement (DPA) forms part of the service agreement between the business using Catchline, a dental clinic or a real estate office (the Customer), and Catchline.",
       },
       {
         type: "p",
-        text: "This DPA describes how Catchline handles personal information and personal health information on behalf of the Clinic when providing the Catchline missed-call recovery service (the Service).",
+        text: "This DPA describes how Catchline handles personal information, and where the Customer is a dental clinic, personal health information, on behalf of the Customer when providing the Catchline missed-call recovery service (the Service).",
       },
     ],
   },
@@ -30,8 +30,8 @@ const sections: LegalSection[] = [
       {
         type: "ul",
         items: [
-          "Applicable Privacy Laws: Canada's PIPEDA, Ontario's PHIPA, and CASL, plus any other privacy or anti-spam laws that apply to the Clinic.",
-          "Personal Information and Personal Health Information: information about an identifiable individual (including health information) that Catchline processes for the Clinic under the Service.",
+          "Applicable Privacy Laws: Canada's PIPEDA and CASL, plus, where the Customer is a dental clinic, Ontario's PHIPA, and any other privacy, anti-spam, or sector laws that apply to the Customer (for a real estate office in Ontario, this includes TRESA and RECO requirements).",
+          "Personal Information and Personal Health Information: information about an identifiable individual (including, for dental clinics, health information) that Catchline processes for the Customer under the Service.",
           "Processing: any operation performed on the information, such as collecting, storing, using, transmitting, or deleting it.",
           "Sub-processor: a third party Catchline engages to help provide the Service that may process the information.",
         ],
@@ -43,15 +43,15 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "The Clinic is the party responsible for the information and is the health information custodian under PHIPA (the controller). Catchline acts only as the Clinic's service provider and agent (the processor): we process the information solely to provide the Service and only on the Clinic's documented instructions, including those given through the dashboard settings.",
+        text: "The Customer is the party responsible for the information (the controller), and where the Customer is a dental clinic it is the health information custodian under PHIPA. Catchline acts only as the Customer's service provider and agent (the processor): we process the information solely to provide the Service and only on the Customer's documented instructions, including those given through the dashboard settings.",
       },
       {
         type: "p",
-        text: "Catchline will not use the information for its own purposes, will not sell it, and will not use the content of patient messages to train AI models. Catchline uses AI only for administrative intake and communication; it does not use AI to give medical or dental advice, to diagnose, to recommend or decide on treatment, or to make clinical judgments.",
+        text: "Catchline will not use the information for its own purposes, will not sell it, and will not use the content of caller messages to train AI models. Catchline uses AI only for administrative intake and communication; it does not use AI to give medical or dental advice, to diagnose, to recommend or decide on treatment, or to make clinical judgments, and it does not use AI to give real estate, legal, mortgage, or financial advice, to value properties, or to negotiate or quote prices.",
       },
       {
         type: "p",
-        text: "The Clinic is responsible for having the legal right, and any consent required, to contact the individuals it responds to through the Service, including compliance with CASL.",
+        text: "The Customer is responsible for having the legal right, and any consent required, to contact the individuals it responds to through the Service, including compliance with CASL.",
       },
     ],
   },
@@ -61,10 +61,10 @@ const sections: LegalSection[] = [
       {
         type: "ul",
         items: [
-          "Purpose: recover missed calls by texting callers back, running a short intake, logging conversations, and paging the Clinic's front desk.",
+          "Purpose: recover missed calls by texting callers back, running a short intake, logging conversations, and paging the Customer's team.",
           "Duration: for the term of the service agreement and the retention period in Section 8.",
-          "Types of data: caller phone number and name, the reason for contact and message content (which may include health information), urgency and booking intent, call records, and clinic staff login details.",
-          "Categories of individuals: the Clinic's callers and patients, and the Clinic's staff users.",
+          "Types of data: caller phone number and name, the reason for contact and message content (which may include health information shared with a clinic, or property and transaction preferences shared with a real estate office), urgency and booking intent, call records, and staff login details.",
+          "Categories of individuals: the Customer's callers, patients or clients, and the Customer's staff users.",
         ],
       },
     ],
@@ -75,12 +75,12 @@ const sections: LegalSection[] = [
       {
         type: "ul",
         items: [
-          "Process the information only to provide the Service and only on the Clinic's instructions.",
+          "Process the information only to provide the Service and only on the Customer's instructions.",
           "Keep the information confidential and ensure personnel are bound by confidentiality.",
           "Maintain the security measures described in Annex C and keep them appropriate to the sensitivity of the data.",
-          "Assist the Clinic in responding to individuals' access, correction, and deletion requests.",
-          "Notify the Clinic of a security breach affecting the information within the timeframe in Section 9.",
-          "Help the Clinic meet its obligations under Applicable Privacy Laws, taking into account the nature of the processing.",
+          "Assist the Customer in responding to individuals' access, correction, and deletion requests.",
+          "Notify the Customer of a security breach affecting the information within the timeframe in Section 9.",
+          "Help the Customer meet its obligations under Applicable Privacy Laws, taking into account the nature of the processing.",
         ],
       },
     ],
@@ -90,7 +90,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "The Clinic authorises Catchline to engage the sub-processors listed in Annex B. Catchline imposes data-protection obligations on each sub-processor that are consistent with this DPA, and remains responsible for their performance. Catchline will give the Clinic notice of any new sub-processor, and the Clinic may object on reasonable data-protection grounds.",
+        text: "The Customer authorises Catchline to engage the sub-processors listed in Annex B. Catchline imposes data-protection obligations on each sub-processor that are consistent with this DPA, and remains responsible for their performance. Catchline will give the Customer notice of any new sub-processor, and the Customer may object on reasonable data-protection grounds.",
       },
     ],
   },
@@ -99,7 +99,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Catchline's primary database is hosted in Canada (Montreal region). Certain sub-processors, notably the telephony and AI providers, may process limited data such as phone numbers and message text in the United States to deliver messages and generate replies. The Clinic acknowledges and instructs these transfers, which are made subject to appropriate safeguards.",
+        text: "Catchline's primary database is hosted in Canada (Montreal region). Certain sub-processors, notably the telephony and AI providers, may process limited data such as phone numbers and message text in the United States to deliver messages and generate replies. The Customer acknowledges and instructs these transfers, which are made subject to appropriate safeguards.",
       },
     ],
   },
@@ -108,7 +108,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Catchline provides tools and reasonable assistance so the Clinic can fulfil requests from individuals to access, correct, or delete their information, and to honour opt-outs (callers may reply STOP at any time, which Catchline enforces automatically).",
+        text: "Catchline provides tools and reasonable assistance so the Customer can fulfil requests from individuals to access, correct, or delete their information, and to honour opt-outs (callers may reply STOP at any time, which Catchline enforces automatically).",
       },
     ],
   },
@@ -117,7 +117,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Catchline retains information only as long as needed to provide the Service. By default, closed conversations are purged after approximately 12 months, and the Clinic may request a different retention period or earlier deletion. On termination, Catchline will, at the Clinic's choice, return or delete the Clinic's information within a reasonable period, except where retention is required by law.",
+        text: "Catchline retains information only as long as needed to provide the Service. By default, closed conversations are purged after approximately 12 months, and the Customer may request a different retention period or earlier deletion. On termination, Catchline will, at the Customer's choice, return or delete the Customer's information within a reasonable period, except where retention is required by law.",
       },
     ],
   },
@@ -126,7 +126,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "If Catchline becomes aware of a breach of security safeguards involving the information, it will notify the Clinic without undue delay and in any event no later than 72 hours after discovery, and will provide the information the Clinic reasonably needs to assess the breach and meet its own notification obligations under PHIPA and PIPEDA.",
+        text: "If Catchline becomes aware of a breach of security safeguards involving the information, it will notify the Customer without undue delay and in any event no later than 72 hours after discovery, and will provide the information the Customer reasonably needs to assess the breach and meet its own notification obligations under PIPEDA and, where applicable, PHIPA.",
       },
     ],
   },
@@ -144,7 +144,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "This DPA applies for as long as Catchline processes the information for the Clinic. Obligations that by their nature should survive termination, including confidentiality and deletion, continue after it ends.",
+        text: "This DPA applies for as long as Catchline processes the information for the Customer. Obligations that by their nature should survive termination, including confidentiality and deletion, continue after it ends.",
       },
     ],
   },
@@ -164,14 +164,14 @@ const sections: LegalSection[] = [
         type: "table",
         columns: ["Item", "Detail"],
         rows: [
-          ["Subject matter", "Missed-call recovery and SMS intake for the Clinic."],
+          ["Subject matter", "Missed-call recovery and SMS intake for the Customer."],
           ["Duration", "Term of the service agreement plus the retention period in Section 8."],
-          ["Nature and purpose", "Text-back, two-way SMS, narrow AI intake, logging, and front-desk paging."],
+          ["Nature and purpose", "Text-back, two-way SMS, narrow AI intake, logging, and team paging."],
           [
             "Types of data",
-            "Phone number, name, reason and message content (may include health information), urgency, booking intent, call records, staff login.",
+            "Phone number, name, reason and message content (may include health information for clinics, or property and transaction preferences for real estate offices), urgency, booking intent, call records, staff login.",
           ],
-          ["Categories of individuals", "Callers, patients, and clinic staff users."],
+          ["Categories of individuals", "Callers, patients or clients, and the Customer's staff users."],
         ],
       },
     ],
@@ -199,7 +199,7 @@ const sections: LegalSection[] = [
         type: "ul",
         items: [
           "Encryption in transit (HTTPS/TLS) across the website, dashboard, and webhooks.",
-          "Multi-tenant isolation enforced at the database level so one clinic cannot access another's data.",
+          "Multi-tenant isolation enforced at the database level so one business cannot access another's data.",
           "Role-based access control and least-privilege handling of data and secrets; the privileged database key is server-side only.",
           "Append-only audit log of sensitive actions (replies, takeovers, settings changes) that cannot be altered or deleted.",
           "A documented breach-response process, incident logging, regular database backups with a defined retention and purge schedule, and review of sub-processors before they are engaged.",
@@ -209,7 +209,7 @@ const sections: LegalSection[] = [
       },
       {
         type: "p",
-        text: "Catchline maintains an internal information-security policy covering access control, employee access, breach response, backups, retention, incident logging, and vendor review, available to the Clinic on reasonable request.",
+        text: "Catchline maintains an internal information-security policy covering access control, employee access, breach response, backups, retention, incident logging, and vendor review, available to the Customer on reasonable request.",
       },
     ],
   },
@@ -218,7 +218,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Clinic: [Clinic legal name]. Signed by [name], [title]. Date: [ ].",
+        text: "Customer: [Business legal name]. Signed by [name], [title]. Date: [ ].",
       },
       {
         type: "p",
@@ -234,7 +234,7 @@ export default function DpaPage() {
     <LegalPage
       title="Data Processing Agreement"
       updated={UPDATED}
-      intro="This agreement sets out how Catchline handles information on behalf of the dental clinics it serves: our roles, the security we apply, who our sub-processors are, where data lives, how we handle breaches, and how data is deleted."
+      intro="This agreement sets out how Catchline handles information on behalf of the businesses it serves, dental clinics and real estate offices alike: our roles, the security we apply, who our sub-processors are, where data lives, how we handle breaches, and how data is deleted."
       sections={sections}
     />
   );

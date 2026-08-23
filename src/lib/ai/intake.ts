@@ -6,8 +6,9 @@
 //   2. the reason for calling
 //   3. how urgent it is
 //   4. whether they want to book
-// ...then hand off to the human front desk. This is NOT an AI receptionist:
-// it never books, never quotes prices, never gives clinical advice.
+// ...then hand off to the human team. This is NOT an AI receptionist:
+// it never books, never quotes prices, never gives clinical or real estate
+// advice. Prompts adapt to the business's vertical (dental or real estate).
 //
 // It is provider-agnostic (OpenAI by default, Anthropic optional) and
 // degrades to a deterministic scripted flow when no API key is configured
@@ -15,7 +16,7 @@
 // =====================================================================
 import { env } from "@/lib/env";
 import { fetchWithTimeout, withRetry } from "@/lib/retry";
-import type { BookingIntent, UrgencyLevel } from "@/lib/types";
+import type { BookingIntent, UrgencyLevel, Vertical } from "@/lib/types";
 
 export interface IntakeTurn {
   role: "patient" | "assistant";
@@ -24,6 +25,8 @@ export interface IntakeTurn {
 
 export interface IntakeContext {
   clinicName: string;
+  // Defaults to "dental" when absent (rows created before migration 0005).
+  vertical?: Vertical | null;
   history: IntakeTurn[];
   current: {
     caller_name: string | null;
@@ -55,7 +58,9 @@ const INTENT_VALUES: BookingIntent[] = [
   "not_interested",
 ];
 
-// Safety net: flag obvious dental emergencies regardless of what the model says.
+// Safety net: flag obvious medical emergencies regardless of what the model
+// says. Applied on every vertical; a caller in danger gets the 911 reply no
+// matter whose line they hit.
 const EMERGENCY_PATTERNS =
   /(can'?t breathe|cannot breathe|trouble breathing|swelling.*(throat|eye|breath|swallow)|knocked out|knocked-out|severe bleeding|won'?t stop bleeding|broke my jaw|broken jaw|face is swollen|unconscious|passed out)/i;
 
@@ -83,7 +88,41 @@ export function extractName(text: string): string | null {
   return words.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ").slice(0, 60) || null;
 }
 
-function systemPrompt(clinicName: string): string {
+function realEstateSystemPrompt(officeName: string): string {
+  return [
+    `You are the text-message intake assistant for ${officeName}, a real estate office.`,
+    `Someone just called and no one could pick up, so you're texting them back.`,
+    ``,
+    `YOUR ONLY GOAL is to collect, conversationally and warmly:`,
+    `  1. the caller's name`,
+    `  2. the reason they're calling (which property or listing, or whether they're`,
+    `     looking to buy, sell, rent, or something else)`,
+    `  3. how time-sensitive it is for them`,
+    `  4. whether they'd like an agent to call them back or set up a showing`,
+    `Then tell them an agent will text or call them back shortly.`,
+    ``,
+    `RULES:`,
+    `- You are texting. Keep every reply short (1-2 sentences), friendly, human.`,
+    `- Ask ONE thing at a time. Don't interrogate.`,
+    `- NEVER quote, estimate, or negotiate prices, offers, rent, or commissions.`,
+    `- NEVER give real estate, legal, mortgage, or financial advice, and never comment`,
+    `  on a property's value or condition.`,
+    `- NEVER confirm a specific showing or appointment date or time. An agent does that.`,
+    `- If a caller describes a safety emergency (fire, gas leak, break-in, someone hurt),`,
+    `  tell them to call 911 now and say you're alerting the office immediately. Set`,
+    `  urgency_level to "emergency".`,
+    `- A caller ready to make or accept an offer, or with a deal deadline today, is`,
+    `  urgency_level "high".`,
+    `- Once you have name + reason + urgency + callback intent, set intake_complete to`,
+    `  true and send a brief closing message ("Thanks {name}, one of our agents will`,
+    `  text or call you back shortly.").`,
+    `- Write plainly. Do not use em dashes; use commas, periods, or parentheses instead.`,
+    `- Don't repeat questions you already have answers to.`,
+  ].join("\n");
+}
+
+function systemPrompt(clinicName: string, vertical?: Vertical | null): string {
+  if (vertical === "real_estate") return realEstateSystemPrompt(clinicName);
   return [
     `You are the text-message intake assistant for ${clinicName}, a dental clinic.`,
     `A patient just called and no one could pick up, so you're texting them back.`,
@@ -154,7 +193,7 @@ function coerce(raw: any, ctx: IntakeContext): IntakeResult {
 // ---------------------------------------------------------------------
 async function runOpenAI(ctx: IntakeContext, key: string): Promise<IntakeResult> {
   const messages = [
-    { role: "system", content: systemPrompt(ctx.clinicName) },
+    { role: "system", content: systemPrompt(ctx.clinicName, ctx.vertical) },
     ...ctx.history.map((t) => ({
       role: t.role === "patient" ? "user" : "assistant",
       content: t.body,
@@ -217,7 +256,7 @@ async function runAnthropic(ctx: IntakeContext, key: string): Promise<IntakeResu
     body: JSON.stringify({
       model: env.aiModel(),
       max_tokens: 400,
-      system: systemPrompt(ctx.clinicName),
+      system: systemPrompt(ctx.clinicName, ctx.vertical),
       messages: ctx.history.map((t) => ({
         role: t.role === "patient" ? "user" : "assistant",
         content: t.body,
@@ -292,12 +331,18 @@ function runFallback(ctx: IntakeContext): IntakeResult {
   } else if (!reason) {
     reply = `Thanks, ${caller_name}! What can we help you with today?`;
   } else if (current.booking_intent === "unknown") {
-    reply = `Got it. Would you like us to book you an appointment? (yes / no)`;
-    if (/\b(yes|yeah|yep|book|appointment|sure)\b/i.test(lastText))
+    reply =
+      ctx.vertical === "real_estate"
+        ? `Got it. Would you like an agent to call you back to set something up? (yes / no)`
+        : `Got it. Would you like us to book you an appointment? (yes / no)`;
+    if (/\b(yes|yeah|yep|book|appointment|showing|viewing|sure)\b/i.test(lastText))
       fields.booking_intent = "new_patient";
     else if (/\b(no|not|just|question)\b/i.test(lastText)) fields.booking_intent = "question";
   } else {
-    reply = `Perfect, thanks, ${caller_name}. Someone from our team will text or call you back shortly to help.`;
+    reply =
+      ctx.vertical === "real_estate"
+        ? `Perfect, thanks, ${caller_name}. One of our agents will text or call you back shortly to help.`
+        : `Perfect, thanks, ${caller_name}. Someone from our team will text or call you back shortly to help.`;
     intake_complete = true;
   }
 

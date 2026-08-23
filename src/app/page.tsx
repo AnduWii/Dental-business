@@ -84,6 +84,12 @@ export default function LandingPage() {
           </div>
           <nav className="flex items-center gap-6 text-sm">
             <Link
+              href="/real-estate"
+              className="hidden font-medium text-slate-600 transition-colors duration-150 hover:text-slate-900 sm:block"
+            >
+              For real estate
+            </Link>
+            <Link
               href="/login"
               className="font-medium text-slate-600 transition-colors duration-150 hover:text-slate-900"
             >
@@ -434,6 +440,9 @@ export default function LandingPage() {
             © {new Date().getFullYear()} {BRAND.name}. {BRAND.tagline}.
           </span>
           <span className="h-[3px] w-[3px] rounded-full bg-slate-300" />
+          <Link href="/real-estate" className="transition-colors duration-150 hover:text-slate-600">
+            For real estate
+          </Link>
           <Link href="/terms" className="transition-colors duration-150 hover:text-slate-600">
             Terms
           </Link>

@@ -1,6 +1,9 @@
 // String-union mirrors of the Postgres enums + row shapes used across the app.
 
 export type UserRole = "owner" | "staff";
+// Industry a business operates in. Reads may see undefined until migration
+// 0005 is applied, so treat a missing value as "dental".
+export type Vertical = "dental" | "real_estate";
 export type SubscriptionStatus = "pilot" | "active" | "paused" | "canceled";
 export type CallStatus = "missed" | "completed" | "voicemail" | "failed";
 export type ConversationStatus = "active" | "needs_attention" | "handled" | "closed";
@@ -22,6 +25,7 @@ export type NotificationStatus = "pending" | "sent" | "failed";
 export interface Clinic {
   id: string;
   name: string;
+  vertical?: Vertical | null;
   timezone: string;
   twilio_number: string | null;
   twilio_messaging_service_sid: string | null;

@@ -7,6 +7,42 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminEmail } from "@/lib/admin";
 import { sanitizeText, normalizePhone, isValidEmail, LIMITS } from "@/lib/validation";
 import { logAudit } from "@/lib/audit";
+import { DEFAULT_TEXTBACK_REAL_ESTATE } from "@/lib/constants";
+import type { Vertical } from "@/lib/types";
+
+function parseVertical(raw: unknown): Vertical | undefined {
+  return raw === "dental" || raw === "real_estate" ? raw : undefined;
+}
+
+// Shared settings update for the owner and admin actions. Includes the
+// vertical when the form sends one; if that write fails (migration 0005 not
+// applied, so the column doesn't exist), it retries without it so the rest
+// of the settings still save.
+async function updateClinicRow(
+  admin: ReturnType<typeof createAdminClient>,
+  clinicId: string,
+  formData: FormData,
+  notifyEmailRaw: string,
+) {
+  const values: Record<string, unknown> = {
+    name: sanitizeText(formData.get("name"), LIMITS.clinicName),
+    twilio_number: normalizePhone(formData.get("twilio_number")),
+    twilio_messaging_service_sid: sanitizeText(formData.get("twilio_messaging_service_sid"), 64) || null,
+    notify_phone: normalizePhone(formData.get("notify_phone")),
+    notify_email: isValidEmail(notifyEmailRaw) ? notifyEmailRaw : null,
+    textback_message: sanitizeText(formData.get("textback_message"), 600),
+    ai_enabled: formData.get("ai_enabled") === "on",
+    timezone: sanitizeText(formData.get("timezone"), 64) || "America/Toronto",
+  };
+  const vertical = parseVertical(formData.get("vertical"));
+  if (vertical) values.vertical = vertical;
+
+  const { error } = await admin.from("clinics").update(values).eq("id", clinicId);
+  if (error && vertical) {
+    delete values.vertical;
+    await admin.from("clinics").update(values).eq("id", clinicId);
+  }
+}
 
 // Create the clinic + owner profile during onboarding.
 export async function createClinic(formData: FormData) {
@@ -22,16 +58,24 @@ export async function createClinic(formData: FormData) {
   const notifyEmailRaw = String(formData.get("notify_email") || user.email || "");
 
   const admin = createAdminClient();
-  const { data: clinic, error } = await admin
-    .from("clinics")
-    .insert({
-      name,
-      timezone: sanitizeText(formData.get("timezone"), 64) || "America/Toronto",
-      notify_phone: normalizePhone(formData.get("notify_phone")),
-      notify_email: isValidEmail(notifyEmailRaw) ? notifyEmailRaw : null,
-    })
-    .select("id")
-    .single();
+  const vertical = parseVertical(formData.get("vertical"));
+  const row: Record<string, unknown> = {
+    name,
+    timezone: sanitizeText(formData.get("timezone"), 64) || "America/Toronto",
+    notify_phone: normalizePhone(formData.get("notify_phone")),
+    notify_email: isValidEmail(notifyEmailRaw) ? notifyEmailRaw : null,
+  };
+  if (vertical) row.vertical = vertical;
+  // Real estate offices get a text-back that fits (no "we're with a patient").
+  if (vertical === "real_estate") row.textback_message = DEFAULT_TEXTBACK_REAL_ESTATE;
+
+  let { data: clinic, error } = await admin.from("clinics").insert(row).select("id").single();
+  if (error && vertical) {
+    // Migration 0005 not applied yet: the vertical column doesn't exist.
+    // Create the business anyway rather than blocking onboarding.
+    delete row.vertical;
+    ({ data: clinic, error } = await admin.from("clinics").insert(row).select("id").single());
+  }
   if (error || !clinic) throw new Error(error?.message || "Could not create clinic");
 
   await admin.from("profiles").upsert({
@@ -69,19 +113,7 @@ export async function updateSettings(formData: FormData) {
 
   const notifyEmailRaw = String(formData.get("notify_email") || "");
 
-  await admin
-    .from("clinics")
-    .update({
-      name: sanitizeText(formData.get("name"), LIMITS.clinicName),
-      twilio_number: normalizePhone(formData.get("twilio_number")),
-      twilio_messaging_service_sid: sanitizeText(formData.get("twilio_messaging_service_sid"), 64) || null,
-      notify_phone: normalizePhone(formData.get("notify_phone")),
-      notify_email: isValidEmail(notifyEmailRaw) ? notifyEmailRaw : null,
-      textback_message: sanitizeText(formData.get("textback_message"), 600),
-      ai_enabled: formData.get("ai_enabled") === "on",
-      timezone: sanitizeText(formData.get("timezone"), 64) || "America/Toronto",
-    })
-    .eq("id", profile.clinic_id);
+  await updateClinicRow(admin, profile.clinic_id, formData, notifyEmailRaw);
 
   await logAudit({
     clinicId: profile.clinic_id,
@@ -109,19 +141,7 @@ export async function updateClinicAsAdmin(formData: FormData) {
   const admin = createAdminClient();
   const notifyEmailRaw = String(formData.get("notify_email") || "");
 
-  await admin
-    .from("clinics")
-    .update({
-      name: sanitizeText(formData.get("name"), LIMITS.clinicName),
-      twilio_number: normalizePhone(formData.get("twilio_number")),
-      twilio_messaging_service_sid: sanitizeText(formData.get("twilio_messaging_service_sid"), 64) || null,
-      notify_phone: normalizePhone(formData.get("notify_phone")),
-      notify_email: isValidEmail(notifyEmailRaw) ? notifyEmailRaw : null,
-      textback_message: sanitizeText(formData.get("textback_message"), 600),
-      ai_enabled: formData.get("ai_enabled") === "on",
-      timezone: sanitizeText(formData.get("timezone"), 64) || "America/Toronto",
-    })
-    .eq("id", clinicId);
+  await updateClinicRow(admin, clinicId, formData, notifyEmailRaw);
 
   await logAudit({
     clinicId,

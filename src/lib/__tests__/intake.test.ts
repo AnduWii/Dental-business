@@ -58,6 +58,66 @@ describe("intake fallback", () => {
   });
 });
 
+describe("intake fallback, real estate vertical", () => {
+  it("asks about a callback instead of an appointment", async () => {
+    const res = await runIntake({
+      clinicName: "Hartwell Realty",
+      vertical: "real_estate",
+      history: [
+        { role: "assistant", body: "What can we help you with today?" },
+        { role: "patient", body: "I want to see the house on Maple Ave" },
+      ],
+      current: {
+        caller_name: "Priya",
+        reason: null,
+        urgency_level: "unknown",
+        booking_intent: "unknown",
+      },
+    });
+    expect(res.fields.intake_complete).toBe(false);
+    expect(res.reply.toLowerCase()).toContain("agent");
+    expect(res.reply.toLowerCase()).not.toContain("appointment");
+  });
+
+  it("closes with an agent handoff once intent is known", async () => {
+    const res = await runIntake({
+      clinicName: "Hartwell Realty",
+      vertical: "real_estate",
+      history: [
+        { role: "assistant", body: "Would you like an agent to call you back? (yes / no)" },
+        { role: "patient", body: "yes please" },
+      ],
+      current: {
+        caller_name: "Priya",
+        reason: "Showing at 42 Maple Ave",
+        urgency_level: "medium",
+        booking_intent: "new_patient",
+      },
+    });
+    expect(res.fields.intake_complete).toBe(true);
+    expect(res.reply.toLowerCase()).toContain("agent");
+  });
+
+  it("still escalates a medical emergency on the real estate script", async () => {
+    const res = await runIntake({
+      clinicName: "Hartwell Realty",
+      vertical: "real_estate",
+      history: [
+        { role: "assistant", body: "How can we help?" },
+        { role: "patient", body: "someone at the open house passed out and won't stop bleeding" },
+      ],
+      current: {
+        caller_name: null,
+        reason: null,
+        urgency_level: "unknown",
+        booking_intent: "unknown",
+      },
+    });
+    expect(res.emergency).toBe(true);
+    expect(res.reply).toContain("911");
+  });
+});
+
 describe("extractName", () => {
   it("handles introduction phrasings", () => {
     expect(extractName("thanks, I'm Andrew")).toBe("Andrew");

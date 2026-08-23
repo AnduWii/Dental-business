@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
     title: "Missed call",
     body: textbackSent
       ? `Missed call from ${caller}. Text-back sent.`
-      : `Missed call from ${caller}. No text-back sent${patient!.opted_out ? " (patient opted out)" : ""}.`,
+      : `Missed call from ${caller}. No text-back sent${patient!.opted_out ? " (caller opted out)" : ""}.`,
     status: "sent",
   });
 

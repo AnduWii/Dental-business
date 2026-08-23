@@ -5,10 +5,10 @@ import { LegalPage, type LegalSection } from "@/components/LegalPage";
 export const metadata: Metadata = {
   title: `Terms of Service · ${BRAND.name}`,
   description:
-    "The terms that govern use of Catchline's missed-call recovery service by dental clinics.",
+    "The terms that govern use of Catchline's missed-call recovery service by dental clinics and real estate offices.",
 };
 
-const UPDATED = "June 21, 2026";
+const UPDATED = "August 23, 2026";
 
 const sections: LegalSection[] = [
   {
@@ -16,7 +16,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "These Terms of Service (the Terms) govern your access to and use of Catchline, the missed-call recovery service operated by Catchline Services Inc. (Catchline, we, us). By creating an account or using the service, you agree to these Terms. If you accept on behalf of a clinic, you confirm you are authorised to bind that clinic.",
+        text: "These Terms of Service (the Terms) govern your access to and use of Catchline, the missed-call recovery service operated by Catchline Services Inc. (Catchline, we, us). By creating an account or using the service, you agree to these Terms. If you accept on behalf of a business, such as a dental clinic or a real estate office (your business), you confirm you are authorised to bind that business.",
       },
     ],
   },
@@ -25,11 +25,15 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "When a call to your clinic goes unanswered, Catchline texts the caller back from the dedicated Catchline number set up for your clinic, runs a short automated intake to capture their name, reason, urgency, and booking intent, logs the conversation, and alerts your front desk. Your staff can take over any conversation at any time.",
+        text: "When a call to your business goes unanswered, Catchline texts the caller back from the dedicated Catchline number set up for you, runs a short automated intake to capture their name, reason, urgency, and booking intent, logs the conversation, and alerts your team. Your staff can take over any conversation at any time.",
       },
       {
         type: "note",
-        text: "Catchline is not a medical or clinical service. It does not provide medical advice, diagnosis, triage, or treatment, and it does not book appointments or quote prices on your behalf. Catchline uses AI only for administrative intake and communication. It does not use AI to give medical or dental advice, to diagnose, to recommend or decide on treatment, or to make clinical judgments. When the assistant notes that a caller seems urgent, that is only to help your front desk prioritise and to prompt the caller to call 911 in an emergency; it is not a clinical assessment. Callers with an emergency are directed to call 911 or go to an emergency room.",
+        text: "Catchline is not a medical or clinical service. It does not provide medical advice, diagnosis, triage, or treatment, and it does not book appointments or quote prices on your behalf. Catchline uses AI only for administrative intake and communication. It does not use AI to give medical or dental advice, to diagnose, to recommend or decide on treatment, or to make clinical judgments. When the assistant notes that a caller seems urgent, that is only to help your team prioritise and to prompt the caller to call 911 in an emergency; it is not a clinical assessment. Callers with an emergency are directed to call 911 or go to an emergency room.",
+      },
+      {
+        type: "note",
+        text: "Catchline is also not a real estate brokerage and does not trade in real estate. It does not list, show, value, or negotiate properties, does not give real estate, legal, mortgage, or financial advice, and does not quote prices, rent, or commissions or confirm showing times on your behalf. When the assistant notes that a real estate caller seems time-sensitive, that is only to help your team prioritise; your licensed agents handle everything else.",
       },
     ],
   },
@@ -66,7 +70,7 @@ const sections: LegalSection[] = [
         type: "ul",
         items: [
           "Break the law or infringe anyone's rights.",
-          "Send cold, bulk, or promotional marketing texts. Catchline is for responding to people who contacted your clinic first.",
+          "Send cold, bulk, or promotional marketing texts. Catchline is for responding to people who contacted your business first.",
           "Message anyone without a lawful basis, or after they have opted out (STOP).",
           "Send harmful, deceptive, or unlawful content, or anything that violates carrier or messaging rules (including CASL and, where applicable, TCPA).",
           "Probe, overload, reverse-engineer, or interfere with the service or its security.",
@@ -75,13 +79,13 @@ const sections: LegalSection[] = [
     ],
   },
   {
-    heading: "6. Your responsibilities as a clinic",
+    heading: "6. Your responsibilities as a business",
     blocks: [
       {
         type: "ul",
         items: [
-          "You remain responsible for the care of your patients and for all clinical decisions; Catchline only handles intake conversations.",
-          "You are the party responsible for the personal and health information involved (the custodian under PHIPA). See the Data Processing Agreement.",
+          "If you are a dental clinic: you remain responsible for the care of your patients and for all clinical decisions, and you are the party responsible for the personal and health information involved (the custodian under PHIPA). Catchline only handles intake conversations. See the Data Processing Agreement.",
+          "If you are a real estate office: you remain responsible for all real estate services, advice, and transactions, for compliance with the real estate legislation and professional rules that apply to you (in Ontario, TRESA and RECO requirements), and for the personal information of your clients and callers. Catchline only handles intake conversations.",
           "You configure call forwarding to your Catchline number and keep your notification phone and email current.",
         ],
       },
@@ -96,7 +100,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Our handling of personal information is described in our Privacy Policy, and our obligations to clinics are set out in our Data Processing Agreement. Both are part of your agreement with us.",
+        text: "Our handling of personal information is described in our Privacy Policy, and our obligations to the businesses we serve are set out in our Data Processing Agreement. Both are part of your agreement with us.",
       },
     ],
   },
@@ -105,7 +109,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Catchline Services Inc. owns all rights in the service, including the software, source code, dashboard, designs, content, and the Catchline name and trademarks. These Terms do not transfer any of those rights to you, and you may use the service only as these Terms allow. You keep ownership of your own data, including your clinic's information and your callers' information, and you grant us the limited rights needed to operate the service for you as described in the Privacy Policy and Data Processing Agreement.",
+        text: "Catchline Services Inc. owns all rights in the service, including the software, source code, dashboard, designs, content, and the Catchline name and trademarks. These Terms do not transfer any of those rights to you, and you may use the service only as these Terms allow. You keep ownership of your own data, including your business's information and your callers' information, and you grant us the limited rights needed to operate the service for you as described in the Privacy Policy and Data Processing Agreement.",
       },
     ],
   },
@@ -123,7 +127,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "The service is provided on an 'as is' and 'as available' basis, and during a pilot it may still be evolving. We do not guarantee that the service will be uninterrupted, timely, secure, or error-free; that any message will be delivered or delivered on time (delivery depends on carriers and networks we do not control); or that the service will recover any particular number of patients, bookings, or amount of revenue. To the fullest extent permitted by law, we disclaim all warranties and conditions not expressly stated in these Terms, including implied warranties of merchantability, fitness for a particular purpose, and non-infringement.",
+        text: "The service is provided on an 'as is' and 'as available' basis, and during a pilot it may still be evolving. We do not guarantee that the service will be uninterrupted, timely, secure, or error-free; that any message will be delivered or delivered on time (delivery depends on carriers and networks we do not control); or that the service will recover any particular number of patients, clients, bookings, or amount of revenue. To the fullest extent permitted by law, we disclaim all warranties and conditions not expressly stated in these Terms, including implied warranties of merchantability, fitness for a particular purpose, and non-infringement.",
       },
     ],
   },
@@ -141,7 +145,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "You agree to indemnify and hold Catchline harmless from claims, losses, and expenses (including reasonable legal fees) arising out of your use of the service, your content, your messaging practices and compliance (including CASL and, where applicable, TCPA), your clinical care, or your breach of these Terms, including claims brought by your patients or callers that relate to your use of the service.",
+        text: "You agree to indemnify and hold Catchline harmless from claims, losses, and expenses (including reasonable legal fees) arising out of your use of the service, your content, your messaging practices and compliance (including CASL and, where applicable, TCPA), your clinical care or your real estate services, or your breach of these Terms, including claims brought by your patients, clients, or callers that relate to your use of the service.",
       },
     ],
   },
@@ -168,7 +172,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "We may update the service and these Terms from time to time. If we make material changes to the Terms, we will update the date below and notify clinics using the service. Continued use after a change means you accept the updated Terms.",
+        text: "We may update the service and these Terms from time to time. If we make material changes to the Terms, we will update the date below and notify the businesses using the service. Continued use after a change means you accept the updated Terms.",
       },
     ],
   },
@@ -198,7 +202,7 @@ export default function TermsPage() {
     <LegalPage
       title="Terms of Service"
       updated={UPDATED}
-      intro="These terms govern your use of Catchline. In short: it recovers missed calls for your clinic, it is not a medical or clinical service, you stay responsible for patient care and lawful messaging, and either of us can stop the service at any time."
+      intro="These terms govern your use of Catchline. In short: it recovers missed calls for your business, whether that is a dental clinic or a real estate office, it is not a medical, clinical, or real estate brokerage service, you stay responsible for your patients or clients and for lawful messaging, and either of us can stop the service at any time."
       sections={sections}
     />
   );

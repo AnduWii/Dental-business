@@ -20,8 +20,22 @@ export function ClinicSettingsForm({
     <form action={action} className="space-y-8">
       <input type="hidden" name="clinic_id" value={clinic.id} />
 
-      <Section title="Clinic">
-        <Field label="Clinic name" name="name" defaultValue={clinic.name} required />
+      <Section title="Business">
+        <Field label="Business name" name="name" defaultValue={clinic.name} required />
+        <div>
+          <label className="block text-sm font-medium text-slate-700">Business type</label>
+          <select
+            name="vertical"
+            defaultValue={clinic.vertical ?? "dental"}
+            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          >
+            <option value="dental">Dental clinic</option>
+            <option value="real_estate">Real estate office</option>
+          </select>
+          <p className="mt-1 text-xs text-slate-500">
+            Tunes how the assistant talks to your callers (intake questions and wording).
+          </p>
+        </div>
         <Field
           label="Timezone"
           name="timezone"
@@ -36,7 +50,7 @@ export function ClinicSettingsForm({
           name="twilio_number"
           defaultValue={clinic.twilio_number ?? ""}
           placeholder="+16475550100"
-          hint="The Twilio number missed calls forward to, and that texts patients. E.164 format."
+          hint="The Twilio number missed calls forward to, and that texts your callers. E.164 format."
         />
         <Field
           label="Messaging Service SID (optional)"
@@ -47,9 +61,9 @@ export function ClinicSettingsForm({
         />
       </Section>
 
-      <Section title="Where we page the front desk">
+      <Section title="Where we page your team">
         <Field
-          label="Front-desk mobile"
+          label="Team mobile"
           name="notify_phone"
           defaultValue={clinic.notify_phone ?? ""}
           placeholder="+16475551234"
@@ -72,7 +86,7 @@ export function ClinicSettingsForm({
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
           <p className="mt-1 text-xs text-slate-500">
-            Use <code>{"{{clinic}}"}</code> to insert the clinic name.
+            Use <code>{"{{clinic}}"}</code> to insert your business name.
           </p>
         </div>
         <label className="flex items-center gap-3">
@@ -97,7 +111,7 @@ export function ClinicSettingsForm({
 
       <Section title="Connect the phone (one-time setup)">
         <ol className="list-decimal space-y-2 pl-5 text-sm text-slate-600">
-          <li>In Twilio, open this clinic&apos;s number configuration.</li>
+          <li>In Twilio, open this business&apos;s number configuration.</li>
           <li>
             Set <strong>A Call Comes In</strong> (Webhook, HTTP POST) to:
             <Code>{voiceUrl}</Code>
@@ -107,8 +121,8 @@ export function ClinicSettingsForm({
             <Code>{smsUrl}</Code>
           </li>
           <li>
-            On the clinic&apos;s real line, enable <em>conditional call forwarding</em> (forward on
-            no-answer / busy) to the Catchline number above.
+            On the business&apos;s real line, enable <em>conditional call forwarding</em> (forward
+            on no-answer / busy) to the Catchline number above.
           </li>
         </ol>
         <p className="text-xs text-slate-500">
