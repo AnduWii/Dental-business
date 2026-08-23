@@ -21,6 +21,53 @@ new session: read this, then `README.md` and `docs/`.
 
 ---
 
+## 🧠 Architecture (the big picture, read before touching code)
+
+**One Next.js 15 App Router codebase on Vercel does everything** (pages + API routes); Supabase
+(Postgres + Auth + Realtime, `ca-central-1`) is the only backend service; Twilio provides the
+per-clinic phone numbers. `main` auto-deploys straight to production (the branch ruleset is
+disabled), so every push to `main` is a deploy.
+
+**The core loop** (all server-side, in two webhook routes):
+`Patient calls clinic → carrier conditional-forwarding sends the unanswered call to the clinic's
+dedicated Twilio number → POST /api/twilio/voice` logs the missed call, upserts the patient,
+opens/reuses a conversation, and sends the instant SMS text-back. The patient's reply hits
+`POST /api/twilio/sms`, which handles STOP/START compliance, dedupes Twilio retries (unique
+`messages.twilio_sid`), enforces the 20-auto-replies/hour cost cap, runs `runIntake()`
+(`src/lib/ai/intake.ts`), stores the reply, updates lead fields on the conversation, and pages
+the clinic (`src/lib/notify.ts`: dashboard notification rows + SMS to `clinics.notify_phone`).
+**`clinics.twilio_number` is the routing key**: webhooks look up the clinic by the number Twilio
+was called/texted on, E.164-exact, one clinic per number, ever.
+
+**Tenancy and auth, three Supabase client flavors** (never mix them up):
+- `lib/supabase/server.ts` (anon key + user cookies): Server Components / user-scoped reads,
+  enforced by RLS (`profiles.clinic_id` scopes every table).
+- `lib/supabase/client.ts` (browser): realtime subscriptions only.
+- `lib/supabase/admin.ts` (service role, bypasses RLS): webhooks and server actions, ALWAYS
+  behind an explicit guard: `requireClinicMember()` for conversation APIs, `isAdminEmail()`
+  allow-list (`lib/constants.ts` + `ADMIN_EMAILS` env) for /admin, Twilio signature validation
+  for webhooks. `src/middleware.ts` refreshes sessions and gates dashboard routes; `/api/*` is
+  excluded from it by the matcher.
+
+**Degrade-by-env is the house pattern**: no AI key → deterministic scripted intake (tests pin
+it); no Stripe keys → billing routes return 503 and the page says "not connected"; Twilio
+signature checks enforce only in production; a malformed `NEXT_PUBLIC_APP_URL` can't crash the
+build. Features light up when their env vars exist. `NEXT_PUBLIC_APP_URL` must EXACTLY equal the
+public URL Twilio calls, or signature validation 403s every webhook.
+
+**Database changes** are hand-applied: write `supabase/migrations/NNNN_*.sql`, run it in the
+Supabase SQL editor, and record it in this file (0001 schema+RLS, 0002 audit/retention, 0003
+billing NOT YET APPLIED, 0004 audit FK unlink). `audit_log` is append-only via triggers and its
+`clinic_id` deliberately has NO foreign key (0004) so clinic deletes don't violate the triggers.
+The dashboard is server components + `RealtimeRefresher` (postgres_changes → `router.refresh()`),
+not client state.
+
+**Sharp edges that have already cut us once**: Supabase free tier auto-pauses after ~1 week idle
+(symptom: 504 `MIDDLEWARE_INVOCATION_TIMEOUT` everywhere and silent webhooks; fix: restore the
+project, real fix: Supabase Pro). Vercel deployment-hash URLs (`catchline-xxxxx-*.vercel.app`)
+are per-deploy throwaways, never configure anything against them. The demo conversation on the
+landing page must never show the AI offering/booking appointment times (Terms consistency).
+
 ## ▶ Immediate next steps (where we left off, 2026-07-05)
 Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-live-runbook.md)):
 0. **Run migration `supabase/migrations/0004_audit_unlink.sql` in the Supabase SQL editor.**
@@ -149,8 +196,10 @@ run the launch checklist"*).
 ## Key commands
 ```bash
 npm run dev        # local dev
-npm run build      # production build
-npm run test       # 30 unit tests
+npm run build      # production build (also runs ESLint; the real pre-push gate)
+npm run test       # 30 unit tests (Vitest)
+npx vitest run src/lib/__tests__/intake.test.ts   # one test file
+npx vitest run -t "captures the name"             # one test by name
 npm run typecheck  # tsc --noEmit
 ```
 
