@@ -138,3 +138,29 @@ def test_default_tasks_parse_and_use_known_keys(tmp_path):
 def test_parse_rules_rejects_missing_fields():
     with pytest.raises(KeyError):
         TaskEngine.parse_rules([{"name": "broken"}])
+
+
+def test_parse_rules_rejects_unknown_fields():
+    entry = {
+        "name": "typo",
+        "template": "x.png",
+        "script": [{"keys": ["e"], "seconds": 1.0}],
+        "treshold": 0.9,  # typo on purpose: must fail loudly, not fall back to defaults
+    }
+    with pytest.raises(ValueError, match="unknown keys.*treshold"):
+        TaskEngine.parse_rules([entry])
+
+
+def test_normalize_key_handles_chars_and_specials():
+    from rusty_pilot.recorder import normalize_key
+
+    class FakeKeyCode:  # pynput KeyCode shape: .char, no .name
+        char = "K"
+
+    class FakeSpecial:  # pynput Key enum shape: .name, no .char
+        char = None
+        name = "F8"
+
+    assert normalize_key(FakeKeyCode()) == "k"
+    assert normalize_key(FakeSpecial()) == "f8"
+    assert normalize_key(object()) is None

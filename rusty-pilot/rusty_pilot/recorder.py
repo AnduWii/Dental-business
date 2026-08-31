@@ -27,6 +27,20 @@ from .config import Config
 SHARD_FRAMES = 2000  # ~3.3 minutes per shard at 10 fps; keeps files ~15 MB
 
 
+def normalize_key(key) -> str | None:
+    """A pynput key object -> the lowercase name used in Config.action_keys.
+
+    pynput delivers printable keys as KeyCode (has .char, no .name) and special
+    keys as Key enums (has .name, no .char); handle both so a single-character
+    kill switch or action key works the same as "f8" or "space".
+    """
+    char = getattr(key, "char", None)
+    if char:
+        return char.lower()
+    name = getattr(key, "name", None)
+    return name.lower() if name else None
+
+
 def save_shard(path: str | Path, frames: np.ndarray, actions: np.ndarray) -> None:
     frames = np.asarray(frames, dtype=np.uint8)
     actions = np.asarray(actions, dtype=np.float32)
@@ -59,12 +73,7 @@ class KeyStateTracker:
     held: set[str] = field(default_factory=set)
 
     def _normalize(self, key) -> str | None:
-        # pynput gives KeyCode (has .char) for letters and Key enums for specials.
-        char = getattr(key, "char", None)
-        if char:
-            return char.lower()
-        name = getattr(key, "name", None)
-        return name.lower() if name else None
+        return normalize_key(key)
 
     def on_press(self, key) -> None:
         name = self._normalize(key)
@@ -106,7 +115,7 @@ class Recorder:
 
         def on_press(key):
             self.tracker.on_press(key)
-            if getattr(key, "name", "") == kill:
+            if normalize_key(key) == kill:
                 self._stop = True
 
         kb = keyboard.Listener(on_press=on_press, on_release=self.tracker.on_release)

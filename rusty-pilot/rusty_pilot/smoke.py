@@ -26,10 +26,24 @@ from .recorder import save_shard
 
 
 def make_synthetic_session(config: Config, data_dir: Path, n_frames: int, seed: int) -> None:
+    import json
+
     rng = np.random.default_rng(seed)
     h, w = config.frame_shape()
     session = data_dir / "session_synthetic"
     session.mkdir(parents=True, exist_ok=True)
+    session.joinpath("meta.json").write_text(
+        json.dumps(
+            {
+                "action_keys": list(config.action_keys),
+                "frame_width": config.frame_width,
+                "frame_height": config.frame_height,
+                "capture_fps": config.capture_fps,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
 
     frames = np.zeros((n_frames, h, w), dtype=np.uint8)
     actions = np.zeros((n_frames, len(config.action_keys)), dtype=np.float32)

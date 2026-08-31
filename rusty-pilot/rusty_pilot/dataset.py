@@ -6,6 +6,7 @@ imported only by training code so the rest of the kit has no torch dependency.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -38,13 +39,71 @@ def stack_windows(
     return np.ascontiguousarray(x, dtype=np.uint8), y.astype(np.float32)
 
 
+def check_session_meta(
+    session_dir: Path,
+    action_keys: tuple[str, ...] | None,
+    frame_width: int | None,
+    frame_height: int | None,
+) -> None:
+    """Refuse to train on a session recorded under an incompatible config.
+
+    Every session written by the recorder carries a meta.json snapshot; if it
+    disagrees with the active config (reordered/renamed action keys train on
+    corrupted labels SILENTLY, since the arrays still line up), fail with a named
+    error instead. A session without meta.json is accepted as-is (legacy data).
+    """
+    meta_path = session_dir / "meta.json"
+    if not meta_path.exists():
+        return
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    problems = []
+    if action_keys is not None and meta.get("action_keys") not in (None, list(action_keys)):
+        problems.append(f"action_keys {meta['action_keys']} != config {list(action_keys)}")
+    for field, expected in (("frame_width", frame_width), ("frame_height", frame_height)):
+        if expected is not None and meta.get(field) not in (None, int(expected)):
+            problems.append(f"{field}={meta[field]} != config {field}={expected}")
+    if problems:
+        raise ValueError(
+            f"session {session_dir} was recorded under a different config: "
+            + "; ".join(problems)
+            + ". Delete/move the session, or restore the config it was recorded with."
+        )
+
+
 def load_dataset_arrays(
-    data_dir: str | Path, frame_stack: int
+    data_dir: str | Path,
+    frame_stack: int,
+    *,
+    action_keys: tuple[str, ...] | None = None,
+    frame_width: int | None = None,
+    frame_height: int | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Load and window every shard under data_dir. Shards never cross-window."""
+    """Load and window every shard under data_dir. Shards never cross-window.
+
+    Pass the active config's action_keys/frame geometry to reject sessions
+    recorded under an incompatible config before they poison training.
+    """
     xs, ys = [], []
+    checked_sessions: set[Path] = set()
     for shard in list_shards(data_dir):
+        if shard.parent not in checked_sessions:
+            check_session_meta(shard.parent, action_keys, frame_width, frame_height)
+            checked_sessions.add(shard.parent)
         frames, actions = load_shard(shard)
+        # Backstop for sessions with no meta.json: shape checks with a named error
+        # beat np.concatenate's bare dimension-mismatch further down.
+        if action_keys is not None and actions.shape[1] != len(action_keys):
+            raise ValueError(
+                f"shard {shard} has {actions.shape[1]} action columns but the config "
+                f"has {len(action_keys)} action keys; it was recorded under a "
+                "different action space"
+            )
+        if frame_width is not None and frames.shape[1:3] != (frame_height, frame_width):
+            raise ValueError(
+                f"shard {shard} has frames of {frames.shape[1:3]} but the config "
+                f"expects {(frame_height, frame_width)}; re-record or restore the "
+                "config it was recorded with"
+            )
         x, y = stack_windows(frames, actions, frame_stack)
         if len(x):
             xs.append(x)

@@ -26,6 +26,7 @@ def write_sidecar(onnx_path: str | Path, config: Config) -> None:
                 "frame_stack": config.frame_stack,
                 "frame_width": config.frame_width,
                 "frame_height": config.frame_height,
+                "capture_fps": config.capture_fps,
                 "input_name": "frames",
                 "output_name": "logits",
             },

@@ -47,5 +47,5 @@ def calibrate(config: Config, shots: int, delay_seconds: float) -> None:
         grabber.close()
     print(
         f"\ndone. Now crop each cue tightly and save into {config.templates_dir}/ "
-        "using the file names from tasks.json (see docs/TRAINING.md, step 4)."
+        "using the file names from tasks.json (see docs/TRAINING.md, step 2, item 3)."
     )

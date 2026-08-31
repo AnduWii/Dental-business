@@ -152,10 +152,32 @@ class TaskEngine:
         return None
 
     # ------------------------------------------------------------------
+    # Fields users may write in tasks.json. "comment" is a free annotation slot.
+    RULE_FIELDS = frozenset(
+        {
+            "name",
+            "template",
+            "comment",
+            "script",
+            "threshold",
+            "cooldown_seconds",
+            "region",
+            "move_mouse_to_match",
+        }
+    )
+
     @staticmethod
     def parse_rules(raw: list[dict]) -> list[TaskRule]:
         rules = []
         for entry in raw:
+            unknown = set(entry) - TaskEngine.RULE_FIELDS
+            if unknown:
+                # A typo in a tuning field would otherwise silently fall back to
+                # defaults; fail loudly like Config.load does.
+                raise ValueError(
+                    f"unknown keys {sorted(unknown)} in task rule "
+                    f"'{entry.get('name', '<unnamed>')}'"
+                )
             steps = [
                 ScriptStep(keys=tuple(step["keys"]), seconds=float(step["seconds"]))
                 for step in entry["script"]

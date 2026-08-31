@@ -86,10 +86,20 @@ class GameController:
             self._press(key)
 
     def move_to(self, x: int, y: int) -> None:
-        """Move the cursor to absolute screen pixel (x, y). Used by task scripts to
+        """Move the cursor to virtual-desktop pixel (x, y). Used by task scripts to
         aim clicks at a matched template (Roblox 2D UI accepts absolute positions;
-        only the 3D camera needs relative deltas)."""
-        if self.focused():
+        only the 3D camera needs relative deltas).
+
+        The coordinates come from mss, which uses virtual-desktop space; plain
+        pydirectinput.moveTo normalizes against the primary monitor only, so pass
+        virtual=True where available (pydirectinput-rgx). With the classic fork,
+        aiming is only correct on the primary monitor.
+        """
+        if not self.focused():
+            return
+        try:
+            self._pdi.moveTo(x, y, virtual=True)
+        except TypeError:  # classic pydirectinput has no `virtual` kwarg
             self._pdi.moveTo(x, y)
 
     def panic(self) -> None:

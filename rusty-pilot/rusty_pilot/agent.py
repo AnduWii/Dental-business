@@ -34,6 +34,11 @@ def validate_model_compat(sidecar: dict, config: Config) -> None:
             problems.append(
                 f"model {field}={sidecar[field]} != config {field}={getattr(config, field)}"
             )
+    # capture_fps changes what a frame stack MEANS in time, so a model trained at
+    # one rate misbehaves at another. .get(): sidecars predate this field.
+    fps = sidecar.get("capture_fps")
+    if fps is not None and int(fps) != int(config.capture_fps):
+        problems.append(f"model capture_fps={fps} != config capture_fps={config.capture_fps}")
     if problems:
         raise ValueError("model/config mismatch: " + "; ".join(problems))
 
@@ -93,10 +98,12 @@ class Agent:
         except ImportError as exc:  # pragma: no cover
             raise ImportError("pynput is required for the kill switch: pip install pynput") from exc
 
+        from .recorder import normalize_key
+
         kill = self.config.kill_switch_key.lower()
 
         def on_press(key):
-            if getattr(key, "name", "") == kill:
+            if normalize_key(key) == kill:
                 self._stop = True
 
         listener = keyboard.Listener(on_press=on_press)

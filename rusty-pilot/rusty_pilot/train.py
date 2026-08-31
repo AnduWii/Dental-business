@@ -29,7 +29,13 @@ def train(config: Config, out_name: str = "policy") -> Path:
     torch.manual_seed(config.seed)
     np.random.seed(config.seed)
 
-    x, y = load_dataset_arrays(config.data_dir, config.frame_stack)
+    x, y = load_dataset_arrays(
+        config.data_dir,
+        config.frame_stack,
+        action_keys=config.action_keys,
+        frame_width=config.frame_width,
+        frame_height=config.frame_height,
+    )
     xt, yt, xv, yv = train_val_split(x, y, config.val_fraction, config.seed)
     print(
         f"dataset: {len(x)} samples ({len(xt)} train / {len(xv)} val), "

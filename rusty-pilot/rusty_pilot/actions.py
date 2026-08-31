@@ -8,17 +8,17 @@ from __future__ import annotations
 
 import numpy as np
 
-# The default action space. Order matters: it defines the meaning of every column in
-# recorded datasets and in the model's output layer. Changing it invalidates old
-# recordings and models, so add new keys at the END and retrain.
-#
-# "m1" is the left mouse button (swings the mop, hammer, etc.). "1" equips the
-# first backpack slot, where Rusty Plane puts your starting tool.
-DEFAULT_ACTION_KEYS: tuple[str, ...] = ("w", "a", "s", "d", "space", "e", "m1", "1")
+from .keys import DEFAULT_ACTION_KEYS, MOVEMENT_KEYS
 
-# Keys that move the character. Used by the safety layer: when the agent loses window
-# focus or is paused, movement keys are always released first.
-MOVEMENT_KEYS: frozenset[str] = frozenset({"w", "a", "s", "d", "space"})
+__all__ = [
+    "DEFAULT_ACTION_KEYS",
+    "MOVEMENT_KEYS",
+    "action_dim",
+    "encode_keys",
+    "decode_vector",
+    "diff_key_sets",
+    "sigmoid",
+]
 
 
 def action_dim(action_keys: tuple[str, ...] = DEFAULT_ACTION_KEYS) -> int:

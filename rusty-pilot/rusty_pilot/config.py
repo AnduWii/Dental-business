@@ -12,7 +12,7 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .actions import DEFAULT_ACTION_KEYS
+from .keys import DEFAULT_ACTION_KEYS
 
 
 @dataclass

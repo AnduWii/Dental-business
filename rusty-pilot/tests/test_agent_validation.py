@@ -11,6 +11,7 @@ def sidecar_for(config: Config) -> dict:
         "frame_stack": config.frame_stack,
         "frame_width": config.frame_width,
         "frame_height": config.frame_height,
+        "capture_fps": config.capture_fps,
     }
 
 
@@ -33,6 +34,22 @@ def test_model_compat_rejects_geometry_mismatch():
     sidecar["frame_width"] = 999
     with pytest.raises(ValueError, match="frame_width"):
         validate_model_compat(sidecar, config)
+
+
+def test_model_compat_rejects_fps_mismatch():
+    config = Config()
+    sidecar = sidecar_for(config)
+    sidecar["capture_fps"] = config.capture_fps + 5
+    with pytest.raises(ValueError, match="capture_fps"):
+        validate_model_compat(sidecar, config)
+
+
+def test_model_compat_tolerates_missing_fps():
+    # Sidecars exported before capture_fps existed must still load.
+    config = Config()
+    sidecar = sidecar_for(config)
+    del sidecar["capture_fps"]
+    validate_model_compat(sidecar, config)  # must not raise
 
 
 def test_task_keys_validation(tmp_path):

@@ -1,7 +1,36 @@
-import numpy as np
+import json
 
-from rusty_pilot.dataset import positive_weights, stack_windows, train_val_split
+import numpy as np
+import pytest
+
+from rusty_pilot.dataset import (
+    load_dataset_arrays,
+    positive_weights,
+    stack_windows,
+    train_val_split,
+)
 from rusty_pilot.recorder import load_shard, save_shard
+
+
+def write_session(tmp_path, name="session_a", n=8, keys=("w", "a"), shape=(4, 5), meta=True):
+    session = tmp_path / name
+    session.mkdir()
+    frames = np.zeros((n, *shape), dtype=np.uint8)
+    actions = np.zeros((n, len(keys)), dtype=np.float32)
+    save_shard(session / "shard_0000.npz", frames, actions)
+    if meta:
+        session.joinpath("meta.json").write_text(
+            json.dumps(
+                {
+                    "action_keys": list(keys),
+                    "frame_width": shape[1],
+                    "frame_height": shape[0],
+                    "capture_fps": 10,
+                }
+            ),
+            encoding="utf-8",
+        )
+    return session
 
 
 def test_shard_roundtrip(tmp_path):
@@ -50,6 +79,34 @@ def test_positive_weights_balances_rare_keys():
 def test_positive_weights_never_pressed_key():
     y = np.zeros((10, 1), dtype=np.float32)
     assert positive_weights(y)[0] == 1.0
+
+
+def test_load_dataset_accepts_matching_session(tmp_path):
+    write_session(tmp_path)
+    x, y = load_dataset_arrays(
+        tmp_path, 2, action_keys=("w", "a"), frame_width=5, frame_height=4
+    )
+    assert len(x) == 7 and y.shape[1] == 2
+
+
+def test_load_dataset_rejects_mismatched_meta(tmp_path):
+    write_session(tmp_path, keys=("a", "w"))  # same width, different order
+    with pytest.raises(ValueError, match="different config"):
+        load_dataset_arrays(tmp_path, 2, action_keys=("w", "a"), frame_width=5, frame_height=4)
+
+
+def test_load_dataset_rejects_wrong_action_width_without_meta(tmp_path):
+    write_session(tmp_path, keys=("w", "a", "s"), meta=False)
+    with pytest.raises(ValueError, match="action columns"):
+        load_dataset_arrays(tmp_path, 2, action_keys=("w", "a"), frame_width=5, frame_height=4)
+
+
+def test_load_dataset_accepts_legacy_session_without_meta(tmp_path):
+    write_session(tmp_path, meta=False)
+    x, _ = load_dataset_arrays(
+        tmp_path, 2, action_keys=("w", "a"), frame_width=5, frame_height=4
+    )
+    assert len(x) == 7
 
 
 def test_train_val_split_partitions():

@@ -16,10 +16,12 @@ import sys
 import time
 from pathlib import Path
 
-from .config import Config
+# No numpy/cv2/torch imports at module level: the CLI must start on a half-installed
+# machine so `check` can say what is missing instead of dying with a traceback.
 
 
 def cmd_init(args) -> int:
+    from .config import Config
     from .tasks.library import write_default_tasks_file
 
     config = Config()
@@ -35,7 +37,6 @@ def cmd_init(args) -> int:
 
 def cmd_check(args) -> int:
     """Report what is installed/missing instead of failing mid-run later."""
-    config = Config.load_or_default(args.config)
     problems = 0
     for module, why, needed_for in [
         ("numpy", "arrays", "everything"),
@@ -58,33 +59,54 @@ def cmd_check(args) -> int:
             "  note     not Windows: record/play cannot drive Roblox here; "
             "train/smoke still work"
         )
-    from .tasks.engine import TaskEngine
+    try:
+        from .config import Config
 
-    tasks_file = Path(config.tasks_file)
-    if tasks_file.exists():
+        config = Config.load_or_default(args.config)
+    except Exception as exc:
+        print(f"  BROKEN   cannot load config: {exc}")
+        problems += 1
+        config = None
+
+    if config is not None:
         try:
-            engine = TaskEngine.from_file(tasks_file, config.templates_dir)
-            ready = [r.name for r in engine.active_rules]
-            print(f"  tasks    {len(ready)} with templates: {', '.join(ready) or 'none yet'}")
-            if engine.missing:
-                print(f"           awaiting templates: {', '.join(engine.missing)}")
-        except Exception as exc:
-            print(f"  BROKEN   {tasks_file}: {exc}")
-            problems += 1
-    else:
-        print(f"  note     no {tasks_file} yet; run: python -m rusty_pilot init")
+            # These need cv2/numpy; the probe loop above already counted them if
+            # missing, so an ImportError here is a note, not another problem.
+            from .agent import validate_task_keys
+            from .tasks.engine import TaskEngine
+        except ImportError:
+            print("  note     tasks.json check skipped until the modules above are installed")
+        else:
+            tasks_file = Path(config.tasks_file)
+            if tasks_file.exists():
+                try:
+                    engine = TaskEngine.from_file(tasks_file, config.templates_dir)
+                    validate_task_keys(engine, config)
+                    ready = [r.name for r in engine.active_rules]
+                    print(
+                        f"  tasks    {len(ready)} with templates: {', '.join(ready) or 'none yet'}"
+                    )
+                    if engine.missing:
+                        print(f"           awaiting templates: {', '.join(engine.missing)}")
+                except Exception as exc:
+                    print(f"  BROKEN   {tasks_file}: {exc}")
+                    problems += 1
+            else:
+                print(f"  note     no {tasks_file} yet; run: python -m rusty_pilot init")
     print("all good" if problems == 0 else f"{problems} problem(s) to fix")
     return 0 if problems == 0 else 1
 
 
 def cmd_calibrate(args) -> int:
     from .calibrate import calibrate
+    from .config import Config
 
     calibrate(Config.load_or_default(args.config), args.shots, args.delay)
     return 0
 
 
 def cmd_record(args) -> int:
+    from .config import Config
     from .recorder import Recorder
 
     config = Config.load_or_default(args.config)
@@ -94,6 +116,7 @@ def cmd_record(args) -> int:
 
 
 def cmd_train(args) -> int:
+    from .config import Config
     from .train import train
 
     train(Config.load_or_default(args.config), out_name=args.name)
@@ -109,6 +132,7 @@ def cmd_smoke(args) -> int:
 
 def cmd_play(args) -> int:
     from .agent import Agent
+    from .config import Config
 
     config = Config.load_or_default(args.config)
     model = args.model or f"{config.models_dir}/policy.onnx"
