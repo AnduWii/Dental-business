@@ -1,9 +1,0 @@
-[project]
-name = "rusty-pilot"
-version = "0.1.0"
-description = "Record, train, export, play: an imitation-learning kit for Roblox's Rusty Plane"
-requires-python = ">=3.10"
-
-[tool.pytest.ini_options]
-pythonpath = ["."]
-testpaths = ["tests"]
