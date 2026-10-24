@@ -1,6 +1,8 @@
-# Catchline, project guide & status
+# CLAUDE.md
 
-> Missed-call recovery for dental clinics. When a clinic misses a call, Catchline texts the caller
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+> **Catchline**, missed-call recovery for dental clinics. When a clinic misses a call, Catchline texts the caller
 > back, runs a short AI intake (name, reason, urgency, booking intent), logs it, and pages the
 > front desk. Full docs in [`README.md`](README.md) and [`docs/`](docs/).
 
@@ -68,24 +70,24 @@ project, real fix: Supabase Pro). Vercel deployment-hash URLs (`catchline-xxxxx-
 are per-deploy throwaways, never configure anything against them. The demo conversation on the
 landing page must never show the AI offering/booking appointment times (Terms consistency).
 
-## ▶ Immediate next steps (where we left off, 2026-07-05)
-Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-live-runbook.md)):
-0. **Run migration `supabase/migrations/0004_audit_unlink.sql` in the Supabase SQL editor.**
-   Without it, deleting any clinic fails with "audit_log is append-only" (the audit FK's
-   set-null collides with the append-only trigger; 0004 drops the FK and keeps the clinic id
-   as history). This also fixes `erase_clinic()`.
-1. In Vercel (project **catchline**, the one connected to `AnduWii/Dental-business`), add env vars
-   `TWILIO_ACCOUNT_SID` + `TWILIO_AUTH_TOKEN`, and verify `NEXT_PUBLIC_APP_URL` is exactly
-   `https://dental-business-dusky.vercel.app`. Redeploy.
-2. In Twilio, on **+1 (437) 476-9802**: set Voice "A call comes in" (Webhook, POST) to
-   `<app-url>/api/twilio/voice` and Messaging "A message comes in" to `<app-url>/api/twilio/sms`.
-   Also finish adding the **Voice channel** in the number's compliance wizard (Messaging was done).
-3. In the app: `/admin`, open the clinic, set Catchline number `+14374769802`, front-desk mobile =
-   owner's cell, AI on, save.
-4. Live test: text the number, then call it; verify the AI replies, the front-desk page lands, and
-   the lead shows in `/dashboard`.
+## ▶ Immediate next steps (where we left off, 2026-10-24)
+The platform is LIVE end to end (text + call + AI intake + front-desk page all verified on the
+real number). The first pilot clinic, **Emerald Park Dental** (the owner's relative, agreed to a
+free 14-day pilot), is configured in the app; only their phone line remains. Playbook:
+[`docs/18`](docs/18-clinic-onboarding.md).
+1. **Conditional call forwarding on the clinic's Rogers business landline** to +1 (437) 476-9802:
+   try `*92` + number (forward on no answer) and `*90` + number (on busy) from the office phone;
+   if the codes are rejected, the clinic calls Rogers Business support (611 from the line) and
+   asks for both, ~4 rings, triggering before voicemail would answer. Then the ring-out test:
+   call their real number, let it ring out, expect the Catchline greeting, the text-back, and the
+   front-desk page (docs/18 steps 6-7).
+2. **Upgrade Supabase to Pro** before the pilot runs unattended: the free tier auto-paused on
+   2026-10-24 and silently killed the whole product (504s + dead webhooks) until restored.
+3. On the pilot clinic's record: set **front-desk mobile to the clinic's own cell** (it may still
+   be the owner's) and confirm the saved text-back message contains no em dash.
+4. Fill the **[mailing address]** placeholder in the Privacy Policy + DPA.
 
-## ✅ Current status (updated 2026-07-05)
+## ✅ Current status (updated 2026-10-24)
 - **V1 built and deployed** on Vercel: project **"catchline"** (owned by the `vibe-coders3` scope),
   `main` auto-deploys, URL **`dental-business-dusky.vercel.app`**. The `catchline.vercel.app` name
   is taken by another project, so the dusky URL stays until the real domain is bought. **Vercel is
@@ -115,11 +117,24 @@ Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-l
   (`andrewbirdie777@gmail.com` → `/admin`). Configured via `src/lib/constants.ts` / `ADMIN_EMAILS`.
 - **Hybrid onboarding:** clinics self-sign-up and own their dashboard; the admin can configure any
   clinic at `/admin/clinics/[id]` (the "free setup").
-- **Twilio: in progress.** Account upgraded (Individual for now, ~$20 balance, auto-recharge OFF),
-  MFA on. **Canadian number purchased: +1 (437) 476-9802 (Toronto), SMS+MMS+Voice.** Messaging
-  compliance wizard completed; Voice channel add + webhooks + env keys + live test remain (see
-  "Immediate next steps"). Switch the account to Business after the entity is registered, then do
-  A2P 10DLC only if/when texting US patients (Canadian traffic doesn't need it).
+- **Twilio: LIVE (2026-10).** Account upgraded (Individual for now, auto-recharge OFF), MFA on.
+  **+1 (437) 476-9802 (Toronto, SMS+MMS+Voice)**: compliance wizards done, both webhooks set, env
+  keys in Vercel, live test passed (text → AI intake → lead in dashboard; call → greeting →
+  text-back → front-desk page). The number is assigned to the first pilot clinic. Switch the
+  account to Business after the entity is registered, then A2P 10DLC only if/when texting US
+  patients (Canadian traffic doesn't need it).
+- **AI intake: LIVE on OpenAI** (`OPENAI_API_KEY` in Vercel, marked Sensitive; restricted key,
+  chat completions only; small prepaid credit, auto-recharge off; default model `gpt-4o-mini`).
+  The scripted fallback now extracts names from conversational replies ("thanks, I'm Andrew" →
+  "Andrew"; `extractName` in `src/lib/ai/intake.ts`, pinned by tests) instead of storing the
+  whole message.
+- **First pilot in progress: Emerald Park Dental** (owner's relative, free 14-day pilot). Clinic
+  configured, internal tests passed; blocked only on conditional forwarding on their Rogers
+  business landline (see "Immediate next steps").
+- **Admin clinic management:** each clinic row in `/admin` has a 3-dot menu with a guarded delete
+  (`deleteClinicAsAdmin` returns `{ ok, error }` and surfaces failures as an alert instead of
+  crashing). Migration **0004 applied in production**, which unblocked clinic deletes and
+  `erase_clinic()`.
 - **Stripe paywall scaffolded, dormant** until keys are set: `/billing` page + sidebar item,
   `/api/stripe/{checkout,portal,webhook}`, `src/lib/stripe.ts` (no SDK dependency), soft
   payment-needed banner in the dashboard layout (non-blocking by design). ⚠️ Migration
@@ -132,22 +147,27 @@ Mid-way through connecting Twilio (full runbook: [`docs/17`](docs/17-twilio-go-l
   the entity exists; keep a backup name in mind.
 - **Data residency:** Supabase **`ca-central-1` (Montreal)** for Canadian/PHIPA comfort.
 - **Hardening done:** input validation, security headers, append-only audit log, abuse/cost cap,
-  RLS multi-tenancy, Twilio signature checks, 27 unit tests + CI + Dependabot + secret scanning.
+  RLS multi-tenancy, Twilio signature checks, 30 unit tests + CI + Dependabot + secret scanning.
   MFA enabled on Google/Vercel/Supabase/Twilio (owner task, done 2026-07).
 - **Review fixes (2026-07):** missed-call notification only claims "Text-back sent" when true;
   Missed-calls "today" counts in the clinic's timezone; OpenGraph metadata with a crash-safe
   `metadataBase` (a malformed `NEXT_PUBLIC_APP_URL` can no longer break deploys).
-- **Stack: Next 15.5.19** (React 18), Vitest 4, `npm audit` 0 vulnerabilities. ⚠️ The `main`
+- **Stack: Next 15.5.22** (React 18), Vitest 4, `npm audit` 0 vulnerabilities (the 2026-10
+  advisory wave was patched: Next/eslint-config-next 15.5.19 → 15.5.22, postcss floor 8.5.23,
+  `sharp` >=0.35 override, transitive fixes). ⚠️ The `main`
   **branch ruleset is DISABLED** (it blocked deploy automation), re-enable with a bypass once a
   collaborator is added.
 - **Legal pages live, lawyer-reviewed (scored 8.5-9/10):** Privacy Policy (`/privacy`), Terms
   (`/terms`), DPA (`/dpa`), linked from footer + sign-up. Lawyer-ready copies in `docs/legal/`.
-  Legal entity: **Catchline Services Inc. (not yet registered)**.
+  Legal entity: **Catchline Services Inc. (not yet registered)**. Support/privacy contact:
+  `team.catchlineservices@gmail.com` (`BRAND.supportEmail` in `src/lib/constants.ts` feeds all
+  three pages; the `docs/legal/` copies match).
   ⏳ Still to do: fill the **[mailing address]** placeholder in the Privacy Policy + DPA, register
   the entity, final counsel re-review (incl. Ontario PHIPA) before signing a clinic.
 - **Pricing:** introductory **$150 CAD/month** per clinic (after a 14-day pilot). Consistent across
   site + Terms; keep the pitch deck/pilot agreement/invoices at the same number.
-- **NOT yet live for real calls** until the "Immediate next steps" above are finished.
+- **Platform live; first clinic pending** only its carrier forwarding (see "Immediate next
+  steps"). No real patient traffic flows until that forwarding is on.
 
 ---
 
@@ -159,8 +179,8 @@ run the launch checklist"*).
    env keys, webhooks, clinic config, live test, then the clinic's conditional call forwarding.
    For a real clinic: move the Twilio account to **Business** (after incorporation). A2P 10DLC only
    for US-bound texting.
-2. **(Optional) AI key:** add `OPENAI_API_KEY` to Vercel for smarter intake (scripted fallback
-   works without it).
+2. **AI key: ✅ DONE** (`OPENAI_API_KEY` live in Vercel; the scripted fallback remains the
+   outage safety net).
 3. **Buy a domain** (e.g. `trycatchline.com`), point Vercel at it, then update the 3 places that
    reference the URL: `NEXT_PUBLIC_APP_URL` (Vercel) → Supabase Auth URL Configuration → Twilio
    webhooks. (See chat notes / `docs/08`.)
